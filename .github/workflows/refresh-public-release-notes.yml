@@ -31,3 +31,4 @@ jobs:
           item = api("contents/"+path+"?ref=main")
           api("contents/"+path, "DELETE", {"message":"Remove completed one-time release notes refresh","sha":item["sha"],"branch":"main"})
           print("Public release notes updated; temporary workflow removed.")
+
