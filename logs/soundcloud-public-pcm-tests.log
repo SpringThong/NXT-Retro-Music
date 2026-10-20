@@ -1,1 +1,0 @@
-PASS SoundCloud native PCM: 44.1/48 kHz resampling and pitch, playback clock from consumed audio, pause preserves samples, stale seek epochs, NaN clamp, bounded nonblocking callbacks, EOF after drain, oversize packets, teardown.

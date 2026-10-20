@@ -1,3 +1,0 @@
-PASS NextUI production: connected A2DP detection ignores gamepad; private ALSA route parses without merge conflicts; speaker/Bluetooth/DAC and headset changes reopen named PCM after closing/resetting cache; stale firmware sink is corrected; transport retry recovers; local, Spotify and SoundCloud PCM remains nonzero; idle does not reopen audio. No physical headset test.
-NXT audio: QA BlueALSA transport not ready
-

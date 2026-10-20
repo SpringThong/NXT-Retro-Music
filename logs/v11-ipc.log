@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/tmp/tmpqdo9uxns/./bin/tg5040/nxt-spotify-backend", line 10, in <module>
-    if v['cmd']=='login':print('{"event":"logged_in"}',flush=True)
-                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-BrokenPipeError: [Errno 32] Broken pipe
-Exception ignored in: <_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>
-BrokenPipeError: [Errno 32] Broken pipe
-PASS production C: QR-first start without PC credentials, native metadata provider, Spotify background ownership, track changes keep the helper, credential import, independent library connection, QR/code event validation/cancel/approval/errors, UTF-8 metadata, stale replies, PCM/playback error cleanup, private diagnostic log, owned helper kill/reap; tokens never sent in argv/IPC.

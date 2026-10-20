@@ -1,1 +1,0 @@
-PASS production detached Spotify session: socketpair transport (host blocks bind/listen), hidden STATUS includes Spotify, tick continues, ATTACH restores UI and same active player, logo-stop blocks detach, stop-all closes Spotify; simulated display/audio hardware.

@@ -1,1 +1,0 @@
-PASS actual background disk worker: path-coalescing latest snapshot, profile paths isolated, PNG owns pixels, ordered remove, SD failure surfaced, quit drains and restart works. No UI fsync/PNG compression.

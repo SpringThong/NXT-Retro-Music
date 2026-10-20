@@ -1,2 +1,0 @@
-PASS: ZIP CRC, ARM64 release, no debug/PC payload, 16 font checksums, licenses, version and exact overlay/source parity
-PASS: 98 corresponding release objects match relink kit.

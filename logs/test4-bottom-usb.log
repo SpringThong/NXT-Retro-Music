@@ -1,9 +1,0 @@
-Bottom USB: open /tmp/tmp1ht8_6oy/otg_role: No such file or directory
-Bottom USB: open /tmp/tmp1ht8_6oy/otg_role: No such file or directory
-Bottom USB: open /tmp/tmp1ht8_6oy/usb_host: No such file or directory
-Bottom USB: open /tmp/tmp1ht8_6oy/usb_host: No such file or directory
-Bottom USB: action=usb_host before=2 reply=host_chose finished! after=1
-Bottom USB: action=usb_device before=1 reply=device_chose finished! after=2
-Bottom USB: action=usb_host before=0 reply=host_chose finished! after=0
-Bottom USB: open /tmp/tmp1ht8_6oy/usb_host: No such file or directory
-PASS USB: status reads only otg_role; explicit read triggers host/device; idempotent requests never touch action FIFO; unknown role permits explicit request; unconfirmed transition is pending; missing action fails; no startup/tick auto-switch; menu applies only on A.

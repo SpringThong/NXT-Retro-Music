@@ -1,8 +1,0 @@
-cache mismatch blend=1 size=0 row=7
-Traceback (most recent call last):
-  File "/workspace/scratch/d7cab07fb248/visual-v1997/work/NXT_Retro_Music_v1.9.7.6_Source/qa/test_v1997_ui.py", line 22, in <module>
-    (R/'logs/v1997-ui-test.log').write_text(result.stdout+result.stderr);print(result.stdout+result.stderr,end='');result.check_returncode()
-                                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 502, in check_returncode
-    raise CalledProcessError(self.returncode, self.args, self.stdout,
-subprocess.CalledProcessError: Command '['/tmp/nxt-v1997-ui-ceydbylq/render', '/tmp/nxt-v1997-ui-ceydbylq/frames']' died with <Signals.SIGABRT: 6>.

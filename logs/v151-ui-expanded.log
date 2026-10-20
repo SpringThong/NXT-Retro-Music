@@ -1,5 +1,0 @@
-PASS 69 actual theme/RGB palettes: text, hints, accent and selection contrast >= 4.5
-PASS append 80 catalog results, listening queue grows to 81 with deduplication, no early repeat while more pages remain, final repeat-all wraps only at actual catalog end.
-PASS QR playback success is independent of library limits; real playback rejection exits pairing without an endless login retry.
-PASS About Y exports device diagnostics at both screen sizes.
-PASS production v1.5 guide/change log/About/control/RGB screens at 640 and 1024, all 21 actions on 16 physical buttons, reset defaults, canceled LED preview restoration, ASan/UBSan.

@@ -1,8 +1,0 @@
-NXT Tools icon ready. Reopen Tools or restart the device to refresh the launcher.
-NXT Tools icon ready. Reopen Tools or restart the device to refresh the launcher.
-NX Redux launcher restored.
-Tools icon integration skipped: launcher differs from official NX Redux v2.1.2.
-PASS timer: deadline, cancel, replace, wrap, pause/screen-off, radio/podcast; saved full exit on Stock/NextUI/NX, actual background/session cleanup, preferences preserved.
-NXT frontend: NX Redux · v1.8.9.1 · HomeLEDCPU
-
-PASS timer cleanup and exact-version Tools icon install/rollback.

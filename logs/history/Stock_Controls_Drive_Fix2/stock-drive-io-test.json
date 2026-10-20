@@ -1,9 +1,0 @@
-{
-  "drive_io": {
-    "exit": 0,
-    "curl_decoder_player_fixtures": true
-  },
-  "local_folder_mapping": {
-    "exit": 0
-  }
-}

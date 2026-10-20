@@ -1,1 +1,0 @@
-PASS: v1.0 installer differs only in musicplayer.elf; fonts/icons/libs/state/launcher are byte-identical. Source edits are confined to footer helpers/layout; overlay manifests match.

@@ -1,1 +1,0 @@
-PASS real Bluetooth mixer helper: A2DP control selected instead of Battery/SCO, explicit unmute with requested volume, absent control does not issue a command, later control recovers, system mute still outputs zero volume. No physical headset test.

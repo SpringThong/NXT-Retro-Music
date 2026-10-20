@@ -1,8 +1,0 @@
-/workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/upstream/src/nxt_write.c: In function ‘run’:
-/workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/upstream/src/nxt_write.c:24:45: warning: ignoring return value of ‘nice’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-   24 | static void *run(void *unused){(void)unused;nice(5);pthread_mutex_lock(&lock);
-      |                                             ^~~~~~~
-/workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/upstream/src/file_utils.c: In function ‘rm_rf’:
-/workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/upstream/src/file_utils.c:131:5: warning: ignoring return value of ‘system’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  131 |     system(cmd);
-      |     ^~~~~~~~~~~

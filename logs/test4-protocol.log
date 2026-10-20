@@ -1,1 +1,0 @@
-PASS production Rust process: JSON protocol, missing/wrong credentials, pairing requires library login, cancellation, private diagnostics, tokens absent, quit/EOF/closed stdout; no account playback tested.

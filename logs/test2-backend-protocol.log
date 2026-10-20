@@ -1,1 +1,0 @@
-PASS production Rust process: real JSON protocol, missing/wrong credentials rejected, tokens absent from logs, quit and EOF clean up; no account/network playback tested.

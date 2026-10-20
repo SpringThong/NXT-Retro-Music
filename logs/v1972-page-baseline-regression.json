@@ -1,8 +1,0 @@
-{
-  "exit": 0,
-  "baseline": "1.9.7.1",
-  "production_UI_and_skin_from_verified_source": true,
-  "old_code_fails_repeated_redraw_assertion": true,
-  "baseline_returncode": -6,
-  "stderr": "render: /workspace/scratch/d7cab07fb248/theme-diagnosis/native/NXT_Retro_Music_v1.9.7.1_Source/qa/v1972_render.c:327: main: Assertion `!NxtMotion_frame(page,true)' failed.\n"
-}

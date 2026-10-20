@@ -1,1 +1,0 @@
-PASS actual NX launcher: cold start, warm reattach without duplicate process, system PCM stop, stable logs, data preservation, wrong device/ROM rejection.

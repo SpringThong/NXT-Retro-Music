@@ -1,4 +1,0 @@
-PASS actual local playlist/browser manual previous/next, random excludes current and folders; sequential when disabled.
-PASS production Auralis button geometry and icon centres at 640/1024.
-PASS production online previous/next respects shuffle in both directions.
-PASS production online previous/next respects shuffle in both directions.

@@ -1,1 +1,0 @@
-PASS: ARM64 preset roundtrip; independent speaker/DAC profiles; malformed presets leave settings unchanged; UTF-8 BOM/relative M3U8 paths; long multilingual names remain valid.

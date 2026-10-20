@@ -1,7 +1,0 @@
-{
-  "source": "https://newsroom.spotify.com/media-kit/logo-and-brand-assets/",
-  "download": "https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Full_Logo_RGB_White.png",
-  "original_sha256": "14a6a4faf018cf8b2f46a35a272db84b3d6b61a094707f225eb0106ea90ef979",
-  "runtime_asset": "upstream/res/icons/spotify-source.png",
-  "conversion": "Transparent padding removed; proportional Lanczos resize to 304 x 83; centered on a 376 x 94 transparent canvas. Logo shape and white color retained."
-}

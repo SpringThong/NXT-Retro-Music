@@ -1,6 +1,0 @@
-PASS production 256 MiB cache: no 512-file cap, full-folder oldest eviction, protected current file, bounded metadata heap, cancellation, growing atomic commits and cold offline Groq cache without an API key/network.
-[NXT translation] start generation=2 lines=2 provider=2 target=1 curl=1
-
-PASS production 256 MiB cache: no 512-file cap, full-folder oldest eviction, protected current file, bounded metadata heap, cancellation, growing atomic commits and cold offline Groq cache without an API key/network.
-[NXT translation] start generation=2 lines=2 provider=2 target=1 curl=1
-

@@ -1,4 +1,0 @@
-/workspace/scratch/d7cab07fb248/visual-v1997/work/NXT_Retro_Music_v1.9.7.6_Source/upstream/src/file_utils.c: In function ‘rm_rf’:
-/workspace/scratch/d7cab07fb248/visual-v1997/work/NXT_Retro_Music_v1.9.7.6_Source/upstream/src/file_utils.c:131:5: warning: ignoring return value of ‘system’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  131 |     system(cmd);
-      |     ^~~~~~~~~~~

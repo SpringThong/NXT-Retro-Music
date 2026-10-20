@@ -1,9 +1,0 @@
-{
-  "exit": 0,
-  "ASan_UBSan": true,
-  "Hangul": true,
-  "Romaji_kana_kanji": true,
-  "Pinyin_simplified_traditional": true,
-  "keyboards": 15,
-  "elapsed_host_seconds": 0.010416568999971787
-}

@@ -1,7 +1,0 @@
-{
-  "version": "2026.08.19",
-  "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp_linux_aarch64.zip",
-  "sha256": "4e27ad43f3a34bacffd078694eb3edbb4e3b378e7da44edab2be02e98555516e",
-  "layout": "onedir; bundled Python; avoids per-request /tmp extraction",
-  "credentials_required": false
-}

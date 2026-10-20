@@ -1,5 +1,0 @@
-PASS production original-lyrics fetch: exact plain/synced, conservative cover fallback, no borrowed cover timings, unrelated result rejected, missing vs network status, stale response discarded and retry.
-[NXT lyrics] no original lyrics generation=8 state=3
-[NXT lyrics] no original lyrics generation=10 state=4
-[NXT lyrics] no original lyrics generation=14 state=3
-

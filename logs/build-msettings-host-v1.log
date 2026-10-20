@@ -1,8 +1,0 @@
-make: Entering directory '/workspace/scratch/766af1647819/build-v1/upstream/NextUI/workspace/desktop/libmsettings'
-/usr/bin/gcc -c -Werror -fpic "msettings.c" -I../../all/common -Wl,--no-as-needed -ldl
-/usr/bin/gcc -shared -o "libmsettings.so" "msettings.o" -ldl
-mkdir -p "/var/tmp/nextui/include"
-mkdir -p "/var/tmp/nextui/lib"
-cp "msettings.h" "/var/tmp/nextui/include"
-cp "libmsettings.so" "/var/tmp/nextui/lib"
-make: Leaving directory '/workspace/scratch/766af1647819/build-v1/upstream/NextUI/workspace/desktop/libmsettings'

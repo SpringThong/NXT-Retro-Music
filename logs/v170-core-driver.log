@@ -1,3 +1,0 @@
-PASS actual atomic config roundtrip, all new preferences, old profile migration retains Original colors/background; new profiles clear identity; malformed numeric bounds under UBSan.
-PASS actual proc/sys telemetry: CPU deltas, SoC-only temp, CPU MHz, MemAvailable; real SQLite day history excludes charging, gaps and different sessions; invalid sensors unsupported.
-PASS actual five-band biquads at 60/250/1000/4000/12000 Hz: +6dB response and PCM RMS, five-band preset export/import.

@@ -1,8 +1,0 @@
-{
-  "exit": 0,
-  "full_cleanup_on_expiry": true,
-  "deadline_cancel_replace_rollover_pause_online": true,
-  "ASan_UBSan": true,
-  "session_socket_mocked": true,
-  "physical_deepsleep_tested": false
-}

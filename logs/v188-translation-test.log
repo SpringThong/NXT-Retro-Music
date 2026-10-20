@@ -1,1 +1,0 @@
-PASS production translation: default-off zero work, repeated-line dedup, cache/offline reuse, 14 targets, CJK script detection, source override, UTF-8 chunks, HTTP/JSON/oversize/quota errors, cooldown/manual retry, stale-result rejection, hidden/screen-off pause, Google protocol/private key and bounded quit/reap. Lyrics/audio inputs are fixtures.

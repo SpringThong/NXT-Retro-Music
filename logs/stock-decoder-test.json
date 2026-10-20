@@ -1,9 +1,0 @@
-{
-  "local_10_formats": {
-    "exit": 0,
-    "actual_arm64_decoder": true
-  },
-  "dsp_replaygain_eq_limiter": {
-    "exit": 0
-  }
-}

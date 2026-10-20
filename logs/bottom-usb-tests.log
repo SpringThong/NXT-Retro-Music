@@ -1,1 +1,0 @@
-PASS USB: status reads only otg_role; explicit read triggers host/device; idempotent requests never touch action FIFO; unknown/missing paths fail; no startup/tick auto-switch; menu applies only on A.

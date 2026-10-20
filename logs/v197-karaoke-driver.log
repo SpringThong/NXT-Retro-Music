@@ -1,2 +1,0 @@
-PASS actual karaoke: partial normalized word alignment, CJK byte offsets, mismatch rejection, malformed cache rollback, mono 16k WAV, opt-in-only HTTP, worker publish, key-free offline cache and generation cancellation/reaping. PCM/HTTP are fixtures; no singing accuracy claim.
-

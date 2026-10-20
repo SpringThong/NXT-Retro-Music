@@ -1,1 +1,0 @@
-PASS persistent incremental index: legacy migration, warm zero writes/probes, nested changes, partial copies, cancellation, missing card, rollback and bounded 2048-track fixture

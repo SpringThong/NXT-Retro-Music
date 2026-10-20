@@ -1,2 +1,0 @@
-REPRODUCED baseline: SDL reopen alone still opens cached speaker route.
-PASS official Stock SDL/ALSA: cached hook reproduced, live speaker→DAC→speaker and repeated handoffs work after process-local config reload without restarting SDL/app.

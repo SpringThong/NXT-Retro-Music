@@ -1,1 +1,0 @@
-PASS production Spotify selection + native NXT render with album art, common metadata/footer, actual Unicode fallback, mini player at 1024x768 and 640x480; audio/DAC values are fixtures.

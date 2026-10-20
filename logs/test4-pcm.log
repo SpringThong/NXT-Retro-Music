@@ -1,2 +1,0 @@
-Resampled frames=9601
-PASS production PCM: stereo levels, 44.1→48 kHz duration/pitch, bounded nonblocking reads, pause drain, stale epoch rejection, invalid samples, clean shutdown.

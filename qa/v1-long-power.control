@@ -1,5 +1,0 @@
-wait(600)
-status()
-hold(POWER,1300)
-wait(2000)
-status()

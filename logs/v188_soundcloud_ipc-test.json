@@ -1,9 +1,0 @@
-{
-  "exit": 0,
-  "production_provider_C": true,
-  "production_audio_policy": true,
-  "raw_to_Normal_keeps_helper_and_queue": true,
-  "local_IPC_fixture": true,
-  "ASan_UBSan": true,
-  "live_account_playback_tested": false
-}

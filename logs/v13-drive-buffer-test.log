@@ -1,1 +1,0 @@
-PASS production 100 MiB progressive Drive cache: starts before full download, cached seeks reuse bytes, missing seeks request priority Range, next-file prefetch survives reader cancellation and is reusable without a new request, two-slot eviction and cleanup. Network rate is a fixture.

@@ -1,1 +1,0 @@
-PASS production 60 Hz input loop: player draws 8/9/16; mechanical draws 9/16/21; FFT updates 13/21/21 per second. Hidden/off: zero visual work; paused: 1 Hz; E-Ink: 4 Hz; immediate change, tick wrap and invalid-mode fallback.

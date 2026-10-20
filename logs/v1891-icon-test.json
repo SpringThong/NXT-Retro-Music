@@ -1,9 +1,0 @@
-{
-  "exit": 0,
-  "exact_official_v212_guard": true,
-  "atomic_install": true,
-  "backup_idempotence_restore": true,
-  "unknown_launcher_preserved": true,
-  "patched_launcher_sha256": "ea1f92faab6f6efc0df6fb6b483a41a7979e888bd1a532cba89fb1786dd5ad47",
-  "hardware_tested": false
-}

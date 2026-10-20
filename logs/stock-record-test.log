@@ -1,1 +1,0 @@
-PASS production vinyl + now-playing frame loop: rotates without spectrum, 20fps gate, pause/resume and arm, no sleep/menu animation or wake jump, track/cover change, portrait art, two themes/sizes, Spotify/local/Drive state, timer wrap, bounded reusable caches and release. Audio/DAC/providers are fixtures.
