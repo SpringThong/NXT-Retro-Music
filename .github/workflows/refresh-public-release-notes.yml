@@ -1,0 +1,33 @@
+name: Refresh renamed public release notes once
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/refresh-public-release-notes.yml']
+permissions:
+  contents: write
+jobs:
+  refresh:
+    if: github.repository == 'SpringThong/NXT-Retro-Music'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Update release description and remove this temporary workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import base64, json, subprocess, tempfile
+          repo = "SpringThong/NXT-Retro-Music"
+          def api(path, method=None, payload=None):
+              args = ["gh", "api", "repos/"+repo+"/"+path]
+              if method: args += ["--method", method, "--input", "-"]
+              p = subprocess.run(args, input=json.dumps(payload) if payload is not None else None, text=True, capture_output=True, check=True)
+              return json.loads(p.stdout) if p.stdout else None
+          doc = api("contents/docs/RELEASE_v1.9.7.7.md?ref=main")
+          with tempfile.NamedTemporaryFile(suffix=".md") as f:
+              f.write(base64.b64decode(doc["content"])); f.flush()
+              subprocess.run(["gh","release","edit","v1.9.7.7","--repo",repo,"--notes-file",f.name],check=True)
+          path = ".github/workflows/refresh-public-release-notes.yml"
+          item = api("contents/"+path+"?ref=main")
+          api("contents/"+path, "DELETE", {"message":"Remove completed one-time release notes refresh","sha":item["sha"],"branch":"main"})
+          print("Public release notes updated; temporary workflow removed.")

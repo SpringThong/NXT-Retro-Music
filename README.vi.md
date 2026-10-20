@@ -20,7 +20,19 @@ README này giới thiệu **v1.9.7.7**, với bộ cài riêng cho **Stock, Nex
 - **Phiên bản:** **1.9.7.7**
 - **Kiểm chứng:** Tác giả thử sử dụng trên Brick Pro. Brick và Brick Hammer cần kiểm tra trên máy/ROM cụ thể; nút bấm, LED và DAC có thể khác nhau.
 
-[Tải các bản phát hành](https://github.com/SpringThong/NXT-Retro-Music-Source/releases) · [Báo lỗi](https://github.com/SpringThong/NXT-Retro-Music-Source/issues/new)
+[Tải các bản phát hành](https://github.com/SpringThong/NXT-Retro-Music/releases) · [Báo lỗi](https://github.com/SpringThong/NXT-Retro-Music/issues/new)
+
+## Tải v1.9.7.7
+
+Chọn đúng bộ cài cho ROM đang dùng, giải nén vào gốc thẻ nhớ rồi mở NXT trong Apps/Tools. **Dùng app chỉ cần tải một bản cài.**
+
+| ROM | Bản cài |
+| --- | --- |
+| **Stock** | [Tải bản cài Stock](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_Stock.zip) |
+| **NextUI** | [Tải bản cài NextUI](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_NextUI.zip) |
+| **NX Redux** | [Tải bản cài NX Redux](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_NXRedux.zip) |
+
+Dành cho phát triển: [source ZIP đầy đủ tương ứng](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_Source.zip). [Mã kiểm tra SHA-256](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/SHA256SUMS.txt).
 
 ![Auralis Now Playing với lời song ngữ](docs/screenshots/auralis-now-playing.png)
 

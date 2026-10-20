@@ -20,7 +20,19 @@ This README describes **v1.9.7.7**, with separate packages for **Stock, NextUI a
 - **Version:** **1.9.7.7**
 - **Validation:** Tested by the author on Brick Pro. Brick and Brick Hammer require device/firmware confirmation; controls, LED and DAC behavior can differ.
 
-[Download releases](https://github.com/SpringThong/NXT-Retro-Music-Source/releases) · [Report an issue](https://github.com/SpringThong/NXT-Retro-Music-Source/issues/new)
+[Download releases](https://github.com/SpringThong/NXT-Retro-Music/releases) · [Report an issue](https://github.com/SpringThong/NXT-Retro-Music/issues/new)
+
+## Download v1.9.7.7
+
+Choose the installer matching your ROM. Extract it to the SD-card root, then launch NXT from Apps/Tools. **You only need one installer to use the app.**
+
+| ROM | Installer |
+| --- | --- |
+| **Stock** | [Download Stock](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_Stock.zip) |
+| **NextUI** | [Download NextUI](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_NextUI.zip) |
+| **NX Redux** | [Download NX Redux](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_NXRedux.zip) |
+
+For development: [complete corresponding source ZIP](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/NXT_Retro_Music_v1.9.7.7_Source.zip). [SHA-256 checksums](https://github.com/SpringThong/NXT-Retro-Music/releases/download/v1.9.7.7/SHA256SUMS.txt).
 
 ![Auralis Now Playing with bilingual lyrics](docs/screenshots/auralis-now-playing.png)
 
