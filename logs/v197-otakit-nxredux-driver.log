@@ -1,0 +1,15 @@
+Created /workspace/scratch/d7cab07fb248/v197-work/native/NXT_Retro_Music_v1.9.6_Source/dist/OTA_Google_Drive_v1.9.7_NXRedux/templates/update.json (133719307 bytes, SHA-256 030b157cf5e7be1edd1c8149ee3c19fdf3bcb0318a79f46fd214c50532149533)
+{
+  "version": "1.9.7",
+  "rom": "nxredux",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.7_NXRedux.zip",
+  "kit_sha256": "c5d23916a9bb449925611d6b430e16a8918ac0e828dd85fcec75a1d94897cfad",
+  "size": 133748700,
+  "installer": "NXT_Retro_Music_v1.9.7_NXRedux.zip",
+  "installer_sha256": "030b157cf5e7be1edd1c8149ee3c19fdf3bcb0318a79f46fd214c50532149533",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

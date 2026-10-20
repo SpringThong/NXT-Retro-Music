@@ -1,0 +1,28 @@
+{
+  "manifest": {
+    "exit": 0,
+    "numeric_version_cases": 7,
+    "bad_manifest_cases": 11
+  },
+  "rom_source_separation": {
+    "exit": 0,
+    "stock_and_implicit_explicit_nextui_defaults": true,
+    "no_shared_default_file_or_userdata_path": true,
+    "cross_rom_manifest_rejected_both_directions": true,
+    "ambiguous_build_flags_rejected": true,
+    "nextui_runtime_build_tested": false
+  },
+  "zip": {
+    "exit": 0,
+    "bad_zip_cases": 11,
+    "sha_size_checked": true,
+    "only_app_payload": true,
+    "arm64_target_checked": true
+  },
+  "install": {
+    "exit": 0,
+    "previous_app_backup": true,
+    "userdata_untouched": true,
+    "physical_device_tested": false
+  }
+}

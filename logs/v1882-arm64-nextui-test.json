@@ -1,0 +1,25 @@
+{
+  "rom": "nextui",
+  "version": "1.8.8.2",
+  "exit": 0,
+  "binary_sha256": "6940582cedfac8763fc923205763e7ac3cd946dc548704c1487291588ac50440",
+  "actual_release_ELF": true,
+  "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+  "checks": [
+    {
+      "args": [
+        "--build-info"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.8.2\nNextUI · v1.8.8.2 · LyricsFix2\n"
+    },
+    {
+      "args": [
+        "--help"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.8.2 for NextUI\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

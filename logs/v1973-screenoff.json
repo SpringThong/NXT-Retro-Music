@@ -1,0 +1,26 @@
+{
+  "STOCK": {
+    "exit": 0,
+    "production_power_functions": true,
+    "all_controls_stay_dark": true,
+    "power_guard_and_timeout": true,
+    "ASan_UBSan": true,
+    "production_dark_control_routing_and_lock": true
+  },
+  "NEXTUI": {
+    "exit": 0,
+    "production_power_functions": true,
+    "all_controls_stay_dark": true,
+    "power_guard_and_timeout": true,
+    "ASan_UBSan": true,
+    "production_dark_control_routing_and_lock": true
+  },
+  "NXREDUX": {
+    "exit": 0,
+    "production_power_functions": true,
+    "all_controls_stay_dark": true,
+    "power_guard_and_timeout": true,
+    "ASan_UBSan": true,
+    "production_dark_control_routing_and_lock": true
+  }
+}

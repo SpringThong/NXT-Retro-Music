@@ -1,0 +1,7 @@
+PASS: release AArch64, v1.0 metadata, executable modes, payload CRC, embedded guide, exact binary, no QA hooks; fonts match approved 0.3.0.
+PASS: 2238 corresponding-source files verified against SHA256; source ZIP CRC pass.
+{
+  "install_bytes": 26339259,
+  "source_bytes": 178556391,
+  "install_sha256": "91e195dd376cfe54e8cb2d5496317c6cc59567bf980f4ea2f9fba5836e6516f3"
+}

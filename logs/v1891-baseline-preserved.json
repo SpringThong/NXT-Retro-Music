@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "baseline_version": "1.8.9",
+  "baseline_sha256": "30311ea905005623f793b13c517728e12dd83920db9ef1cc25883ba19dd90332",
+  "unchanged_core": {
+    "stock/bin/tg5040/musicplayer.elf": "e358dcfac20571f57f1b3955215f1074f56d91db322ea9972647dbe2bd1ef168",
+    "upstream/bin/tg5040/musicplayer.elf": "763de8f2a3ccfc0325f04a1ccfc752a7500fe3682e4eeaf5b72b5da72555045e",
+    "upstream/bin/tg5040/nxt-spotify-backend": "0f12fa810b387910e64a18c0a895cdd6a4782e6b177f9cdbe1eefc9be7815a5b",
+    "upstream/bin/tg5040/nxt-soundcloud-backend": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463",
+    "upstream/src/nxt_dsp.c": "6dce11b46a0d2a68887d695c33ad986d7714906e1e8f37ba6b676b5b00c8d466",
+    "upstream/src/nxt_bitperfect.c": "d7e0ddc996fe0bfecdd204710999e3360a0d60ff2b108d70d9b18b5f599a435c",
+    "upstream/src/nxt_audio_mode.c": "2860b8a33b40c3827eb5408453873cb57b998838d32e2920c42dcd734e88109a",
+    "upstream/src/nxt_startup.c": "c0f140fbd05966350a012056b75ae95958dc9794c9b8465c232fc3839db615af",
+    "upstream/src/nxt_theme_v18.inc": "f0fe5757c53fc8642988deb9ddd3b4360bd019c158cd4c6cceb7dbf7040125f1",
+    "upstream/src/nxt_ota.c": "8daa973b0f8957a383a411b2d98783ecaed48568d80cb47b2b87d769f5503063",
+    "upstream/src/nxt_ota_package.c": "60bff4aefb97a18c9399eedd1dc349aa766e10f527e9e5f9e03bdf3b40637570"
+  },
+  "historical_frontends_preserved": {
+    "stock/bin/tg5040/musicplayer.elf": "e358dcfac20571f57f1b3955215f1074f56d91db322ea9972647dbe2bd1ef168",
+    "upstream/bin/tg5040/musicplayer.elf": "763de8f2a3ccfc0325f04a1ccfc752a7500fe3682e4eeaf5b72b5da72555045e"
+  },
+  "unchanged_UI_assets": 667,
+  "audio_hardware_tested": false
+}

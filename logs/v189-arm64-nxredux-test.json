@@ -1,0 +1,25 @@
+{
+  "rom": "nxredux",
+  "version": "1.8.9",
+  "exit": 0,
+  "binary_sha256": "07cc612c375207a0dabed3663aac25b110ca8e9eb81e28b8a5479462eebe46c3",
+  "actual_release_ELF": true,
+  "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+  "checks": [
+    {
+      "args": [
+        "--build-info"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.9\nNX Redux · v1.8.9 · GroqOTA\n"
+    },
+    {
+      "args": [
+        "--help"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.9 for NX Redux\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/nxredux/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

@@ -1,0 +1,49 @@
+{
+  "version": "1.9.2",
+  "rom": "nxredux",
+  "baseline": "1.9.1",
+  "build": {
+    "exit": 0,
+    "toolchain": "d4ac4ef1968668f93f625f2b226c69d74739ae58ff640d2ce3aaae6b4d1b93d3"
+  },
+  "binary_sha256": "8b1081f03782b644b0f3ff7a57921dbfa3db6aa709ad1463871fbde680741643",
+  "installer": "NXT_Retro_Music_v1.9.2_NXRedux.zip",
+  "installer_sha256": "ffd47584906d94e56cd054e0fe39e0a0b877dfac7e420a785c71fc9d741f98e9",
+  "checks": {
+    "v192-device-log.json": {
+      "sha256": "4fd58dacaa73b227fc04e94138004b1cf05934db346c81b4e6c2b89d7ede673d"
+    },
+    "v192-dsd-test.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v192-ota-publisher-kit-nxredux.json": {
+      "sha256": "0e0116cb4fc4e26fcb9f4d74510849f9ae417c67b2b88825e889e465dbf029a3"
+    },
+    "v192-dac-name.json": {
+      "sha256": "71568b748ec737a2a063d2a69e0c3f8fd24d3fc2df99f20cd3c4d6f55f22be04"
+    },
+    "v192-loader-nxredux.json": {
+      "sha256": "d296990427c0649050bca856330692094c2b303b9ff8a5b72d6b709059312e48"
+    },
+    "v192-ota-qa-nxredux.json": {
+      "sha256": "b8ade357e62f4f5cb2ee1b39af63cb6123964f3c23117cdc4c6dce8262996828"
+    },
+    "v1891-cpu-key-test.json": {
+      "sha256": "7ad48bd4a919ac8c9f2b7ab3eac6140451393b4de24d9d4114a48b8b59e4598b"
+    },
+    "v1891-led-test.json": {
+      "sha256": "07cdc6c5059666467dc91a54dc975f2ec3308ded5ffee4864f199b991954e2cf"
+    },
+    "v1891-home-test.json": {
+      "sha256": "fb89921d314b3752c7e7c9b3069ddb9cfd00999e8643b23ec4f883a5f71f0297"
+    }
+  },
+  "hardware_tested": false,
+  "limitations": [
+    "Native support depends on ROM USB driver and exact DAC format/rate.",
+    "Explicit DoP compatibility approval required; no implicit PCM conversion.",
+    "User display name does not claim automatic model identification.",
+    "No physical Black Pearl playback/heat/power verification.",
+    "Official OTA URL retained; live publisher JSON is not uploaded by this build."
+  ]
+}

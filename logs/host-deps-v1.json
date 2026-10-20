@@ -1,0 +1,170 @@
+[
+  {
+    "package": "libasound2-dev",
+    "version": "1.2.11-1build2",
+    "sha256": "6acdb3db0069cf386ee6b615de8bb11cfc8863bf3a593ca6957f03e017a4b3db",
+    "archive": "libasound2-dev_1.2.11-1build2_amd64.deb"
+  },
+  {
+    "package": "libegl-dev",
+    "version": "1.7.0-1build1",
+    "sha256": "3a0315216bb0d6fc4bbe7f689cf0168c2ffa3e62ac69bff06bbbe49679259990",
+    "archive": "libegl-dev_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libfreetype-dev",
+    "version": "2.13.2+dfsg-1build3",
+    "sha256": "ffb5f0abfb76cb9c1189879fad2bbe5a9d4ffda359ba864b5c949d72b5871d70",
+    "archive": "libfreetype-dev_2.13.2+dfsg-1build3_amd64.deb"
+  },
+  {
+    "package": "libfribidi-dev",
+    "version": "1.0.13-3build1",
+    "sha256": "c6d3e5f737f56d86d441ed466db4ec78bee319e685024a624629a14470d5f4f3",
+    "archive": "libfribidi-dev_1.0.13-3build1_amd64.deb"
+  },
+  {
+    "package": "libgl-dev",
+    "version": "1.7.0-1build1",
+    "sha256": "b7145fd8f8abe20d5cb436d2eae9b3235bd91be6fbddac581620d16763bd9250",
+    "archive": "libgl-dev_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libgles-dev",
+    "version": "1.7.0-1build1",
+    "sha256": "ee2ea529c20e28031230c5910281e5bbd7f2c2ca06a2e306ca15e985d4875eb2",
+    "archive": "libgles-dev_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libgles1",
+    "version": "1.7.0-1build1",
+    "sha256": "3128deef59859a47cfca25244f035bdbedd223640209dcffdd11f1873ef71aff",
+    "archive": "libgles1_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libgles2",
+    "version": "1.7.0-1build1",
+    "sha256": "9dec2d79a2eebb80522f7cce77995f7a8ded22f0e3916f13353d066c62f97fac",
+    "archive": "libgles2_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libglx-dev",
+    "version": "1.7.0-1build1",
+    "sha256": "0e2654950a881c20b640a3af590add2e0b612b8c0fdd945761fc695e1b6eb797",
+    "archive": "libglx-dev_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libharfbuzz-dev",
+    "version": "8.3.0-2build2",
+    "sha256": "fe2eaa5977d6208328357e289d3166e079b100ce80feb70d4d13b929f508a3e0",
+    "archive": "libharfbuzz-dev_8.3.0-2build2_amd64.deb"
+  },
+  {
+    "package": "libopengl-dev",
+    "version": "1.7.0-1build1",
+    "sha256": "da50e2804e80391e5c3d7f61af70b41ff6d0d20e4862136ceb8828000637c273",
+    "archive": "libopengl-dev_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libopengl0",
+    "version": "1.7.0-1build1",
+    "sha256": "da36bd4d30c13b40b697fa8b72cc09d309ff36a5bd9750341ef78492bf3f3966",
+    "archive": "libopengl0_1.7.0-1build1_amd64.deb"
+  },
+  {
+    "package": "libpkgconf3",
+    "version": "1.8.1-2build1",
+    "sha256": "fc3a57e8f931ec06cb7c51acc56878f1fec247ff02a7adcab26905c2faeb2792",
+    "archive": "libpkgconf3_1.8.1-2build1_amd64.deb"
+  },
+  {
+    "package": "libsamplerate0-dev",
+    "version": "0.2.2-4build1",
+    "sha256": "dbef2e4d948f1a01f31b0f9755a574a768c3969a9c8cbef0acd3928ffa2e0897",
+    "archive": "libsamplerate0-dev_0.2.2-4build1_amd64.deb"
+  },
+  {
+    "package": "libsqlite3-dev",
+    "version": "3.45.1-1ubuntu2",
+    "sha256": "d23577c43936fedd8c4fa1337a6e960a6e71e94ac164d7a15c46ea96bf21265d",
+    "archive": "libsqlite3-dev_3.45.1-1ubuntu2_amd64.deb"
+  },
+  {
+    "package": "libunwind8",
+    "version": "1.6.2-3build1",
+    "sha256": "658977d18976149b75391850ba0ccacaf7bde3201f0284189da50cd634334d17",
+    "archive": "libunwind8_1.6.2-3build1_amd64.deb"
+  },
+  {
+    "package": "liburing2",
+    "version": "2.5-1build1",
+    "sha256": "c2aef62accee92a06263c3ad4ef46132c13e409b54296c44792a20491830a7b0",
+    "archive": "liburing2_2.5-1build1_amd64.deb"
+  },
+  {
+    "package": "pkgconf-bin",
+    "version": "1.8.1-2build1",
+    "sha256": "7a812f05ee1610154b433e2ad54f6e4163fcbb306b9fb31afe959afb2e5e1545",
+    "archive": "pkgconf-bin_1.8.1-2build1_amd64.deb"
+  },
+  {
+    "package": "7zip",
+    "version": "23.01+dfsg-11",
+    "sha256": "0f79450d81e64326a862a8645ae1613890e486115101e51e41ca07d929388d87",
+    "archive": "7zip_23.01+dfsg-11_amd64.deb"
+  },
+  {
+    "package": "libcapstone4",
+    "version": "4.0.2-5.1build1",
+    "sha256": "c2b92fa793412f00fe14f3a8e30bb73b1138d237bafda520f291db33ed475e0c",
+    "archive": "libcapstone4_4.0.2-5.1build1_amd64.deb"
+  },
+  {
+    "package": "libsdl2-dev",
+    "version": "2.30.0+dfsg-1build3",
+    "sha256": "da31bb7338df41964abc4d99728c00b857281c00e43d91ff7cbf48612929c2f2",
+    "archive": "libsdl2-dev_2.30.0+dfsg-1build3_amd64.deb"
+  },
+  {
+    "package": "libsdl2-image-2.0-0",
+    "version": "2.8.2+dfsg-1build2",
+    "sha256": "88d38a0b6b0e1be5b7261f9dc049b67729f098f58af2531cab56c512f3ce6645",
+    "archive": "libsdl2-image-2.0-0_2.8.2+dfsg-1build2_amd64.deb"
+  },
+  {
+    "package": "libsdl2-image-dev",
+    "version": "2.8.2+dfsg-1build2",
+    "sha256": "676cdb5414b51b8fecd0a345310f5ce1bcdfbd0365f2c185ef4b2178725caf50",
+    "archive": "libsdl2-image-dev_2.8.2+dfsg-1build2_amd64.deb"
+  },
+  {
+    "package": "libsdl2-ttf-2.0-0",
+    "version": "2.22.0+dfsg-1",
+    "sha256": "6d833dd56b79d584d7b36eb839306c2d990b7570befb1a93422df32c892b66ca",
+    "archive": "libsdl2-ttf-2.0-0_2.22.0+dfsg-1_amd64.deb"
+  },
+  {
+    "package": "libsdl2-ttf-dev",
+    "version": "2.22.0+dfsg-1",
+    "sha256": "d655bfb951d26a83f9d0752f9b59391279ccad9101e2d7bf57772167280dc641",
+    "archive": "libsdl2-ttf-dev_2.22.0+dfsg-1_amd64.deb"
+  },
+  {
+    "package": "libzip-dev",
+    "version": "1.7.3-1.1ubuntu2",
+    "sha256": "52ced731d063588760c18dcb767f23dbb1d6d139facd8752fd97fd43822cc978",
+    "archive": "libzip-dev_1.7.3-1.1ubuntu2_amd64.deb"
+  },
+  {
+    "package": "libzip4t64",
+    "version": "1.7.3-1.1ubuntu2",
+    "sha256": "d7484efd8d9968ecab9e488fde59980fc633e0eb2bbf7f1ea8e33bf71c9ff1fb",
+    "archive": "libzip4t64_1.7.3-1.1ubuntu2_amd64.deb"
+  },
+  {
+    "package": "qemu-user",
+    "version": "1:8.2.2+ds-0ubuntu1",
+    "sha256": "46558804e8b17883055a4c76361e51f4b53eb5612848c2c8cfad3f8c653bb7ad",
+    "archive": "qemu-user_8.2.2+ds-0ubuntu1_amd64.deb"
+  }
+]

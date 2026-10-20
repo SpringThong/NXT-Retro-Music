@@ -1,0 +1,92 @@
+{
+  "version": "1.6.1",
+  "rom": "stock",
+  "device": "trimui-brick-pro",
+  "build": {
+    "exit": 0,
+    "define": "NXT_ROM_STOCK",
+    "frontend_sources": 119,
+    "binary_sha256": "db9dfd3bbaef91a3a66ab623c594574eeb8f56e42ab91b83f3be0430889c2d42",
+    "compiler": "aarch64-nextui-linux-gnu-gcc pinned to SOURCE.json"
+  },
+  "installer": {
+    "filename": "NXT_Retro_Music_v1.6.1_Stock.zip",
+    "size": 77380614,
+    "sha256": "acb742684051bbeb23b3e76fb9a74403af777c9e218470971eb95ae75912110e",
+    "crc_verified": true,
+    "aarch64_headers_and_executable_modes": true
+  },
+  "wallpapers": {
+    "version": "1.6.1",
+    "exit": 0,
+    "production_parser_resize_sort_persistence": true,
+    "production_gallery_and_image_worker": true,
+    "quality_antialias_pixel_alpha": true,
+    "full_detail_cache": true,
+    "legacy_cache_preserved_and_rebuilt": true,
+    "online_original_reused_offline": true,
+    "genre_count": 24,
+    "pagination_fixture_images": 1200,
+    "pagination_window_cap": 512,
+    "ui_sizes": [
+      640,
+      1024
+    ],
+    "asan_ubsan": true,
+    "hardware_tested": false,
+    "network": "deterministic curl child fixtures; live Wallhaven catalog tested separately"
+  },
+  "ota": {
+    "version": "1.6.1",
+    "rom": "stock",
+    "exit": 0,
+    "actual_v161_full_installer": true,
+    "baseline_installed_version_fixture": "1.6",
+    "production_worker_and_installer": true,
+    "drive_download_confirmation_fixture": true,
+    "sha_size_rom_checks": true,
+    "userdata_and_wallpaper_preserved": true,
+    "previous_app_backup": true,
+    "asan_ubsan": true,
+    "publisher_live_url_tested": false,
+    "hardware_tested": false
+  },
+  "baseline": {
+    "baseline": "1.6",
+    "rom": "stock",
+    "other_c_source_files_unchanged": 723,
+    "changed_source_files": [
+      "upstream/src/nxt.h",
+      "upstream/src/nxt_appearance.c",
+      "upstream/src/nxt_screens.c",
+      "upstream/src/nxt_wallpaper_store.c",
+      "upstream/src/nxt_wallpaper_store.h",
+      "upstream/src/nxt_wallpapers.c"
+    ],
+    "audio_and_led_source_unchanged": true,
+    "backend_sha256": {
+      "nxt-spotify-backend": "c03f6a0f3b552bac850245d9cd89c897556fbdaa455ad30fabdbbb803080d217",
+      "nxt-soundcloud-backend": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463"
+    }
+  },
+  "physical_hardware_tested": false,
+  "publisher_action_required": "Upload the ROM installer and replace only download_url in its prepared JSON; retain the existing update.json file ID.",
+  "live_wallhaven": {
+    "version": "1.6.1",
+    "exit": 0,
+    "actual_https_worker": true,
+    "bundled_ca": true,
+    "catalog_thumbnail_full_and_resize": true,
+    "provider": "Wallhaven",
+    "hardware_tested": false,
+    "source_total_from_live_response": 20350,
+    "source_pages_from_live_response": 848,
+    "compatible_records_across_two_pages": 36,
+    "original_retained": true,
+    "offline_pixel_reprocessing": true,
+    "prepared_size": [
+      1024,
+      768
+    ]
+  }
+}

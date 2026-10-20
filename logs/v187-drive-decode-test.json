@@ -1,0 +1,10 @@
+{
+  "actual_arm64_decoder": {
+    "exit": 0,
+    "pinned_SDK_libc": true,
+    "synthesized_audio": true,
+    "network_or_device_test": false,
+    "production_Drive_URI_metadata_normal_decoder_seek": true,
+    "HTTPS_buffer_transport_FILE_fixture": true
+  }
+}

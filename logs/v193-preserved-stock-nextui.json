@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "baseline": "delivered NX Redux v1.9.3 source, including v1.9.2 DSD fixes",
+  "common_functional_modules_byte_identical": {
+    "upstream/src/nxt_bitperfect.c": "314b336c7226d489393a5150740bd7ffa880119c311d139b84279d0b74f5b73d",
+    "upstream/src/nxt_dsd.c": "31374e7bced2d07d334f1e6994447c9a3549804e704a579f7ffa6de90701f5ba",
+    "upstream/src/nxt_dsd_alsa.c": "c62c3427464ed181eab9a81a247626a6cefaa64fa888be7945706aea31dbde2f",
+    "upstream/src/nxt_decoder.c": "44a08ea34117eb031f639637364ce6a84ac2d0a2dcb3cdb6248859fb964620ad",
+    "upstream/src/nxt_audio_mode.c": "47c33a4e9ad01c55449a5995ab1335c54587bd5aa4847d36072158340882ce02",
+    "upstream/src/nxt_dac_name.c": "b8393089e1aecced356b1ba759e08c40e0b31df5ad84bf1ca92fa66ae32083cd",
+    "upstream/src/nxt_cpu.c": "4ab1144b73824d3dfe72f223fa74e8a5fe11254c55b964197e828ab051f08a5d",
+    "upstream/src/nxt_led.c": "3c42abcb24795f3e18b54eb4d4ac94ec9d6bece68c31928e1a2f66fe70edf337",
+    "upstream/src/nxt_nxredux.c": "945bbf23f252e2760be38a5ec968a2ee40bc4920e1c54e7cc08c6e5fc127ab1a",
+    "upstream/src/nxt_translate.c": "72536f025f8cc5464910c54d6bf45c59235ec3bda73ea4ceead4ea14081bbfc1",
+    "upstream/src/nxt_hardware.c": "66480fb72fc8b2e1eb600935e181816293578935f5af45cd6084657f3e4844f5",
+    "upstream/src/nxt_library.c": "319fb564cdd2a7790acea7a712359d9c4d23b71f16387b176e78e97301262e9c",
+    "upstream/src/nxt_library_index.c": "4c12bc0f281d8bb8ed1867b3fda51e9ae312c815c4f3c59811dded83c6ecbd3d",
+    "upstream/src/nxt_transfer.c": "a60d9fbe3486ab6ab2787926f3ecb3c5f81911a8338215fa457f7c5af3457a24",
+    "upstream/src/nxt_ota.c": "8daa973b0f8957a383a411b2d98783ecaed48568d80cb47b2b87d769f5503063",
+    "upstream/src/nxt_ota_package.c": "60bff4aefb97a18c9399eedd1dc349aa766e10f527e9e5f9e03bdf3b40637570"
+  },
+  "all_resource_assets_byte_identical": 667,
+  "retained_nxredux_binary_byte_identical": true,
+  "Stock_NextUI_own_build_defines": true
+}

@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "real_Stock_output_callback": true,
+  "hardware_volume_not_double_attenuated": true,
+  "existing_software_volume_retained": true,
+  "ASan_UBSan": true,
+  "hardware_tested": false,
+  "source_sha256": "fede6ef5fbcbbb3750244735ad294671abe820f16dd4ccbb11bd7c10b22e329c"
+}

@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "package": "vn.nguyenxuanthong.nxtretromusic",
+  "rom": "stock",
+  "device": "trimui-brick-pro",
+  "version": "1.8.3",
+  "download_url": "https://drive.google.com/file/d/NXT_STOCK_INSTALLER_FIXTURE_183/view",
+  "sha256": "7aa79a7486448859302a2b3ed1783fab0d33e72cfd0af4b57316c6a1ef280a18",
+  "size": 111585817,
+  "changelog": "# NXT Retro Music v1.8.3 — Stock\n\n- Hết hẹn giờ: lưu vị trí/cài đặt, dừng nhạc và thoát hẳn toàn bộ phiên NXT.\n- Áp dụng cả khi phát nền, tạm dừng và tắt màn hình; hủy/đổi hẹn giờ vẫn hoạt động.\n- Giải phóng thiết bị âm thanh, decoder, phiên online, LED và chia sẻ Wi-Fi khi thoát.\n- Trả việc ngủ máy về firmware; không ép suspend hay dùng SIGKILL.\n- Giữ các tính năng đang hoạt động của v1.8.2: Bluetooth/DAC, 36 giao diện, hồ sơ,\n  EQ, thông tin chất lượng/đầu ra, LED trực tiếp, Wi-Fi copy, 14 ngôn ngữ và hiệu năng.\n- Bộ cài và OTA riêng cho Stock; OTA xác thực ROM/version/SHA-256 và giữ dữ liệu.\n\nNX Redux v1.8.2 đã có cách hẹn giờ tương tự; lần này chỉ build Stock và NextUI.\nCần thử Bluetooth/DAC và giấc ngủ trên Brick Pro thật; chưa đo pin hoặc nhiệt.\n"
+}

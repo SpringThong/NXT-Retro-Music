@@ -1,0 +1,27 @@
+NXT Retro Music 0.3.0 — tg5040 / NextUI
+
+Music Player baseline: https://github.com/nborodikhin/nextui-music-player
+Commit f0e5e2ea2fea4f535d659b72aa1d2a8e969e5484 (retained MIT notices).
+NextUI platform/common code: v6.14.0 (GPL-3.0); modifications included.
+New NXT code: GPL-3.0-only. The combined application is distributed under GPL-3.0.
+
+The accompanying NXT_Retro_Music_0.3.0_Source.zip includes full modified
+application and NextUI source, pinned dependency archives and build scripts.
+The relink directory includes release application objects and static libraries
+so recipients can modify/relink LGPL FFmpeg/FriBidi dependencies.
+
+FFmpeg n6.1.6 / f1e3a2bf7a2f2cde936d1ed97f09a26853d20125 (LGPL-2.1-or-later).
+FreeType 2.13.2 (FreeType License / GPL-2.0); see both accompanying license files.
+HarfBuzz 8.3.0 (permissive COPYING); SDL2_ttf 2.24.0 (zlib license).
+utf8proc 2.9.0 (MIT and Unicode data notice); FriBidi 1.0.13 (LGPL-2.1-or-later).
+libsamplerate 0.2.2 (BSD-2-Clause); libzip 1.10.1 (BSD-3-Clause).
+Bundled libstdc++ comes from the pinned GCC 8.3 toolchain and retains the
+GCC Runtime Library Exception; SQLite is dedicated to the public domain.
+Bundled libmsettings source is included in upstream/NextUI/workspace/tg5040.
+Other retained source libraries carry their original license notices.
+
+Fonts: per-family notices under licenses/fonts; provenance/checksums in
+res/fonts/catalog.json. GNU Unifont 16.0.04 includes its font embedding
+exception; corresponding source archive accompanies the source package.
+Lucide 0.468.0 icons (ISC): licenses/Lucide-ISC.txt.
+DejaVu compatibility font: res/nxt-font-LICENSE.txt.

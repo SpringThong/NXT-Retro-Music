@@ -1,0 +1,10 @@
+{
+  "exit": 0,
+  "production_frame_function": true,
+  "timed_motion_target_Hz": 60,
+  "idle_and_paused_bounded": true,
+  "FFT_separately_capped": true,
+  "hidden_off_no_visual_work": true,
+  "tick_wrap": true,
+  "physical_FPS_or_temperature_measured": false
+}

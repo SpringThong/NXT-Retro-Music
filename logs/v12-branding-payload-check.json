@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "changed": [
+    "HUONG_DAN_NXT_Retro_Music_v1.2_NextUI.md",
+    "NXT Retro Music v1.2.pak/bin/tg5040/musicplayer.elf"
+  ],
+  "added": [
+    "NXT Retro Music v1.2.pak/res/icons/spotify-source.png"
+  ],
+  "removed": [],
+  "installer_sha256": "08a263baa1649f31f286a1795a610c36004d08d2b0d5e93b6b1312fe6ea393c3",
+  "helpers_and_runtime_identical": true
+}

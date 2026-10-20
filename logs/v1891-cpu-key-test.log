@@ -1,0 +1,2 @@
+PASS production CPUFreq: three supported targets; boot 2GHz minimum lowered; userspace/dynamic governor; hw cap; hidden/resume/exit restore; external policy respected; unsupported governor rejected.
+PASS CPU modes and Groq TXT fixtures.

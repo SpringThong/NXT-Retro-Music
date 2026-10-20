@@ -1,0 +1,54 @@
+In file included from /tmp/nxt-drive-queue-it1l00hg/queue_harness.c:3:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c: In function ‘queue_saved’:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c:1043:104: warning: ‘%s’ directive output may be truncated writing up to 1023 bytes into a region of size 512 [-Wformat-truncation=]
+ 1043 |     if(fclose(f)==0&&rename(temp,path)==0) snprintf(resume_playlist_path,sizeof(resume_playlist_path),"%s",path);
+      |                                                                                                        ^~  ~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_stdinc.h:43,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_main.h:25,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL.h:32,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_ttf.h:39,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/nxt_text.h:4,
+                 from /tmp/nxt-drive-queue-it1l00hg/queue_harness.c:2:
+In function ‘snprintf’,
+    inlined from ‘queue_saved’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c:1043:44:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin_snprintf’ output between 1 and 1024 bytes into a destination of size 512
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c: In function ‘PlayerModule_runResume’:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c:1035:67: warning: ‘%s’ directive output may be truncated writing up to 1287 bytes into a region of size 512 [-Wformat-truncation=]
+ 1035 |     snprintf(resume_playlist_path, sizeof(resume_playlist_path), "%s", m3u_path ? m3u_path : "");
+      |                                                                   ^~
+In function ‘snprintf’,
+    inlined from ‘PlayerModule_setResumePlaylistPath’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c:1035:5,
+    inlined from ‘PlayerModule_runResume’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/module_player.c:1257:9:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin_snprintf’ output between 1 and 1288 bytes into a destination of size 512
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/playlist_m3u.c: In function ‘M3U_listPlaylists’:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/playlist_m3u.c:59:54: warning: ‘%s’ directive output may be truncated writing likely 5 or more bytes into a region of size between 0 and 511 [-Wformat-truncation=]
+   59 |         snprintf(info->path, sizeof(info->path), "%s/%s", playlists_dir, ent->d_name);
+      |                                                      ^~
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/playlist_m3u.c:59:50: note: assuming directive output of 5 bytes
+   59 |         snprintf(info->path, sizeof(info->path), "%s/%s", playlists_dir, ent->d_name);
+      |                                                  ^~~~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/playlist_m3u.c:1:
+In function ‘snprintf’,
+    inlined from ‘M3U_listPlaylists’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/upstream/src/playlist_m3u.c:59:9:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output 2 or more bytes (assuming 518) into a destination of size 512
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+PASS real queue controller + playlist + saved Drive URI/M3U: automatic next/end, repeat one/all, shuffle, manual next/previous wrap, stopped playback and resume at the selected song. Audio loading is a fixture.

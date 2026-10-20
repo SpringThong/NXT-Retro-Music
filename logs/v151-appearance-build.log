@@ -1,0 +1,23 @@
+In file included from /tmp/nxt-appearance-4xk2xmhs/headers.c:1:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.c: In function ‘NxtAppearance_run’:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.c:88:68: warning: ‘%s’ directive output may be truncated writing up to 1199 bytes into a region of size 512 [-Wformat-truncation=]
+   88 |     if(ok){snprintf(nxt.wallpaper_path,sizeof(nxt.wallpaper_path),"%s",target);nxt.wallpaper_mode=4;}else unlink(temp);
+      |                                                                    ^~  ~~~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_stdinc.h:43,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_main.h:25,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL.h:32,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/.cache/render-sp/include/SDL2/SDL_ttf.h:39,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt.h:7,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.h:4,
+                 from /workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.c:2:
+In function ‘snprintf’,
+    inlined from ‘import_wallpaper’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.c:88:12,
+    inlined from ‘NxtAppearance_run’ at /workspace/scratch/d7cab07fb248/nxt-stock-v1.5.2/NXT_Retro_Music_v1.5.2_Stock_Source/upstream/src/nxt_appearance.c:139:109:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin_snprintf’ output between 1 and 1200 bytes into a destination of size 512
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~

@@ -1,0 +1,69 @@
+{
+  "version": "1.9.7.7",
+  "rom": "nxredux",
+  "baseline": "unified v1.9.7.6",
+  "build": {
+    "exit": 0,
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_NXREDUX",
+    "freshly_recompiled": true,
+    "source_fingerprints_verified": true,
+    "inputs_file_sha256": "6207418d01e16236bf74cacdf58c502d547135c5d8f25549452076749608183a",
+    "build_log_sha256": "d9ba924e8e4dbe26299790621c9ebe2507fa337e65155dfa41ef6edb4cf72d99"
+  },
+  "binary_sha256": "934e8cd22ae06bd990e152fa8f92f9a8af9d06a1c0566810084b64eeaef761d8",
+  "installer": "NXT_Retro_Music_v1.9.7.7_NXRedux.zip",
+  "installer_size": 146094430,
+  "installer_sha256": "d660410b95ec76943d4fbbd595dffdd00140cfd245bd88dcfdc4c781c0b16bf1",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.7.7_NXRedux.zip",
+  "OTA_kit_size": 146120720,
+  "OTA_kit_sha256": "c5c5ea60cf1748caa0fe16fdf426f14031e3abd50307c09d34da71a3171b7326",
+  "checks": {
+    "v1977-preservation.json": {
+      "sha256": "a39e82b96590b7bd986b2941b71eea899102f7fce064bf9b399077eba3439c5f"
+    },
+    "v1977-ui-test.json": {
+      "sha256": "7b49bc1a7cc2acf93e72fdb0c4586645f1d95dec42e9da1fb2c97b0a44ed70cd"
+    },
+    "v1977-pixels.json": {
+      "sha256": "ce4df7a29b3d970544ed2d9b8aa44efdde4c0a352f154f2863f55a2a49c57825"
+    },
+    "v1977-render-cost.json": {
+      "sha256": "0495a0c3aa231346560dc43d07e3be3685d41a093655f101f38380d15290fd4f"
+    },
+    "v1977-loader-nxredux.json": {
+      "sha256": "dfac3c44d79972369a37f5e406651c6f199c1518bafd735fd55ea6bf4e66c9ff"
+    },
+    "v1977-package-qa-nxredux.json": {
+      "sha256": "6222bf8486d5e37f06ed1dd93b2566590ee13c979d96a2a634375339eac3de33"
+    },
+    "v1977-ota-qa-nxredux.json": {
+      "sha256": "780ec6a1129761bba4a9667fcd26c1bf03a440652d804bf29c41353e1048af1f"
+    },
+    "v1977-ota-publisher-kit-nxredux.json": {
+      "sha256": "fa5566dba3c5ad78508601c4d926e116d64f495594263ce66de6c930e8d3fc51"
+    }
+  },
+  "changes": [
+    "316 vector icons at 192 px, alpha-correct area downsampling cached at native size",
+    "AA rounded edges/circles/diagonals; opaque interiors keep fast fills",
+    "Larger symmetric Auralis controls, bright filled active state with dark glyphs",
+    "Filtered cover/chassis/avatar/vinyl label scaling and rectangular cover bounds",
+    "Ocean Blue and Boombox title/art bounds; bilingual footer kept clear"
+  ],
+  "preserved": "Audio, DSP/DSD, online backends, controls, scheduler/performance/CPU/LED, translations, library, profiles, compositor and OTA code verified unchanged against source baseline.",
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "native_test_frames": 396,
+  "fonts_total": 60,
+  "themes_total": 51,
+  "official_OTA_feed": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing",
+  "online_backends_rebuilt": false,
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "actual_device_FPS_measured": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

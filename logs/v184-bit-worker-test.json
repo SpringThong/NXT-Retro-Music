@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "production_worker": true,
+  "hardware_and_decoder_are_explicit_simulators": true,
+  "native_transport_formats": [
+    "S16_LE",
+    "S24_3LE",
+    "S24_LE",
+    "S32_LE"
+  ],
+  "exact_sample_bytes": true,
+  "source_16_24_32_bit": true,
+  "mono_stereo": true,
+  "partial_writes_EAGAIN": true,
+  "paused_no_PCM": true,
+  "native_seek_pause_resume": true,
+  "EOF_idle": true,
+  "missing_busy_rate_incompatible_no_fallback": true,
+  "graceful_quit": true,
+  "ASan_UBSan": true,
+  "hardware_tested": false,
+  "source_sha256": "d7e0ddc996fe0bfecdd204710999e3360a0d60ff2b108d70d9b18b5f599a435c",
+  "mono_stereo_visual_copy": true,
+  "partial_writes_accumulate_full_visual_window": true,
+  "paused_and_stopped_visual_buffer_empty": true
+}

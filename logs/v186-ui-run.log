@@ -1,0 +1,92 @@
+PASS cached album pixels exactly match direct SDL scaling: four sizes, opaque and alpha, cold and warm renders.
+PASS original player portrait/landscape album images retain aspect ratio and stay centered in the old frame.
+PASS native RGB save/cancel, 300-icon/180-emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS saved startup avatar, no global-avatar mutation, cold-start profile selection without questionnaire; optional Personal check-in and mood/genre/country commit.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS three performance modes: immediate save/apply, cancel, failed-save rollback, settings route and Balanced default.
+PASS native audio info lanes: source codec/rate/bitrate/channels and actual DAC/PCM change independently; hardware inputs are fixtures.
+PASS native v1.8.2 settings, personal-appearance hub, clean profile editor, merged update route, Original font edit, live album preview apply/cancel and full lyric screen.
+PASS actual SELECT release: presets close unchanged, nested EQ closes fully, Bit-Perfect EQ closes unchanged; native settings and START mode selection.
+RENDER_BUDGET 0 1024 3.101 ms per cached paint (host)
+RENDER_BUDGET 1 1024 2.043 ms per cached paint (host)
+RENDER_BUDGET 2 1024 1.749 ms per cached paint (host)
+RENDER_BUDGET 3 1024 2.113 ms per cached paint (host)
+RENDER_BUDGET 4 1024 2.144 ms per cached paint (host)
+RENDER_BUDGET 5 1024 2.090 ms per cached paint (host)
+RENDER_BUDGET 6 1024 1.960 ms per cached paint (host)
+RENDER_BUDGET 7 1024 1.816 ms per cached paint (host)
+RENDER_BUDGET 8 1024 1.983 ms per cached paint (host)
+RENDER_BUDGET 9 1024 1.929 ms per cached paint (host)
+RENDER_BUDGET 10 1024 2.267 ms per cached paint (host)
+RENDER_BUDGET 11 1024 2.102 ms per cached paint (host)
+RENDER_BUDGET 12 1024 1.994 ms per cached paint (host)
+RENDER_BUDGET 13 1024 2.336 ms per cached paint (host)
+RENDER_BUDGET 14 1024 2.095 ms per cached paint (host)
+RENDER_BUDGET 15 1024 1.770 ms per cached paint (host)
+RENDER_BUDGET 16 1024 1.808 ms per cached paint (host)
+RENDER_BUDGET 17 1024 2.130 ms per cached paint (host)
+RENDER_BUDGET 18 1024 2.080 ms per cached paint (host)
+RENDER_BUDGET 19 1024 2.095 ms per cached paint (host)
+RENDER_BUDGET 20 1024 2.192 ms per cached paint (host)
+RENDER_BUDGET 21 1024 2.141 ms per cached paint (host)
+RENDER_BUDGET 22 1024 1.837 ms per cached paint (host)
+RENDER_BUDGET 23 1024 1.720 ms per cached paint (host)
+RENDER_BUDGET 24 1024 1.824 ms per cached paint (host)
+RENDER_BUDGET 25 1024 1.874 ms per cached paint (host)
+RENDER_BUDGET 26 1024 2.127 ms per cached paint (host)
+RENDER_BUDGET 27 1024 2.036 ms per cached paint (host)
+RENDER_BUDGET 28 1024 2.216 ms per cached paint (host)
+RENDER_BUDGET 29 1024 2.020 ms per cached paint (host)
+RENDER_BUDGET 30 1024 2.107 ms per cached paint (host)
+RENDER_BUDGET 31 1024 2.099 ms per cached paint (host)
+RENDER_BUDGET 32 1024 2.019 ms per cached paint (host)
+RENDER_BUDGET 33 1024 2.131 ms per cached paint (host)
+RENDER_BUDGET 34 1024 2.146 ms per cached paint (host)
+RENDER_BUDGET 35 1024 2.202 ms per cached paint (host)
+PASS real startup card: empty Now Playing, no questionnaire, missing track kept, paused restore, optional auto-play, atomic position save and profile isolation. Audio playback is a fixture.
+PASS original player portrait/landscape album images retain aspect ratio and stay centered in the old frame.
+PASS native RGB save/cancel, 300-icon/180-emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS saved startup avatar, no global-avatar mutation, cold-start profile selection without questionnaire; optional Personal check-in and mood/genre/country commit.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS three performance modes: immediate save/apply, cancel, failed-save rollback, settings route and Balanced default.
+PASS native audio info lanes: source codec/rate/bitrate/channels and actual DAC/PCM change independently; hardware inputs are fixtures.
+PASS native v1.8.2 settings, personal-appearance hub, clean profile editor, merged update route, Original font edit, live album preview apply/cancel and full lyric screen.
+PASS actual SELECT release: presets close unchanged, nested EQ closes fully, Bit-Perfect EQ closes unchanged; native settings and START mode selection.
+RENDER_BUDGET 0 640 2.499 ms per cached paint (host)
+RENDER_BUDGET 1 640 0.806 ms per cached paint (host)
+RENDER_BUDGET 2 640 0.841 ms per cached paint (host)
+RENDER_BUDGET 3 640 0.880 ms per cached paint (host)
+RENDER_BUDGET 4 640 0.984 ms per cached paint (host)
+RENDER_BUDGET 5 640 1.020 ms per cached paint (host)
+RENDER_BUDGET 6 640 1.075 ms per cached paint (host)
+RENDER_BUDGET 7 640 0.991 ms per cached paint (host)
+RENDER_BUDGET 8 640 1.066 ms per cached paint (host)
+RENDER_BUDGET 9 640 0.966 ms per cached paint (host)
+RENDER_BUDGET 10 640 0.974 ms per cached paint (host)
+RENDER_BUDGET 11 640 0.898 ms per cached paint (host)
+RENDER_BUDGET 12 640 0.787 ms per cached paint (host)
+RENDER_BUDGET 13 640 0.794 ms per cached paint (host)
+RENDER_BUDGET 14 640 0.816 ms per cached paint (host)
+RENDER_BUDGET 15 640 1.027 ms per cached paint (host)
+RENDER_BUDGET 16 640 0.889 ms per cached paint (host)
+RENDER_BUDGET 17 640 0.860 ms per cached paint (host)
+RENDER_BUDGET 18 640 0.792 ms per cached paint (host)
+RENDER_BUDGET 19 640 0.964 ms per cached paint (host)
+RENDER_BUDGET 20 640 1.033 ms per cached paint (host)
+RENDER_BUDGET 21 640 1.050 ms per cached paint (host)
+RENDER_BUDGET 22 640 1.056 ms per cached paint (host)
+RENDER_BUDGET 23 640 1.058 ms per cached paint (host)
+RENDER_BUDGET 24 640 0.948 ms per cached paint (host)
+RENDER_BUDGET 25 640 1.038 ms per cached paint (host)
+RENDER_BUDGET 26 640 1.000 ms per cached paint (host)
+RENDER_BUDGET 27 640 1.085 ms per cached paint (host)
+RENDER_BUDGET 28 640 0.955 ms per cached paint (host)
+RENDER_BUDGET 29 640 1.048 ms per cached paint (host)
+RENDER_BUDGET 30 640 1.064 ms per cached paint (host)
+RENDER_BUDGET 31 640 0.996 ms per cached paint (host)
+RENDER_BUDGET 32 640 0.994 ms per cached paint (host)
+RENDER_BUDGET 33 640 1.077 ms per cached paint (host)
+RENDER_BUDGET 34 640 1.258 ms per cached paint (host)
+RENDER_BUDGET 35 640 1.121 ms per cached paint (host)
+PASS real startup card: empty Now Playing, no questionnaire, missing track kept, paused restore, optional auto-play, atomic position save and profile isolation. Audio playback is a fixture.
+PASS static full-sentence lyrics in all 36 device layouts at both resolutions; 36 native home/player interfaces, reserved icon/quality/output lanes, 300 icons + 180 3D emoji, 105 spectrum combinations, 6 LED color functions, 640/1024 native surfaces under ASan/UBSan. Audio, account and physical-device inputs are fixtures.

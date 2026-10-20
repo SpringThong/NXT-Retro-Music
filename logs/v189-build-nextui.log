@@ -1,0 +1,195 @@
+NXT_ROM_NEXTUI: utils.c
+NXT_ROM_NEXTUI: scaler.c
+NXT_ROM_NEXTUI: config.c
+In file included from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/NextUI/workspace/tg5040/platform/platform.c:903:
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/NextUI/workspace/all/common/generic_wifi.c: In function 'wifi_find_network_id':
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:449:9: warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]
+         strncpy(line, current, len);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:447:56: note: length computed here
+         size_t len = next ? (size_t)(next - current) : strlen(current);
+                                                        ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/album_art.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: add_to_playlist.c
+NXT_ROM_NEXTUI: album_art.c
+NXT_ROM_NEXTUI: kiss_fft.c
+NXT_ROM_NEXTUI: kiss_fftr.c
+NXT_ROM_NEXTUI: background.c
+NXT_ROM_NEXTUI: api.c
+NXT_ROM_NEXTUI: sonic.c
+NXT_ROM_NEXTUI: platform.c
+NXT_ROM_NEXTUI: browser.c
+NXT_ROM_NEXTUI: db.c
+NXT_ROM_NEXTUI: db_schema.c
+NXT_ROM_NEXTUI: debug.c
+NXT_ROM_NEXTUI: db_statement.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/downloader.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: display_helper.c
+NXT_ROM_NEXTUI: frame_state.c
+NXT_ROM_NEXTUI: file_utils.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/http_download.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: http_download.c
+NXT_ROM_NEXTUI: downloader.c
+NXT_ROM_NEXTUI: yxml.c
+NXT_ROM_NEXTUI: keyboard_map.c
+NXT_ROM_NEXTUI: list_nav.c
+NXT_ROM_NEXTUI: keyboard.c
+NXT_ROM_NEXTUI: lyric_window.c
+NXT_ROM_NEXTUI: parson.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/lyrics.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: list_nav_pad.c
+NXT_ROM_NEXTUI: menu_rows.c
+NXT_ROM_NEXTUI: lyrics.c
+NXT_ROM_NEXTUI: module_common.c
+NXT_ROM_NEXTUI: module_downloader.c
+NXT_ROM_NEXTUI: module_library.c
+NXT_ROM_NEXTUI: module_menu.c
+NXT_ROM_NEXTUI: module_playlist.c
+NXT_ROM_NEXTUI: module_podcast.c
+NXT_ROM_NEXTUI: module_radio.c
+NXT_ROM_NEXTUI: module_settings.c
+NXT_ROM_NEXTUI: module_player.c
+NXT_ROM_NEXTUI: mp3_seek.c
+NXT_ROM_NEXTUI: musicplayer.c
+NXT_ROM_NEXTUI: nxt_controls.c
+NXT_ROM_NEXTUI: nxt_appearance.c
+NXT_ROM_NEXTUI: nxt_decoder.c
+NXT_ROM_NEXTUI: nxt_config.c
+NXT_ROM_NEXTUI: nxt_dsp.c
+NXT_ROM_NEXTUI: nxt_drive_parser.c
+NXT_ROM_NEXTUI: nxt_drive.c
+NXT_ROM_NEXTUI: nxt_eq.c
+NXT_ROM_NEXTUI: nxt_i18n.c
+NXT_ROM_NEXTUI: nxt_led.c
+NXT_ROM_NEXTUI: nxt_log.c
+NXT_ROM_NEXTUI: nxt_hardware.c
+NXT_ROM_NEXTUI: nxt_library.c
+NXT_ROM_NEXTUI: nxt_music_playing.c
+NXT_ROM_NEXTUI: nxt_ota_package.c
+NXT_ROM_NEXTUI: nxt_ota.c
+NXT_ROM_NEXTUI: nxt_pad.c
+NXT_ROM_NEXTUI: nxt_pcm.c
+NXT_ROM_NEXTUI: nxt_volume.c
+NXT_ROM_NEXTUI: nxt_audio_mode.c
+NXT_ROM_NEXTUI: nxt_cpu.c
+NXT_ROM_NEXTUI: nxt_write.c
+NXT_ROM_NEXTUI: nxt_player_core.c
+NXT_ROM_NEXTUI: nxt_presets.c
+NXT_ROM_NEXTUI: nxt_personal.c
+NXT_ROM_NEXTUI: nxt_route.c
+NXT_ROM_NEXTUI: nxt_record.c
+NXT_ROM_NEXTUI: nxt_session.c
+NXT_ROM_NEXTUI: nxt_sort.c
+NXT_ROM_NEXTUI: nxt_screens.c
+NXT_ROM_NEXTUI: nxt_skin.c
+NXT_ROM_NEXTUI: nxt_soundcloud.c
+NXT_ROM_NEXTUI: nxt_stock.c
+NXT_ROM_NEXTUI: nxt_spotify.c
+NXT_ROM_NEXTUI: nxt_telex.c
+NXT_ROM_NEXTUI: nxt_stream.c
+NXT_ROM_NEXTUI: nxt_text.c
+NXT_ROM_NEXTUI: playlist.c
+NXT_ROM_NEXTUI: nxt_radio_decoders.c
+NXT_ROM_NEXTUI: playlist_m3u.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/podcast.c:4: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: podcast_episode_layout.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/podcast_rss.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/podcast_search.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: nxt_ui.c
+NXT_ROM_NEXTUI: podcast_rss.c
+NXT_ROM_NEXTUI: podcast_search.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/radio.c:4: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE  // For strcasestr
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/radio_curated.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/radio_hls.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: podcast.c
+NXT_ROM_NEXTUI: radio_curated.c
+NXT_ROM_NEXTUI: radio_hls.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/radio_net.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: resume.c
+NXT_ROM_NEXTUI: screen_title.c
+NXT_ROM_NEXTUI: radio.c
+NXT_ROM_NEXTUI: seek_scan.c
+NXT_ROM_NEXTUI: radio_net.c
+NXT_ROM_NEXTUI: selfupdate.c
+NXT_ROM_NEXTUI: settings.c
+NXT_ROM_NEXTUI: spectrum_ceiling.c
+NXT_ROM_NEXTUI: spectrum.c
+NXT_ROM_NEXTUI: toast_state.c
+NXT_ROM_NEXTUI: toast.c
+NXT_ROM_NEXTUI: ui_album_art.c
+NXT_ROM_NEXTUI: ui_fonts.c
+NXT_ROM_NEXTUI: ui_icons.c
+NXT_ROM_NEXTUI: ui_downloader.c
+NXT_ROM_NEXTUI: ui_keyboard.c
+NXT_ROM_NEXTUI: ui_layers.c
+NXT_ROM_NEXTUI: ui_main.c
+NXT_ROM_NEXTUI: ui_playlist.c
+NXT_ROM_NEXTUI: ui_music.c
+NXT_ROM_NEXTUI: ui_radio.c
+NXT_ROM_NEXTUI: ui_radio_playing.c
+NXT_ROM_NEXTUI: ui_podcast_playing.c
+NXT_ROM_NEXTUI: ui_settings.c
+NXT_ROM_NEXTUI: ui_theme.c
+NXT_ROM_NEXTUI: ui_podcast.c
+NXT_ROM_NEXTUI: ui_system.c
+NXT_ROM_NEXTUI: ui_theme_utils.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/wget_fetch.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: utf8.c
+NXT_ROM_NEXTUI: wget_fetch.c
+NXT_ROM_NEXTUI: wifi.c
+NXT_ROM_NEXTUI: nxt_wallpaper_store.c
+NXT_ROM_NEXTUI: ui_utils.c
+NXT_ROM_NEXTUI: nxt_monitor.c
+NXT_ROM_NEXTUI: nxt_wallpapers.c
+NXT_ROM_NEXTUI: nxt_custom.c
+NXT_ROM_NEXTUI: nxt_theme.c
+NXT_ROM_NEXTUI: nxt_performance.c
+NXT_ROM_NEXTUI: nxt_locale.c
+NXT_ROM_NEXTUI: nxt_nextui.c
+NXT_ROM_NEXTUI: nxt_ime.c
+NXT_ROM_NEXTUI: nxt_usb.c
+NXT_ROM_NEXTUI: nxt_transfer.c
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/src/nxt_translate.c:6: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+NXT_ROM_NEXTUI: nxt_bitperfect.c
+NXT_ROM_NEXTUI: nxt_startup.c
+NXT_ROM_NEXTUI: nxt_translate.c
+NXT_ROM_NEXTUI release built: /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/upstream/bin/tg5040/musicplayer.elf

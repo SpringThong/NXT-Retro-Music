@@ -1,0 +1,28 @@
+{
+  "version": "1.9.7.7",
+  "exit": 0,
+  "warm_icon_surfaces_created_in_100_frames": 0,
+  "warm_auralis_surfaces_created_in_30_frames_each_state_each_resolution": 0,
+  "icon_cache_bytes_limit": 2097152,
+  "panel_cache_bytes_limit": 4194304,
+  "text_cache_existing_bytes_limit": 6291456,
+  "opaque_panels_fill_interior_blend_only_corners": true,
+  "whole_app_supersampling": false,
+  "CPU_scheduler_and_frame_policy_unchanged": true,
+  "informational_host_timings": [
+    {
+      "width": 640,
+      "samples": 50,
+      "median_host_ASan_ms": 1.02,
+      "max_host_ASan_ms": 2.111
+    },
+    {
+      "width": 1024,
+      "samples": 50,
+      "median_host_ASan_ms": 2.641,
+      "max_host_ASan_ms": 4.646
+    }
+  ],
+  "timing_note": "Software renderer with ASan/UBSan on host; not a device FPS, power or temperature measurement.",
+  "physical_tested": false
+}

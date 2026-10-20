@@ -1,0 +1,11 @@
+@ok 1
+@ok 2
+@ok 3
+@state playback=2 position_ms=0 lock=0 font=6 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 timer=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 4
+@ok 5
+@ok 6
+@ok 7
+@state playback=1 position_ms=490 lock=0 font=6 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 timer=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 8
+@bye

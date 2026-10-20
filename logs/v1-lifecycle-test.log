@@ -1,0 +1,4 @@
+PASS: cold resume stays paused; OFF and favorite persist; R2 while paused; color cycle preserves saved style.
+PASS: saved color survives restart; normal queue wraps to next track with the backlight off.
+PASS: actual 60-second sleep timer expires while screen is off; wake does not restart stopped music.
+PASS: long Power reaches the platform shutdown path and exits.

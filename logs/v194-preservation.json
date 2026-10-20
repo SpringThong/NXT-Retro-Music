@@ -1,0 +1,41 @@
+{
+  "version": "1.9.4",
+  "exit": 0,
+  "baseline_version": "1.9.3",
+  "baseline_sha256": "83fd7cb0b44c13ff88a1dbe9566e890972a69a3c9b6cf49f3e6677cf4ab30f68",
+  "baseline_frontend_inputs_checked": 821,
+  "modified_frontend_inputs": [
+    "upstream/src/module_common.c",
+    "upstream/src/musicplayer.c",
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_appearance.c",
+    "upstream/src/nxt_config.c",
+    "upstream/src/nxt_controls.c",
+    "upstream/src/nxt_hardware.c",
+    "upstream/src/nxt_player_core.c",
+    "upstream/src/nxt_screens.c",
+    "upstream/src/nxt_skin.c",
+    "upstream/src/nxt_skin.h",
+    "upstream/src/nxt_text.c",
+    "upstream/src/nxt_text.h",
+    "upstream/src/nxt_theme.c",
+    "upstream/src/nxt_theme.h",
+    "upstream/src/nxt_theme_scene.inc",
+    "upstream/src/nxt_theme_v18.inc",
+    "upstream/src/nxt_ui.c",
+    "upstream/src/nxt_v18_palette.inc",
+    "upstream/src/nxt_volume.c",
+    "upstream/src/nxt_volume.h"
+  ],
+  "new_Auralis_module_only": true,
+  "original_resources_preserved": 667,
+  "first_50_theme_names_and_palettes_preserved": true,
+  "online_backends_byte_identical": true,
+  "unmodified_MiSans_SHA256_verified": true,
+  "current_binaries": {
+    "stock": "ebdeb53dfe39b82cc4cfc99e1b8e1e8c4d146298539bc8d8e31d26ccd454d8f0",
+    "nextui": "0e9d559f4c1549481931ce76fea7c6e75c280187dc53b4b03a93b5c100ea32e9",
+    "nxredux": "0504546589d79452e825ca838307bca0c27cf455eb05b59393e8e51708321567"
+  },
+  "physical_tested": false
+}

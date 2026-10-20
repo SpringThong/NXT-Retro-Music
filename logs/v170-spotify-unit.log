@@ -1,0 +1,41 @@
+warning: librespot-core@0.8.0: not within a suitable 'git' worktree!
+warning: librespot-core@0.8.0: VERGEN_GIT_COMMIT_DATE set to default
+warning: librespot-core@0.8.0: VERGEN_GIT_SHA set to default
+warning: this lint expectation is unfulfilled
+  --> /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/spotify/vendor/librespot-dev/core/src/authentication.rs:69:14
+   |
+69 |     #[expect(deprecated)]
+   |              ^^^^^^^^^^
+   |
+   = note: `#[warn(unfulfilled_lint_expectations)]` on by default
+
+warning: `librespot-core` (lib) generated 1 warning
+   Compiling nxt-spotify-backend v1.3.0 (/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/spotify/backend)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.79s
+     Running unittests src/main.rs (target/debug/deps/nxt_spotify_backend-7cc18f0d0145ff10)
+
+running 19 tests
+test api::playable_tests::rejects_market_product_explicit_and_local_tracks ... ok
+test api::tests::catalog_parses_null_playlists_and_album_tracks ... ok
+test api::retry_tests::respects_server_cooldown ... ok
+test api::tests::credentials_reject_wrong_application ... ok
+test api::tests::metadata_preserves_scripts_and_selects_cover ... ok
+test catalog::tests::compatibility_login_never_mixes_accounts ... ok
+test auth::tests::login_source_accepts_only_explicit_known_modes ... ok
+test lyrics::tests::plain_text_does_not_claim_sync ... ok
+test lyrics::tests::timestamped_unicode_lyrics_preserve_milliseconds ... ok
+test pair::tests::pairing_diagnostics_never_forward_response_secrets ... ok
+test auth::tests::explicit_pc_import_is_not_shadowed_by_saved_qr ... {"event":"retry_wait","seconds":1}
+ok
+{"event":"retry_wait","seconds":1}
+test pcm::tests::framed_pcm_and_generation ... ok
+test api::tests::playback_credentials_match_session_and_are_separate_from_library ... ok
+test pair::tests::saved_pair_credentials_are_private_and_atomic ... ok
+test api::fix1_tests::accepts_authorized_pc_client_and_rejects_empty_tokens ... ok
+test api::fix1_tests::login_probe_is_fast_and_library_cooldown_does_not_block_oauth ... ok
+test pair::tests::qr_url_builds_square_binary_matrix ... ok
+test lyrics::tests::malformed_or_overlong_lyrics_are_rejected ... ok
+test api::retry_tests::actual_429_wait_then_success ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.00s
+

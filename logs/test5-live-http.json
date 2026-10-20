@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "device_code_received": true,
+  "user_code_received": true,
+  "error": null,
+  "approval_tested": false,
+  "scopes_requested": [
+    "streaming",
+    "user-read-private",
+    "playlist-read-private",
+    "playlist-read-collaborative",
+    "user-library-read",
+    "user-library-modify"
+  ]
+}

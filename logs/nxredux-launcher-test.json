@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "production_launch_script": true,
+  "cold_start_and_reattach_without_duplicate": true,
+  "firmware_player_stopped_without_killing_daemon": true,
+  "stable_logs_and_userdata": true,
+  "wrong_device_ROM_rejected": true,
+  "frontend_process_fixture": true
+}

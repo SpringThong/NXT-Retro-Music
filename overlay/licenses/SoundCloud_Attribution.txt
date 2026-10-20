@@ -1,0 +1,5 @@
+SoundCloud 7-bar horizontal white logo: official transparent asset from https://cdn.prod.website-files.com/62a0a0168756b795debc65bc/69ef2abb874551e8c75433a2_Horizontal%20White%20(transparent)-download.webp
+Converted from WebP to PNG without changing pixels or colors.
+Branding: https://community.soundcloud.com/company/media-kit
+Attribution: https://developers.soundcloud.com/docs/api/buttons-logos
+SoundCloud is a trademark of SoundCloud Limited.

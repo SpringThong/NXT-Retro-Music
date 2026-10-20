@@ -1,0 +1,17 @@
+{
+  "exit": 0,
+  "native_layouts": 24,
+  "sizes": [
+    640,
+    1024
+  ],
+  "icon_choices": 64,
+  "emoji_choices": 64,
+  "spectrum_combinations": 105,
+  "LED_effects": 6,
+  "ASan_UBSan": true,
+  "theme_RGB_original_background_cover_preserved": true,
+  "controller_flow": true,
+  "physical_device_tested": false,
+  "live_account_playback_tested": false
+}

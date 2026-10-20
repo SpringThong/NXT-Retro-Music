@@ -1,0 +1,3 @@
+{"test": "loader", "exit": 0, "seconds": 0.73}
+{"test": "theme_catalog", "exit": 0, "seconds": 0.81}
+{"test": "baseline", "exit": 0, "seconds": 3.09}

@@ -1,0 +1,10 @@
+NXT Retro Music v1.9
+NX Redux · v1.9 · NativeDSD
+
+NXT Retro Music v1.9 for NX Redux
+
+Usage: /workspace/scratch/d7cab07fb248/v19-project/NXT_Retro_Music_v1.8.9.1_NXRedux_Source/nxredux/bin/tg5040/musicplayer.elf [options]
+
+Options:
+  --build-info                 Show frontend revision and stop.
+  -h, --help                   Give this text and stop.

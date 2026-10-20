@@ -1,0 +1,22 @@
+[INFO] Current render driver: opengl
+[INFO] Supported texture formats:
+[INFO] - SDL_PIXELFORMAT_ARGB8888
+[INFO] - SDL_PIXELFORMAT_ABGR8888
+[INFO] - SDL_PIXELFORMAT_RGB888
+[INFO] - SDL_PIXELFORMAT_BGR888
+[INFO] - SDL_PIXELFORMAT_YV12
+[INFO] - SDL_PIXELFORMAT_IYUV
+[INFO] - SDL_PIXELFORMAT_NV12
+[INFO] - SDL_PIXELFORMAT_NV21
+[CFG] Unable to open settings file, loading defaults
+[INFO] Error opening file /var/db/timezone/zoneinfo/zone.tab
+[WARN] LEDS_applyRules called before PWR_init
+[WARN] LEDS_applyRules called before InitSettings
+[DEBUG] LED_profile stack is empty, returning default profile.
+[INFO] PWR_init complete
+sh: 1: gametimectl.elf: not found
+killall: /proc lacks process entries (not mounted ?)
+batmon.elf: no process found
+audiomon.elf: no process found
+[WARN] Skipping SND teardown, not initialized.
+[CFG] SHARED_USERDATA_PATH is not set!

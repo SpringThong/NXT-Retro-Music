@@ -1,0 +1,36 @@
+In file included from /tmp/nxt-drive-io-yxlyb79w/drive_harness.c:2:
+/workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c: In function ‘cache_total’:
+/workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c:156:106: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 176 and 1199 [-Wformat-truncation=]
+  156 |     while((e=readdir(dir))){if(e->d_name[0]=='.')continue;char file[1200];snprintf(file,sizeof(file),"%s/%s",cache_dir,e->d_name);struct stat st;if(!lstat(file,&st)&&S_ISREG(st.st_mode))total+=st.st_size;}
+      |                                                                                                          ^~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/.cache/render-sp/include/SDL2/SDL_stdinc.h:43,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/.cache/render-sp/include/SDL2/SDL_main.h:25,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/.cache/render-sp/include/SDL2/SDL.h:32,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/.cache/render-sp/include/SDL2/SDL_ttf.h:39,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt.h:7,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.h:4,
+                 from /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c:4:
+In function ‘snprintf’,
+    inlined from ‘cache_total’ at /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c:156:75:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 2 and 1280 bytes into a destination of size 1200
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c: In function ‘trim_cache’:
+/workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c:161:124: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 176 and 1199 [-Wformat-truncation=]
+  161 |         while((e=readdir(dir))){if(!Browser_isAudioFile(e->d_name))continue;char file[1200];snprintf(file,sizeof(file),"%s/%s",cache_dir,e->d_name);
+      |                                                                                                                            ^~
+In function ‘snprintf’,
+    inlined from ‘trim_cache’ at /workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_Stock_Source/upstream/src/nxt_drive.c:161:93:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 2 and 1280 bytes into a destination of size 1200
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+PASS production Drive: persistent links/dedup, public folder parsing/filter/sort, names and metadata, selected playback/cache hit, B cancel/reap/cleanup, HTTP failure cleanup, active-cache protection; production local folder labels match sorted file paths. Curl/decoder/player/UI are fixtures.

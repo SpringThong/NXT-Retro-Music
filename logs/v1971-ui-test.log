@@ -1,0 +1,123 @@
+PASS cached album pixels match smooth opaque / direct alpha reference: four sizes, opaque and alpha, cold and warm renders.
+PASS original player portrait/landscape album images retain aspect ratio and stay centered in the old frame.
+PASS native RGB save/cancel, 300-icon/180-emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS transactional native preview: every background/input frame sees committed config; cancel, apply, failed save, exact RGB, font jump/wrap, both views/all 51 themes, sample isolation.
+RENDER_BUDGET 0 1024 3.693 ms per cached paint (host)
+RENDER_BUDGET 1 1024 2.436 ms per cached paint (host)
+RENDER_BUDGET 2 1024 2.326 ms per cached paint (host)
+RENDER_BUDGET 3 1024 2.630 ms per cached paint (host)
+RENDER_BUDGET 4 1024 3.776 ms per cached paint (host)
+RENDER_BUDGET 5 1024 2.751 ms per cached paint (host)
+RENDER_BUDGET 6 1024 2.125 ms per cached paint (host)
+RENDER_BUDGET 7 1024 2.327 ms per cached paint (host)
+RENDER_BUDGET 8 1024 2.160 ms per cached paint (host)
+RENDER_BUDGET 9 1024 2.971 ms per cached paint (host)
+RENDER_BUDGET 10 1024 2.590 ms per cached paint (host)
+RENDER_BUDGET 11 1024 2.033 ms per cached paint (host)
+RENDER_BUDGET 12 1024 1.980 ms per cached paint (host)
+RENDER_BUDGET 13 1024 2.216 ms per cached paint (host)
+RENDER_BUDGET 14 1024 2.556 ms per cached paint (host)
+RENDER_BUDGET 15 1024 2.166 ms per cached paint (host)
+RENDER_BUDGET 16 1024 2.345 ms per cached paint (host)
+RENDER_BUDGET 17 1024 2.014 ms per cached paint (host)
+RENDER_BUDGET 18 1024 2.270 ms per cached paint (host)
+RENDER_BUDGET 19 1024 2.345 ms per cached paint (host)
+RENDER_BUDGET 20 1024 3.236 ms per cached paint (host)
+RENDER_BUDGET 21 1024 2.439 ms per cached paint (host)
+RENDER_BUDGET 22 1024 2.391 ms per cached paint (host)
+RENDER_BUDGET 23 1024 2.014 ms per cached paint (host)
+RENDER_BUDGET 24 1024 2.567 ms per cached paint (host)
+RENDER_BUDGET 25 1024 3.079 ms per cached paint (host)
+RENDER_BUDGET 26 1024 2.775 ms per cached paint (host)
+RENDER_BUDGET 27 1024 2.230 ms per cached paint (host)
+RENDER_BUDGET 28 1024 2.022 ms per cached paint (host)
+RENDER_BUDGET 29 1024 3.044 ms per cached paint (host)
+RENDER_BUDGET 30 1024 2.589 ms per cached paint (host)
+RENDER_BUDGET 31 1024 2.279 ms per cached paint (host)
+RENDER_BUDGET 32 1024 2.260 ms per cached paint (host)
+RENDER_BUDGET 33 1024 2.550 ms per cached paint (host)
+RENDER_BUDGET 34 1024 2.974 ms per cached paint (host)
+RENDER_BUDGET 35 1024 2.244 ms per cached paint (host)
+RENDER_BUDGET 36 1024 2.945 ms per cached paint (host)
+RENDER_BUDGET 37 1024 4.056 ms per cached paint (host)
+RENDER_BUDGET 38 1024 2.068 ms per cached paint (host)
+RENDER_BUDGET 39 1024 2.385 ms per cached paint (host)
+RENDER_BUDGET 40 1024 4.052 ms per cached paint (host)
+RENDER_BUDGET 41 1024 3.655 ms per cached paint (host)
+RENDER_BUDGET 42 1024 2.470 ms per cached paint (host)
+RENDER_BUDGET 43 1024 2.155 ms per cached paint (host)
+RENDER_BUDGET 44 1024 2.471 ms per cached paint (host)
+RENDER_BUDGET 45 1024 2.613 ms per cached paint (host)
+RENDER_BUDGET 46 1024 2.270 ms per cached paint (host)
+RENDER_BUDGET 47 1024 2.174 ms per cached paint (host)
+RENDER_BUDGET 48 1024 2.053 ms per cached paint (host)
+RENDER_BUDGET 49 1024 2.457 ms per cached paint (host)
+ITALIC_LAYOUT 1024 145 54
+PASS production translated lyrics in 50 native players, bilingual whole-line screen, original text kept, settings/START/controller routes and font sharpness at this resolution. Server replies are explicit fixtures.
+PASS original player portrait/landscape album images retain aspect ratio and stay centered in the old frame.
+PASS native RGB save/cancel, 300-icon/180-emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS transactional native preview: every background/input frame sees committed config; cancel, apply, failed save, exact RGB, font jump/wrap, both views/all 51 themes, sample isolation.
+RENDER_BUDGET 0 640 2.581 ms per cached paint (host)
+RENDER_BUDGET 1 640 0.980 ms per cached paint (host)
+RENDER_BUDGET 2 640 1.036 ms per cached paint (host)
+RENDER_BUDGET 3 640 1.196 ms per cached paint (host)
+RENDER_BUDGET 4 640 1.164 ms per cached paint (host)
+RENDER_BUDGET 5 640 1.006 ms per cached paint (host)
+RENDER_BUDGET 6 640 1.113 ms per cached paint (host)
+RENDER_BUDGET 7 640 1.029 ms per cached paint (host)
+RENDER_BUDGET 8 640 1.093 ms per cached paint (host)
+RENDER_BUDGET 9 640 0.960 ms per cached paint (host)
+RENDER_BUDGET 10 640 1.016 ms per cached paint (host)
+RENDER_BUDGET 11 640 0.999 ms per cached paint (host)
+RENDER_BUDGET 12 640 1.225 ms per cached paint (host)
+RENDER_BUDGET 13 640 1.073 ms per cached paint (host)
+RENDER_BUDGET 14 640 0.972 ms per cached paint (host)
+RENDER_BUDGET 15 640 1.075 ms per cached paint (host)
+RENDER_BUDGET 16 640 1.510 ms per cached paint (host)
+RENDER_BUDGET 17 640 1.143 ms per cached paint (host)
+RENDER_BUDGET 18 640 0.946 ms per cached paint (host)
+RENDER_BUDGET 19 640 1.259 ms per cached paint (host)
+RENDER_BUDGET 20 640 1.459 ms per cached paint (host)
+RENDER_BUDGET 21 640 1.473 ms per cached paint (host)
+RENDER_BUDGET 22 640 3.130 ms per cached paint (host)
+RENDER_BUDGET 23 640 11.484 ms per cached paint (host)
+RENDER_BUDGET 24 640 1.835 ms per cached paint (host)
+RENDER_BUDGET 25 640 1.638 ms per cached paint (host)
+RENDER_BUDGET 26 640 1.564 ms per cached paint (host)
+RENDER_BUDGET 27 640 1.374 ms per cached paint (host)
+RENDER_BUDGET 28 640 1.271 ms per cached paint (host)
+RENDER_BUDGET 29 640 1.316 ms per cached paint (host)
+RENDER_BUDGET 30 640 1.692 ms per cached paint (host)
+RENDER_BUDGET 31 640 1.584 ms per cached paint (host)
+RENDER_BUDGET 32 640 1.548 ms per cached paint (host)
+RENDER_BUDGET 33 640 1.323 ms per cached paint (host)
+RENDER_BUDGET 34 640 1.526 ms per cached paint (host)
+RENDER_BUDGET 35 640 1.513 ms per cached paint (host)
+RENDER_BUDGET 36 640 1.491 ms per cached paint (host)
+RENDER_BUDGET 37 640 1.589 ms per cached paint (host)
+RENDER_BUDGET 38 640 1.362 ms per cached paint (host)
+RENDER_BUDGET 39 640 1.470 ms per cached paint (host)
+RENDER_BUDGET 40 640 1.442 ms per cached paint (host)
+RENDER_BUDGET 41 640 1.336 ms per cached paint (host)
+RENDER_BUDGET 42 640 1.494 ms per cached paint (host)
+RENDER_BUDGET 43 640 1.343 ms per cached paint (host)
+RENDER_BUDGET 44 640 1.493 ms per cached paint (host)
+RENDER_BUDGET 45 640 1.488 ms per cached paint (host)
+RENDER_BUDGET 46 640 1.311 ms per cached paint (host)
+RENDER_BUDGET 47 640 1.535 ms per cached paint (host)
+RENDER_BUDGET 48 640 1.364 ms per cached paint (host)
+RENDER_BUDGET 49 640 1.555 ms per cached paint (host)
+ITALIC_LAYOUT 640 91 36
+PASS production translated lyrics in 50 native players, bilingual whole-line screen, original text kept, settings/START/controller routes and font sharpness at this resolution. Server replies are explicit fixtures.
+PASS v1.9.7.1: 50 legacy layouts, Auralis full-cover/cue pairs/italic/transition/no-cover, native full lyrics controls, 60 fonts, two resolutions, translation worker/cache fixture, ASan/UBSan. Hardware inputs are mocked.
+[NXT translation] start generation=2 lines=2 provider=0 target=1 curl=1
+[NXT translation] end generation=2 done=2/2 cancelled=0
+[NXT translation] start generation=4 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=6 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=7 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=8 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=10 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=12 lines=2 provider=0 target=1 curl=1
+[NXT translation] start generation=13 lines=2 provider=0 target=1 curl=1

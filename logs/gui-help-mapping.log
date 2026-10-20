@@ -1,0 +1,27 @@
+[INFO] Current render driver: opengl
+[INFO] Supported texture formats:
+[INFO] - SDL_PIXELFORMAT_ARGB8888
+[INFO] - SDL_PIXELFORMAT_ABGR8888
+[INFO] - SDL_PIXELFORMAT_RGB888
+[INFO] - SDL_PIXELFORMAT_BGR888
+[INFO] - SDL_PIXELFORMAT_YV12
+[INFO] - SDL_PIXELFORMAT_IYUV
+[INFO] - SDL_PIXELFORMAT_NV12
+[INFO] - SDL_PIXELFORMAT_NV21
+[CFG] Unable to open settings file, loading defaults
+[INFO] Error opening file /var/db/timezone/zoneinfo/zone.tab
+[WARN] LEDS_applyRules called before PWR_init
+[WARN] LEDS_applyRules called before InitSettings
+[DEBUG] LED_profile stack is empty, returning default profile.
+[INFO] PWR_init complete
+@ok 1
+@ok 2
+@ok 3
+@ok 4
+@ok 5
+@ok 6
+@ok 7
+@ok 8
+@ok 9
+@bye
+[CFG] Unable to open settings file, cant write

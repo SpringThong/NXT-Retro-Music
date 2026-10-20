@@ -1,0 +1,48 @@
+In file included from /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/qa/v193_library_flow.c:1:
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c: In function ‘play_rows’:
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:161:486: warning: ‘%s’ directive output may be truncated writing up to 599 bytes into a region of size 256 [-Wformat-truncation=]
+  161 | static ModuleExitReason play_rows(DisplayContext *d,LibraryRow *rows,int count,int selected){int n=count>PLAYLIST_MAX_TRACKS?PLAYLIST_MAX_TRACKS:count;if(selected>=n){Toast_show(Nxt_text("Queue limit: 10000 tracks","Hàng đợi tối đa 10000 bài"),2000);return MODULE_EXIT_TO_MENU;}PlaylistTrack *list=calloc(n,sizeof(*list));if(!list)return MODULE_EXIT_TO_MENU;for(int i=0;i<n;i++){snprintf(list[i].path,sizeof(list[i].path),"%s",rows[i].path);snprintf(list[i].name,sizeof(list[i].name),"%s",rows[i].label);char *newline=strchr(list[i].name,'\n');if(newline)*newline=0;list[i].format=Player_detectFormat(list[i].path);}PlayerModule_setResumePlaylistPath("");ModuleExitReason r=PlayerModule_runWithPlaylist(d,list,n,selected);free(list);return r;}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^~
+In file included from /usr/include/stdio.h:980,
+                 from /tmp/nxt193-flow-byb2sbqg/include/SDL2/SDL_stdinc.h:43,
+                 from /tmp/nxt193-flow-byb2sbqg/include/SDL2/SDL_main.h:25,
+                 from /tmp/nxt193-flow-byb2sbqg/include/SDL2/SDL.h:32,
+                 from /tmp/nxt193-flow-byb2sbqg/include/SDL2/SDL_ttf.h:30,
+                 from /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt.h:7,
+                 from /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_personal.h:4,
+                 from /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:1:
+In function ‘snprintf’,
+    inlined from ‘play_rows’ at /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:161:450:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 1 and 600 bytes into a destination of size 256
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c: In function ‘tracks’:
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:143:589: warning: ‘%s’ directive output may be truncated writing up to 599 bytes into a region of size 256 [-Wformat-truncation=]
+  143 |             if(p.action==1){ModuleExitReason r=MODULE_EXIT_TO_MENU;if(mode==1)r=tracks(display,0,rows[selected].artist,NULL,NULL);else if(mode==2)r=tracks(display,0,rows[selected].artist,rows[selected].album,NULL);else {int n=count>PLAYLIST_MAX_TRACKS?PLAYLIST_MAX_TRACKS:count;int start=selected;if(start>=n){Toast_show(Nxt_text("Queue limit reached (10000)","Hàng đợi đạt giới hạn 10000 bài"),2000);}else {PlaylistTrack *list=calloc(n,sizeof(*list));if(list){for(int i=0;i<n;i++){snprintf(list[i].path,sizeof(list[i].path),"%s",rows[i].path);snprintf(list[i].name,sizeof(list[i].name),"%s",rows[i].label);list[i].format=Player_detectFormat(rows[i].path);}PlayerModule_setResumePlaylistPath("");r=PlayerModule_runWithPlaylist(display,list,n,start);free(list);}}}if(r==MODULE_EXIT_QUIT){free(labels);free(rows);return r;}if(Nxt_takeReturnHome()){Nxt_returnHome();free(labels);free(rows);return r;}}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^~
+In function ‘snprintf’,
+    inlined from ‘tracks’ at /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:143:557:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 1 and 600 bytes into a destination of size 256
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c: In function ‘Nxt_libraryAddTracks’:
+/workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:160:734: warning: ‘%s’ directive output may be truncated writing up to 599 bytes into a region of size 256 [-Wformat-truncation=]
+  160 | void Nxt_libraryAddTracks(DisplayContext *d,const char *path){init();NxtLibrary_start();int selected=0,count=0;unsigned revision=~NxtLibrary_revision();LibraryRow*rows=NULL;const char**labels=NULL;for(;;){if(!labels||revision!=NxtLibrary_revision()){free(labels);free(rows);revision=NxtLibrary_revision();rows=query(0,NULL,NULL,NULL,false,&count);labels=calloc(count?count:1,sizeof(char*));if(!labels){free(rows);return;}for(int i=0;i<count;i++)labels[i]=rows[i].label;}NxtPick p=Nxt_pickLive(d,Nxt_text("Add tracks · A adds selected track","Thêm bài · A thêm bài đang chọn"),labels,count,&selected,Nxt_text("A Add • B Done","A Thêm • B Xong"));if(p.action==1&&selected>=0&&selected<count){char name[256];snprintf(name,sizeof(name),"%s",rows[selected].label);char *newline=strchr(name,'\n');if(newline)*newline=0;int status=M3U_addTrack(path,rows[selected].path,name);Toast_show(status==0?Nxt_text("Track added","Đã thêm bài"):Nxt_text("Already added / cannot write","Đã có bài / không ghi được"),1000);}if(p.action==2||p.action==9){free(labels);free(rows);return;}}}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^~
+In function ‘snprintf’,
+    inlined from ‘Nxt_libraryAddTracks’ at /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/upstream/src/nxt_library.c:160:720:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin_snprintf’ output between 1 and 600 bytes into a destination of size 256
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~

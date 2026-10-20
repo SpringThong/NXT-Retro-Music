@@ -1,0 +1,21 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "native_sizes": [
+    640,
+    1024
+  ],
+  "legacy_themes": 50,
+  "total_themes": 51,
+  "fonts": 60,
+  "real_translation_worker_local_fixture": true,
+  "draft_transaction_background_frame_guard": true,
+  "apply_cancel_save_failure": true,
+  "exact_RGB_channel_edits": true,
+  "font_jump_wrap": true,
+  "both_preview_views_all_51_themes": true,
+  "demo_lyrics_state_isolated": true,
+  "physical_device_tested": false,
+  "original_now_playing_repeated_redraw_regression": true,
+  "baseline_1971_failure_reproduced": true
+}

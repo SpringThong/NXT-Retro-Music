@@ -1,0 +1,14 @@
+{
+  "exit": 0,
+  "production_worker_mapping_cache_transport": true,
+  "partial_normalized_alignment": true,
+  "off_no_audio_upload": true,
+  "explicit_consent_default_cancel": true,
+  "quota_oversize_and_slow_cancel": true,
+  "online_path_does_not_analyse_old_local_file": true,
+  "offline_cache_no_key": true,
+  "generation_cancellation_reaping": true,
+  "ASan_UBSan": true,
+  "real_Groq_singing_tested": false,
+  "PCM_and_HTTP_fixtures": true
+}

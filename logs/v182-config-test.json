@@ -1,0 +1,22 @@
+{
+  "stock": {
+    "exit": 0,
+    "real_config_init_save_load": true,
+    "missing_mode_Balanced": true,
+    "old_audio_wallpaper_LED_preserved": true,
+    "all_modes_saved_and_reloaded": true,
+    "global_mode_not_overridden_by_profile": true,
+    "invalid_config_values_Balanced": true,
+    "ASan_UBSan": true
+  },
+  "nextui": {
+    "exit": 0,
+    "real_config_init_save_load": true,
+    "missing_mode_Balanced": true,
+    "old_audio_wallpaper_LED_preserved": true,
+    "all_modes_saved_and_reloaded": true,
+    "global_mode_not_overridden_by_profile": true,
+    "invalid_config_values_Balanced": true,
+    "ASan_UBSan": true
+  }
+}

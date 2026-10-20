@@ -1,0 +1,44 @@
+In file included from /workspace/scratch/d7cab07fb248/v184-native/qa/v184_bluetooth_volume.c:21:
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c: In function ‘getInt’:
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:289:17: warning: ignoring return value of ‘fscanf’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  289 |                 fscanf(file, "%i", &i);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c: In function ‘peekVersion’:
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:321:17: warning: ignoring return value of ‘fread’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  321 |                 fread(&version, sizeof(int), 1, file);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c: In function ‘InitSettings’:
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:373:17: warning: ignoring return value of ‘ftruncate’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  373 |                 ftruncate(shm_fd, shm_size);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:382:41: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  382 |                                         read(fd, settings, shm_size);
+      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:392:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  392 |                                                 read(fd, &old, sizeof(SettingsV10));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:400:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  400 |                                                 read(fd, &old, sizeof(SettingsV9));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:436:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  436 |                                                 read(fd, &old, sizeof(SettingsV8));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:461:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  461 |                                                 read(fd, &old, sizeof(SettingsV7));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:485:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  485 |                                                 read(fd, &old, sizeof(SettingsV6));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:502:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  502 |                                                 read(fd, &old, sizeof(SettingsV5));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:515:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  515 |                                                 read(fd, &old, sizeof(SettingsV4));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:529:49: warning: ignoring return value of ‘read’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  529 |                                                 read(fd, &old, sizeof(SettingsV3));
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c: In function ‘SaveSettings’:
+/workspace/scratch/d7cab07fb248/v184-native/upstream/NextUI/workspace/tg5040/libmsettings/msettings.c:581:17: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  581 |                 write(fd, settings, shm_size);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~

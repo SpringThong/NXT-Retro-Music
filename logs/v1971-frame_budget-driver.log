@@ -1,0 +1,2 @@
+PASS actual production player frame function: 60-Hz-target timed motion, bounded static/paused redraw, separate FFT cap, immediate cue/translation changes, no hidden/off work and tick wrap.
+

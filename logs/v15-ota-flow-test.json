@@ -1,0 +1,18 @@
+{
+  "actual_worker": {
+    "exit": 0,
+    "compact_ui_rows": 4,
+    "entry_auto_check": true,
+    "stock_nextui_default_and_override_separated": true,
+    "ready_stage_preserved_on_reentry": true,
+    "back_keeps_download_running": true,
+    "drive_confirmation": true,
+    "hash_staging_install": true,
+    "html_error": true,
+    "cancel_and_reap": true,
+    "private_data_unchanged": true,
+    "no_urls_tokens_in_log": true,
+    "asan_ubsan": true,
+    "network": "deterministic curl child fixtures; no live publisher URL"
+  }
+}

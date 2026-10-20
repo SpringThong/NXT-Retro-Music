@@ -1,0 +1,315 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <dirent.h>
+
+#include "defines.h"
+#include "api.h"
+#include "file_utils.h"
+#include "playlist_m3u.h"
+#include "utf8.h"
+#include "nxt_text.h"
+#include "nxt_drive.h"
+#include "nxt_sort.h"
+#include <limits.h>
+#include "player.h"
+
+void M3U_init(void) {
+    userdata_mkdir("playlists");
+}
+
+// Count non-comment, non-empty lines in an m3u file (= track count)
+static int count_tracks_in_file(const char* path) {
+    FILE* f = fopen(path, "r");
+    if (!f) return 0;
+
+    int count = 0;
+    char line[1024];
+    while (fgets(line, sizeof(line), f)) {
+        // Trim trailing newline
+        int len = strlen(line);
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r'))
+            line[--len] = '\0';
+        if (len == 0 || line[0] == '#') continue;
+        count++;
+    }
+    fclose(f);
+    return count;
+}
+
+int M3U_listPlaylists(PlaylistInfo* out, int max) {
+    char playlists_dir[512];
+    int length = userdata_snpath("playlists", playlists_dir, sizeof(playlists_dir));
+    if (length < 0 || (size_t)length >= sizeof(playlists_dir)) return 0;
+
+    DIR* dir = opendir(playlists_dir);
+    if (!dir) return 0;
+
+    int count = 0;
+    struct dirent* ent;
+    while ((ent = readdir(dir)) != NULL && count < max) {
+        if (ent->d_name[0] == '.') continue;
+
+        // Only .m3u files
+        int len = strlen(ent->d_name);
+        if (len < 5 || strcasecmp(ent->d_name + len - 4, ".m3u") != 0) continue;
+
+        PlaylistInfo* info = &out[count];
+        snprintf(info->path, sizeof(info->path), "%s/%s", playlists_dir, ent->d_name);
+
+        // Name without .m3u extension
+        snprintf(info->name, sizeof(info->name), "%.*s", len - 4, ent->d_name);
+
+        info->track_count = count_tracks_in_file(info->path);
+        count++;
+    }
+    closedir(dir);
+
+    // Sort by name (case-insensitive)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (NxtSort_compare(out[i].name, out[j].name) > 0) {
+                PlaylistInfo tmp = out[i];
+                out[i] = out[j];
+                out[j] = tmp;
+            }
+        }
+    }
+
+    return count;
+}
+
+bool M3U_sanitizeName(const char* name, char* out, size_t out_size) {
+    if (!name || !out || out_size == 0) return false;
+
+    while (*name == ' ') name++;
+
+    // Characters a path cannot hold become '_' before the copy, so the length
+    // the copier works to is the one that lands on disk
+    char cleaned[512];
+    size_t cleaned_length = 0;
+    for (; *name && cleaned_length + 1 < sizeof(cleaned); name++) {
+        unsigned char c = (unsigned char)*name;
+        bool forbidden = (c == '/' || c == '\\' || c < 0x20 || c == 0x7F);
+        cleaned[cleaned_length++] = forbidden ? '_' : (char)c;
+    }
+    cleaned[cleaned_length] = '\0';
+
+    // Whole characters only: a name cut mid-character would name a file nothing
+    // can render
+    size_t length = UTF8_copy(out, out_size, cleaned);
+    while (length > 0 && out[length - 1] == ' ') length--;
+    out[length] = '\0';
+
+    // A name made only of dots would address the directory itself
+    if (length == 0 || strcmp(out, ".") == 0 || strcmp(out, "..") == 0) return false;
+    return true;
+}
+
+int M3U_create(const char* name) {
+    if (!name || !name[0]) return -1;
+
+    M3U_init();
+
+    char safe_name[MAX_PLAYLIST_NAME];
+    if (!M3U_sanitizeName(name, safe_name, sizeof(safe_name))) return -1;
+
+    char relative_path[sizeof("playlists/") + MAX_PLAYLIST_NAME + sizeof(".m3u")];
+    snprintf(relative_path, sizeof(relative_path), "playlists/%s.m3u", safe_name);
+
+    char path[512];
+    int length = userdata_snpath(relative_path, path, sizeof(path));
+    if (length < 0 || (size_t)length >= sizeof(path)) return -1;
+
+    // Don't overwrite existing
+    if (access(path, F_OK) == 0) return -1;
+
+    FILE* f = fopen(path, "w");
+    if (!f) return -1;
+
+    fprintf(f, "#EXTM3U\n");
+    fclose(f);
+    return 0;
+}
+
+int M3U_delete(const char* m3u_path) {
+    if (!m3u_path) return -1;
+    return unlink(m3u_path);
+}
+
+int M3U_addTrack(const char* m3u_path, const char* track_path, const char* display_name) {
+    if (!m3u_path || !track_path) return -1;
+
+    // Don't add duplicates
+    if (M3U_containsTrack(m3u_path, track_path)) return -1;
+
+    FILE* f = fopen(m3u_path, "a");
+    if (!f) return -1;
+
+    const char* name = display_name ? display_name : track_path;
+    fprintf(f, "#EXTINF:0,%s\n%s\n", name, track_path);
+    fclose(f);
+    return 0;
+}
+
+int M3U_removeTrack(const char* m3u_path, int index) {
+    if (!m3u_path || index < 0) return -1;
+
+    FILE* f = fopen(m3u_path, "r");
+    if (!f) return -1;
+
+    // Read all lines
+    char** lines = NULL;
+    int line_count = 0;
+    int capacity = 64;
+    lines = malloc(sizeof(char*) * capacity);
+    if (!lines) { fclose(f); return -1; }
+
+    char buf[1024];
+    while (fgets(buf, sizeof(buf), f)) {
+        if (line_count >= capacity) {
+            capacity *= 2;
+            char** new_lines = realloc(lines, sizeof(char*) * capacity);
+            if (!new_lines) {
+                for (int i = 0; i < line_count; i++) free(lines[i]);
+                free(lines);
+                fclose(f);
+                return -1;
+            }
+            lines = new_lines;
+        }
+        lines[line_count] = strdup(buf);
+        if (lines[line_count]) line_count++;
+    }
+    fclose(f);
+
+    // Find the track line at the given index (skip # and empty lines)
+    int track_idx = 0;
+    int remove_line = -1;
+    for (int i = 0; i < line_count; i++) {
+        char* line = lines[i];
+        int len = strlen(line);
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r'))
+            len--;
+        if (len == 0 || line[0] == '#') continue;
+
+        if (track_idx == index) {
+            remove_line = i;
+            break;
+        }
+        track_idx++;
+    }
+
+    if (remove_line < 0) {
+        for (int i = 0; i < line_count; i++) free(lines[i]);
+        free(lines);
+        return -1;
+    }
+
+    // Rewrite the file without the removed track (and its preceding #EXTINF line)
+    f = fopen(m3u_path, "w");
+    if (!f) {
+        for (int i = 0; i < line_count; i++) free(lines[i]);
+        free(lines);
+        return -1;
+    }
+
+    for (int i = 0; i < line_count; i++) {
+        // Skip the track path line
+        if (i == remove_line) continue;
+        // Skip the #EXTINF line right before the track
+        if (i == remove_line - 1 && lines[i][0] == '#' &&
+            strncmp(lines[i], "#EXTINF", 7) == 0) continue;
+        fputs(lines[i], f);
+    }
+    fclose(f);
+
+    for (int i = 0; i < line_count; i++) free(lines[i]);
+    free(lines);
+    return 0;
+}
+
+int M3U_loadTracks(const char* m3u_path, PlaylistTrack* tracks, int max, int* count) {
+    if (!m3u_path || !tracks || !count || max < 0) return -1;
+    *count = 0;
+    FILE *f = fopen(m3u_path, "rb");
+    if (!f) return -1;
+    char base[PATH_MAX];
+    if (!realpath(m3u_path, base)) { fclose(f); return -1; }
+    char *slash = strrchr(base, '/');
+    if (slash) *slash = 0;
+    char line[2048], last_extinf_name[256] = "";
+    bool first = true;
+    while (fgets(line, sizeof(line), f) && *count < max) {
+        size_t len = strlen(line);
+        if (len == sizeof(line)-1 && line[len-1] != '\n') {
+            int ch; while ((ch = fgetc(f)) != '\n' && ch != EOF) {}
+            last_extinf_name[0] = 0; first = false; continue;
+        }
+        if (first && len >= 3 && !memcmp(line, "\xef\xbb\xbf", 3)) {
+            memmove(line, line+3, len-2); len -= 3;
+        }
+        first = false;
+        while (len && (line[len-1] == '\n' || line[len-1] == '\r')) line[--len] = 0;
+        if (!len) continue;
+        if (!strncmp(line, "#EXTINF:", 8)) {
+            const char *comma = strchr(line+8, ',');
+            NxtText_copy(last_extinf_name, comma ? comma+1 : "", sizeof(last_extinf_name));
+            continue;
+        }
+        if (line[0] == '#') continue;
+        /* Saved Drive URIs are resolved through the public-link registry.
+         * A queue resume never treats the URI as a local filesystem path. */
+        if(NxtDrive_isStream(line)){
+            NxtDriveEntry entry;
+            if(strlen(line)<sizeof(tracks[0].path)&&NxtDrive_streamEntry(line,&entry)){
+                PlaylistTrack *track=&tracks[(*count)++];
+                snprintf(track->path,sizeof(track->path),"%s",line);
+                NxtText_copy(track->name,last_extinf_name[0]?last_extinf_name:entry.name,sizeof(track->name));
+                track->format=Player_detectFormat(entry.name);
+            }
+            last_extinf_name[0]=0;continue;
+        }
+        char candidate[PATH_MAX], resolved[PATH_MAX];
+        int bytes = line[0]=='/' ? snprintf(candidate, sizeof(candidate), "%s", line) : snprintf(candidate, sizeof(candidate), "%s/%s", base, line);
+        if (bytes < 0 || bytes >= sizeof(candidate) || !realpath(candidate, resolved) ||
+            strlen(resolved) >= sizeof(tracks[0].path) || access(resolved, R_OK) ||
+            Player_detectFormat(resolved) == AUDIO_FORMAT_UNKNOWN) {
+            last_extinf_name[0] = 0; continue;
+        }
+        PlaylistTrack *track = &tracks[*count];
+        snprintf(track->path, sizeof(track->path), "%s", resolved);
+        const char *name = strrchr(resolved, '/');
+        NxtText_copy(track->name, last_extinf_name[0] ? last_extinf_name : (name ? name+1 : resolved), sizeof(track->name));
+        track->format = Player_detectFormat(resolved);
+        last_extinf_name[0] = 0;
+        (*count)++;
+    }
+    bool ok = !ferror(f); fclose(f);
+    return ok ? 0 : -1;
+}
+
+bool M3U_containsTrack(const char* m3u_path, const char* track_path) {
+    if (!m3u_path || !track_path) return false;
+
+    FILE* f = fopen(m3u_path, "r");
+    if (!f) return false;
+
+    char line[1024];
+    bool found = false;
+    while (fgets(line, sizeof(line), f)) {
+        int len = strlen(line);
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r'))
+            line[--len] = '\0';
+        if (len == 0 || line[0] == '#') continue;
+
+        if (strcmp(line, track_path) == 0) {
+            found = true;
+            break;
+        }
+    }
+
+    fclose(f);
+    return found;
+}

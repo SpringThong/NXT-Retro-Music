@@ -1,0 +1,41 @@
+{
+  "version": "1.9.6",
+  "exit": 0,
+  "baseline_version": "1.9.5",
+  "baseline_sha256": "78fd51ca656fba60f824011464601d3cd0a134d485437481f1b817ec7afdf94d",
+  "baseline_frontend_inputs_checked": 825,
+  "modified_frontend_inputs": [
+    "upstream/src/lyrics.c",
+    "upstream/src/lyrics.h",
+    "upstream/src/musicplayer.c",
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_appearance.c",
+    "upstream/src/nxt_auralis.c",
+    "upstream/src/nxt_auralis.h",
+    "upstream/src/nxt_config.c",
+    "upstream/src/nxt_motion.c",
+    "upstream/src/nxt_motion.h",
+    "upstream/src/nxt_music_playing.c",
+    "upstream/src/nxt_screens.c",
+    "upstream/src/nxt_skin.c",
+    "upstream/src/nxt_translate.c",
+    "upstream/src/nxt_translate.h",
+    "upstream/src/nxt_ui.c",
+    "upstream/src/nxt_v18_palette.inc",
+    "upstream/src/nxt_volume.c"
+  ],
+  "new_frontend_inputs": [
+    "upstream/src/nxt_karaoke.c",
+    "upstream/src/nxt_karaoke.h"
+  ],
+  "original_resources_preserved": 676,
+  "first_50_palettes_and_all_51_names_preserved": true,
+  "first_17_font_indices_preserved": true,
+  "online_backends_byte_identical": true,
+  "current_binaries": {
+    "stock": "7e75d701ab5245ecf7cc9c7fd97cfec9628adb70fb2aac1f8cfeffdd48b6a501",
+    "nextui": "3a2e97082eda0f921e4ff8a717a9b2229bbdd64a924393a2f4c83e7da7445bd9",
+    "nxredux": "84418410a673cbd3524f3dcf20307dcc84a5aff72b7b7fe977d5837f14e9e93e"
+  },
+  "physical_tested": false
+}

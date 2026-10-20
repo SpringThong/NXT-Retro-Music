@@ -1,0 +1,2 @@
+PASS append 80 catalog results, listening queue grows to 81 with deduplication, no early repeat while more pages remain, final repeat-all wraps only at actual catalog end.
+PASS production SoundCloud frontend: key-free startup, no credential import, UTF-8 metadata, shared player, pause/seek PCM clock, stale replies, local bookmark status, QR validation, DAC unplug/route pause, restricted-track cleanup, helper quit/kill/reap, token-free logs.

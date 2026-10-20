@@ -1,0 +1,20 @@
+{
+  "installer": "/workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/dist/nextui-release/NXT_Retro_Music_v1.9.4_NextUI.zip",
+  "size": 114793832,
+  "sha256": "547a1f1ed4cebc51aeaadfec2a24ef15e6bcd11121d4736daf7761e3e7157f0c"
+}
+Created /workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/dist/OTA_Google_Drive_v1.9.4_NextUI/templates/update.json (114793832 bytes, SHA-256 547a1f1ed4cebc51aeaadfec2a24ef15e6bcd11121d4736daf7761e3e7157f0c)
+{
+  "version": "1.9.4",
+  "rom": "nextui",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.4_NextUI.zip",
+  "kit_sha256": "099961f870457670ced2eaa86c494fa664e75543f6ce02a4efc7823ef3f48f04",
+  "size": 114814537,
+  "installer": "NXT_Retro_Music_v1.9.4_NextUI.zip",
+  "installer_sha256": "547a1f1ed4cebc51aeaadfec2a24ef15e6bcd11121d4736daf7761e3e7157f0c",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

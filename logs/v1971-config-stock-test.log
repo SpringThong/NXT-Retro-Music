@@ -1,0 +1,2 @@
+PASS fine volume legacy migration, exact levels save/reload, MiSans/Auralis profile choices and independent device volumes.
+PASS real config: v1.8.2 migration defaults to Balanced without changing audio/appearance; three modes save/reload atomically; profile changes preserve device mode; malformed, fractional and out-of-range values fall back safely.

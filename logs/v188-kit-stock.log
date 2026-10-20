@@ -1,0 +1,15 @@
+Created /workspace/scratch/d7cab07fb248/nxt-v188-work/NXT_Retro_Music_v1.8.8_Source/dist/OTA_Google_Drive_v1.8.8_Stock/templates/update.json (111643699 bytes, SHA-256 e052774fc4bfc60fc5dcc2b7af631de2a018544fd25b41bbd78bf2e710675345)
+{
+  "version": "1.8.8",
+  "rom": "stock",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.8.8_Stock.zip",
+  "kit_sha256": "de0a0c3b858381439cc85e6caed6e187aeda33e0df4608d270c30a609a164d60",
+  "size": 111664320,
+  "installer": "NXT_Retro_Music_v1.8.8_Stock.zip",
+  "installer_sha256": "e052774fc4bfc60fc5dcc2b7af631de2a018544fd25b41bbd78bf2e710675345",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

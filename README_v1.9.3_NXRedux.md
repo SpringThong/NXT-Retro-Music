@@ -1,0 +1,33 @@
+# NXT Retro Music v1.9.3 — NX Redux
+
+## Thư viện nhanh v1.9.3
+
+Mở app vẫn chọn hồ sơ rồi vào Now Playing. Danh sách nhạc trong Thư viện lấy ngay từ chỉ mục đã lưu, không chờ đọc thông tin từng bài.
+
+- Sau khi vào app, một lượt kiểm tra nhẹ chạy nền sau khoảng 1,5 giây; chỉ duyệt tên và thuộc tính tệp để phát hiện thay đổi. Vào lại Thư viện/Yêu thích/Thêm bài trong cùng phiên không khởi động lượt quét mới.
+- Nhạc không đổi không bị mở lại để đọc tag và không ghi lại dấu seen. Nhạc mới hoặc sửa đổi mới được đọc thông tin; bài thực sự bị xóa được gỡ khỏi chỉ mục. App không xóa tệp nhạc.
+- Khi nâng từ bản cũ, tên bài/nghệ sĩ và yêu thích đã lưu vẫn dùng ngay; lần kiểm tra đầu bổ sung dấu thời gian vào bảng phụ theo từng đợt mà không đọc lại tag của bài không đổi. Từ lần sau, thư viện không đổi không tạo thay đổi ghi vào chỉ mục.
+- Chép bằng máy tính: mở lại app để tự nhận nhạc mới. Chép qua Wi-Fi trong app: chỉ báo thay đổi sau khi tệp cài vào thư mục thành công; nhiều tệp được gom thông báo. Tệp .part/ẩn và liên kết tượng trưng được bỏ qua.
+- Nếu chép qua công cụ khác trong lúc app đang chạy, dùng START trong Thư viện → Kiểm tra nhạc mới. Không chạy vòng quét thẻ liên tục.
+- START → Quét lại toàn bộ thông tin: đọc lại tag mọi bài trong thư mục đang chọn, vẫn giữ danh sách cũ khi cập nhật. Cài đặt → Thư mục nhạc → Quét lại thư viện cũng dùng lượt kiểm tra đầy đủ này. Dùng khi sửa tag nhưng công cụ vẫn giữ nguyên dấu thời gian/dung lượng hoặc chỉ mục chưa đúng.
+- Công việc nền ưu tiên thấp, ghi tối đa 16 thay đổi/đợt, không giữ khóa ghi khi đọc tag. Tạm dừng khi ẩn app, tắt màn hình hoặc đang chép tệp Wi-Fi; tiếp tục khi giao diện hoạt động lại.
+- Khi đổi thư mục hoặc tùy chọn gồm thư mục con, danh sách được lọc đúng phạm vi ngay. Dữ liệu các thư mục đã xem và yêu thích được giữ. Nếu thẻ/thư mục mất hoặc lượt duyệt bị hủy/lỗi, không xóa chỉ mục hàng loạt theo phần duyệt dở.
+- Danh sách All/Folders/Artists/Albums giữ lại khi đứng yên; không đọc lại thư mục mỗi giây. Chỉ tải lại khi đổi mục, tìm/sắp xếp, điều hướng thư mục hoặc có thay đổi dữ liệu.
+
+Lần đầu chưa có chỉ mục, thư viện sẽ dần xuất hiện trong lúc tạo chỉ mục. Dấu thời gian tệp không phát hiện được mọi thay đổi cố tình giữ nguyên thuộc tính; mục quét lại toàn bộ là cách kiểm tra lại.
+
+Log app có dòng library/index: checked/decoded/writes/commits. Với thư viện đã lập chỉ mục và không đổi, decoded=0, writes=0, commits=0 cho phần cập nhật chỉ mục; các dữ liệu nghe nhạc/hồ sơ khác vẫn lưu bình thường.
+
+Sửa DSD USB và tên hiển thị DAC. Chỉ build NX Redux; không dùng ZIP này cho Stock/NextUI.
+
+- Giữ nguyên dữ liệu/hồ sơ/cache 256 MiB, Groq TXT, CPU/LED/Home, nguồn nhạc và OTA.
+- DSD không tự chuyển PCM. Native cần driver ROM; DoP cần DAC thật sự hỗ trợ đúng tần số truyền.
+- Mặc định và lựa chọn DSD cũ được giữ. Muốn thử Native rồi DoP: Cài đặt → Phát nhạc & âm thanh → Âm thanh & đầu ra → Đầu ra DSD USB → Tự động, xác nhận DoP.
+- DSD64 qua DoP cần 176.4 kHz, DSD128 cần 352.8 kHz, DSD256 cần 705.6 kHz. DAC hỗ trợ DSD256 Native không đồng nghĩa DoP DSD256. Không hạ DSD tier hay chuyển PCM ngầm.
+- Tên USB có thể là tên bộ điều khiển/OEM. Chọn Tên hiển thị DAC → TRN Black Pearl hoặc tự nhập. App lưu tên cho bộ VID/PID/manufacturer/product bạn xác nhận, không suy đoán model/tính năng từ chip hay tên TE-C. Hai thiết bị có descriptor giống hệt sẽ dùng chung nhãn.
+- Log DSD giữ lỗi ở bước đã mở được phần cứng, không bị các cổng không tồn tại ghi đè. Native/DoP ghi rõ format, tần số truyền, bước thất bại. Trạng thái không còn kết luận mọi lỗi đều do thiếu DAC tương thích.
+- Thông tin, hướng dẫn & cập nhật: START xuất NXT_App_Log.txt, Y xuất NXT_Device_Log.txt gồm VID/PID, descriptor, kernel, stream formats, trạng thái DSD. Giữ DAC cắm khi xuất. File ở Tools/NXT Retro Music.pak cạnh launch.sh.
+
+Cài đặt: thoát hẳn phiên nghe, giải nén ZIP ở gốc thẻ; giữ nguyên dữ liệu người dùng. OTA giữ nguyên link NX Redux đã tích hợp. Người dùng không cần nhập link; người phát hành vẫn cần cập nhật nội dung chính file update.json cũ trên Drive.
+
+Bản sửa cần thử lại với Black Pearl và DFF thật. Các kiểm thử phần mềm dùng mô phỏng ALSA, không thay thế xác nhận phần cứng hay đo nhiệt/pin. Nếu Native vẫn lỗi, log mới sẽ xác định driver thiếu format hay thiết lập bị từ chối; app không thể tạo khả năng Native DSD mà kernel ROM không hỗ trợ.

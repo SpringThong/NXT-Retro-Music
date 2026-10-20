@@ -1,0 +1,5 @@
+PASS PCM: actual hw_params, supported integer/float formats, 44.1–384 kHz, active substream, correct DAC card/device, closed/missing/malformed inputs and unconfirmed fallback.
+PASS production input: both physical MENU and HOME stop full session and save current position; ordinary A preserves behavior; HID volume stays functional.
+PASS lock/display-off exit: stop request passes the actual lock input filter.
+PASS NextUI lifecycle/mapping: NextUI joystick MENU/HOME mappings retained; stop prevents detached background session; DAC actual PCM is shown in Now Playing.
+PASS actual SDL poll: joystick 8 -> MENU and joystick 15 -> HOME, both handled by full exit.

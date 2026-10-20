@@ -1,0 +1,10 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "actual_sysfs_identity_walk": true,
+  "USB_descriptor_not_assumed_retail_brand": true,
+  "persistent_label": true,
+  "DSD_source_USB_streams_hw_params_kernel_in_atomic_export": true,
+  "hardware_fixture_not_physical": true,
+  "hardware_source_sha256": "66480fb72fc8b2e1eb600935e181816293578935f5af45cd6084657f3e4844f5"
+}

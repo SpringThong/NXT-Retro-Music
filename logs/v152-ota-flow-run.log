@@ -1,0 +1,1 @@
+PASS four-row OTA entry auto-check; source/ROM separation and folder rejection; background download; ready-stage preserved on reentry; real OTA worker: manifest → Drive confirmation → download/hash/stage/install/backup; HTML error; cancellation and child reaping.

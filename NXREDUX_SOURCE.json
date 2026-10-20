@@ -1,0 +1,64 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.9.7.4",
+  "rom": "nxredux",
+  "device": "trimui-brick-pro",
+  "baseline_source_filename": "NXT_Retro_Music_v1.8.9_Source.zip",
+  "firmware_reference": {
+    "tag": "v2.1.2",
+    "repository": "https://github.com/mohammadsyuhada/nx-redux",
+    "archive_sha256": "b37c20f00c38e9a530c310378c0b07bf393a1cd0962eb66f5e8d00aa937ebf9a"
+  },
+  "compiler_url": "https://github.com/LoveRetro/gcc-arm-8.3-aarch64-tg5040/releases/download/v8.3.0-20260204-190602-d37268f5/gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz",
+  "compiler_sha256": "d4ac4ef1968668f93f625f2b226c69d74739ae58ff640d2ce3aaae6b4d1b93d3",
+  "sysroot_url": "https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDK_usr_tg5040_a133p.tgz",
+  "sysroot_sha256": "b6b615d03204e9d9bb1a91c31de0c3402434f6b8fc780743fa88a5f1da6f3c79",
+  "new_build_define": "NXT_ROM_NXREDUX",
+  "shared_family_define": "NXT_ROM_NEXTUI",
+  "build_command": "python3 tools/build-release.py --rom nxredux",
+  "source_package_command": "python3 tools/package-source.py",
+  "historical_Stock_NextUI_binaries_unchanged": false,
+  "physical_hardware_tested": false,
+  "physical_deep_sleep_tested": false,
+  "official_OTA_source": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing",
+  "baseline_source_sha256": "30311ea905005623f793b13c517728e12dd83920db9ef1cc25883ba19dd90332",
+  "baseline_version": "1.8.9.1",
+  "hardware_test_status": "All three fresh ARM64 builds and software/rendering/installer/OTA fixtures passed. No physical ROM/DAC/FPS/heat or live Groq singing measurement.",
+  "dsd": {
+    "source": "local raw DSF/DFF mono/stereo DSD64-512",
+    "default": "Retain saved mode; Native is initial default, confirmed DoP or explicit Native-to-DoP available",
+    "DoP": "explicit compatible-DAC selection",
+    "PCM_conversion": false,
+    "bounded_reads": true,
+    "DSP_FFT_software_gain": false
+  },
+  "stage": "v1.9.7.4-unified-three-rom",
+  "release_roms": [
+    "stock",
+    "nextui",
+    "nxredux"
+  ],
+  "release_ready": true,
+  "release_build_paused_by_user": false,
+  "baseline_versions": {
+    "stock": "1.8.9",
+    "nextui": "1.8.9",
+    "nxredux": "1.9"
+  },
+  "translation_cache_bytes": 268435456,
+  "translation_cache_song_limit": null,
+  "current_build_report": "BUILD_REPORT_v1.9.7.4_NXRedux.json",
+  "current_build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ],
+  "revision": "v1.9.7.4 · Fonts and Live Preview",
+  "frontend_translation_units": 145,
+  "verification": "RELEASE_QA_v1.9.7.4.md",
+  "build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ]
+}

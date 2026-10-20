@@ -1,0 +1,25 @@
+{
+  "results": {
+    "nxredux": {
+      "exit": 0,
+      "full_exit_on_expiry": true,
+      "ASan_UBSan": true
+    },
+    "stock": {
+      "exit": 0,
+      "full_exit_on_expiry": false,
+      "ASan_UBSan": true
+    },
+    "nextui": {
+      "exit": 0,
+      "full_exit_on_expiry": false,
+      "ASan_UBSan": true
+    }
+  },
+  "hardware_sleep_tested": false,
+  "sleep_policy": "NX Redux firmware screen/suspend timeouts after full NXT cleanup",
+  "sources": {
+    "nxt_config.c": "6b4a7b1474ef56541fa78d12c5b9c4ed3d10b3a01df1dda8fe92c89a5cc10e4f",
+    "nxt_session.c": "64d8b05bcfda69fb1aaec75c5633729b65537b8c3ef163be293210397121a668"
+  }
+}

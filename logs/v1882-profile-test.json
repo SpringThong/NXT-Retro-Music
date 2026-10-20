@@ -1,0 +1,26 @@
+{
+  "profile_deletion": {
+    "exit": 0,
+    "active_and_inactive": true,
+    "last_listener_guard": true,
+    "database_rollback": true,
+    "no_follow_directory_cleanup": true,
+    "no_resurrection": true,
+    "shared_files_preserved": true,
+    "clean_reused_ID": true
+  },
+  "production_source_sha256": "cadc34d398765cbc456dc88da9d0cc891af784efbf65f2a5b55a7473d44d743c",
+  "profiles_and_statistics": {
+    "exit": 0,
+    "sqlite_actual": true,
+    "asan_ubsan": true,
+    "paths_and_favorites_isolated": true,
+    "seek_pause_buffer_not_counted": true,
+    "short_track_repeat_qualification": true,
+    "profile_persistence": true,
+    "recording_off": true,
+    "mixed_source_history_queue": true,
+    "profile_switch_releases_player_module": true,
+    "audio_and_hardware_boundaries": "fixtures"
+  }
+}

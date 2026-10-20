@@ -1,0 +1,8 @@
+stock ['--build-info'] PASS
+stock ['--help'] PASS
+nextui ['--build-info'] PASS
+nextui ['--help'] PASS
+nxredux ['--build-info'] PASS
+nxredux ['--help'] PASS
+nxt-spotify-backend PASS
+nxt-soundcloud-backend PASS

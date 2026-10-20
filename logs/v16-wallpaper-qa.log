@@ -1,0 +1,5 @@
+PASS real catalog parser: pagination, SFW only, HTTPS/no credentials, malformed HTML, image bounds and byte cap.
+PASS real JPG/PNG resize/thumbnail, natural SD sort, ignored symlinks/nonimages, SD boundary, truncated directory notice, atomic favorites and separate profile files.
+PASS actual idle redraws 10 vs marquee 90 / 625 polls; input immediate; hidden/off/wake/tick-wrap; cache reuse/eviction/font invalidation.
+PASS actual idle redraws 10 vs marquee 90 / 625 polls; input immediate; hidden/off/wake/tick-wrap; cache reuse/eviction/font invalidation.
+PASS actual gallery render (5 tabs, 8 categories, preview/details) at 640/1024; online image worker, offline metadata, cache reuse, cancel/reap; real UI input loop and preview rollback. Hardware functions are fixtures; no device test claimed.

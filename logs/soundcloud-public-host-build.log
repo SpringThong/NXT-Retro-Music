@@ -1,0 +1,17 @@
+   Compiling nxt-soundcloud-backend v1.2.0 (/workspace/scratch/d7cab07fb248/nxt-project/NXT_Retro_Music_v1.2_NextUI_Source/soundcloud/backend)
+warning: function `playable` is never used
+  --> src/api.rs:27:8
+   |
+27 | pub fn playable(v: &Value) -> bool { v["access"].as_str() == Some("playable") && v["streamable"].as_bool() != Some(false) }
+   |        ^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `item` is never used
+  --> src/api.rs:28:8
+   |
+28 | pub fn item(v: &Value, playlist: bool) -> Option<Value> {
+   |        ^^^^
+
+warning: `nxt-soundcloud-backend` (bin "nxt-soundcloud-backend") generated 2 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.43s

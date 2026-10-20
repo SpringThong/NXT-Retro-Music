@@ -1,0 +1,895 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <sys/wait.h>
+#include "defines.h"
+#include "api.h"
+#include "utils.h"
+#include "types.h"
+#include "recents.h"
+#include "collcount.h"
+#include "content.h"
+#include "gamelist.h"
+#include "launcher.h"
+#include "list_window.h"
+#include "menutabs.h"
+#include "shortcuts.h"
+
+///////////////////////////////////////
+
+static void queueNext(char* cmd) {
+	LOG_info("cmd: %s\n", cmd);
+	putFile("/tmp/next", cmd);
+	quit = true;
+	// Every external launch (rom, pak, script, auto-resume) comes through here and then leaves nextui with
+	// _exit, so CollCount_quit never runs: write the collection counts now (the worker defers its writes).
+	CollCount_flush();
+}
+
+// Fire-and-forget launch that leaves this process's SIGCHLD disposition
+// untouched. Double-fork: the grandchild execs the command and is orphaned to
+// init (PID 1), which reaps it on exit — so no zombie accumulates while nextui
+// lives. We deliberately do NOT set SIGCHLD=SIG_IGN process-wide: that made
+// popen()/pclose()/system() elsewhere return ECHILD and misreport failure
+// after the first async launch (e.g. PLAT_wifiConnected()'s wpa_cli call read
+// as "disconnected" for the rest of the session). execvp resolves a bare
+// program name (eg. "gametimectl.elf") via PATH, matching the old posix_spawnp.
+static void runCommandAsync(const char* path, char* const argv[]) {
+	pid_t pid = fork();
+	if (pid < 0)
+		return;
+	if (pid == 0) {
+		// intermediate child
+		pid_t gc = fork();
+		if (gc == 0) {
+			// grandchild: exec the real command
+			execvp(path, argv);
+			_exit(127); // exec failed
+		}
+		_exit(0); // intermediate exits now → grandchild reparents to init
+	}
+	// parent (nextui): reap the intermediate, which exits immediately. Waiting
+	// on this specific pid can never steal a popen()/system() child.
+	waitpid(pid, NULL, 0);
+}
+
+void openArtFetch(const char* rom, const char* out, const char* tag, const char* status) {
+	char script[MAX_PATH];
+	snprintf(script, sizeof(script), "%s/Tools/Artwork Manager.pak/fetchart.sh", PAKS_PATH);
+	char* argv[] = {script, (char*)rom, (char*)out, (char*)tag, (char*)status, NULL};
+	runCommandAsync(script, argv);
+}
+
+///////////////////////////////////////
+
+static void readyResumePath(char* rom_path, int type, ResumeState* r) {
+	char* tmp;
+	r->can_resume = false;
+	r->has_preview = false;
+	r->has_boxart = false;
+	char path[MAX_PATH];
+	strcpy(path, rom_path);
+
+	if (!MenuTabs_underPath(path, ROMS_PATH))
+		return;
+
+	char auto_path[MAX_PATH];
+	if (type == ENTRY_DIR) {
+		if (!hasCue(path, auto_path) && !hasFolderM3u(path, auto_path))
+			return;				 // neither cue nor m3u
+		strcpy(path, auto_path); // cue or m3u if one exists
+	}
+
+	if (!suffixMatch(".m3u", path)) {
+		char m3u_path[MAX_PATH];
+		if (hasM3u(path, m3u_path)) {
+			// change path to m3u path
+			strcpy(path, m3u_path);
+		}
+	}
+
+	char emu_name[MAX_PATH];
+	getEmuName(path, emu_name);
+
+	char rom_file[MAX_PATH];
+	tmp = strrchr(path, '/');
+	if (!tmp)
+		return;
+	strcpy(rom_file, tmp + 1);
+
+	snprintf(r->slot_path, sizeof(r->slot_path), "%s/.minui/%s/%s.txt", SHARED_USERDATA_PATH, emu_name, rom_file); // /.userdata/.minui/<EMU>/<romname>.ext.txt
+	r->can_resume = exists(r->slot_path);
+
+	// r->slot_path contains a single integer representing the last used slot
+	if (r->can_resume) {
+		char slot[16];
+		getFile(r->slot_path, slot, 16);
+		int s = atoi(slot);
+		if (s < 0 || s > AUTO_RESUME_SLOT)
+			s = 0;																												   // corrupt slot file
+		snprintf(r->preview_path, sizeof(r->preview_path), "%s/.minui/%s/%s.%d.bmp", SHARED_USERDATA_PATH, emu_name, rom_file, s); // /.userdata/.minui/<EMU>/<romname>.ext.<n>.bmp
+		r->has_preview = exists(r->preview_path);
+	}
+
+	// Boxart fallback: if no savestate preview, check for boxart in .media folder
+	// (with ROM_findArt's multi-disc fallback to the parent folder's art)
+	if (!r->has_preview) {
+		r->has_boxart = ROM_findArt(rom_path, r->boxart_path, sizeof(r->boxart_path));
+	}
+}
+static unsigned resume_probes = 0;
+
+void readyResumeInto(Entry* entry, ResumeState* out) {
+	memset(out, 0, sizeof(*out));
+	if (entry)
+		readyResumePath(entry->path, entry->type, out);
+}
+unsigned readyResumeCount(void) {
+	return resume_probes;
+}
+void readyResume(Entry* entry) {
+	resume_probes++; // the shared state now describes this entry (or none): see readyResumeCount
+	if (!entry) {
+		resume.can_resume = false;
+		resume.has_preview = false;
+		resume.has_boxart = false;
+		return;
+	}
+	readyResumePath(entry->path, entry->type, &resume);
+}
+
+int autoResume(void) {
+	// NOTE: bypasses recents
+
+	if (!exists(AUTO_RESUME_PATH))
+		return 0;
+
+	char path[MAX_PATH];
+	getFile(AUTO_RESUME_PATH, path, MAX_PATH);
+	unlink(AUTO_RESUME_PATH);
+	sync();
+
+	// make sure rom still exists
+	char sd_path[MAX_PATH];
+	snprintf(sd_path, sizeof(sd_path), "%s%s", SDCARD_PATH, path);
+	if (!exists(sd_path))
+		return 0;
+
+	// make sure emu still exists
+	char emu_name[MAX_PATH];
+	getEmuName(sd_path, emu_name);
+
+	char emu_path[MAX_PATH];
+	getEmuPath(emu_name, emu_path);
+
+	if (!exists(emu_path))
+		return 0;
+
+	char* gametimectl_argv[] = {"gametimectl.elf", "start", sd_path, NULL};
+	runCommandAsync("gametimectl.elf", gametimectl_argv);
+
+	// Escaped buffers are 4x MAX_PATH so worst-case single-quote escaping
+	// (each ' -> '\'', +3 bytes) of a MAX_PATH source can never overflow and
+	// leave escapeSingleQuotes bailing mid-string with unbalanced quotes.
+	char escaped_emu[MAX_PATH * 4];
+	char escaped_sd[MAX_PATH * 4];
+	strncpy(escaped_emu, emu_path, sizeof(escaped_emu) - 1);
+	escaped_emu[sizeof(escaped_emu) - 1] = '\0';
+	strncpy(escaped_sd, sd_path, sizeof(escaped_sd) - 1);
+	escaped_sd[sizeof(escaped_sd) - 1] = '\0';
+
+	char cmd[MAX_PATH * 8]; // holds two worst-case escaped MAX_PATH strings + quotes
+	int n = snprintf(cmd, sizeof(cmd), "'%s' '%s'", escapeSingleQuotes(escaped_emu, sizeof(escaped_emu)), escapeSingleQuotes(escaped_sd, sizeof(escaped_sd)));
+	if (n < 0 || (size_t)n >= sizeof(cmd)) {
+		LOG_error("autoResume: launch command too long, aborting\n");
+		return 0;
+	}
+	putInt(RESUME_SLOT_PATH, AUTO_RESUME_SLOT);
+	queueNext(cmd);
+	return 1;
+}
+
+int pendingLaunch(void) {
+	if (!exists(PENDING_LAUNCH_PATH))
+		return 0;
+
+	// consumed whatever it holds: a stale or bogus request must never fire twice
+	char path[MAX_PATH] = {0};
+	getFile(PENDING_LAUNCH_PATH, path, MAX_PATH);
+	unlink(PENDING_LAUNCH_PATH);
+	trimTrailingNewlines(path);
+
+	// the same checks as autoResume: the rom (under Roms) and its emu pak still exist
+	if (!prefixMatch(ROMS_PATH "/", path) || !exists(path)) {
+		LOG_info("pendingLaunch: ignoring stale request (%s)\n", path);
+		return 0;
+	}
+	char emu_name[MAX_PATH];
+	getEmuName(path, emu_name);
+	char emu_path[MAX_PATH];
+	getEmuPath(emu_name, emu_path);
+	if (!exists(emu_path)) {
+		LOG_info("pendingLaunch: no emu pak for %s\n", path);
+		return 0;
+	}
+
+	// The script was opened from a list row (loadLast has reselected it and its list is `top`): open that row,
+	// so the alias, the collection/Home-shaped last path and a folder game's auto-launch all match an A press.
+	// A folder game's script got the resolved cue/m3u, so its row is the folder holding that file.
+	char parent[MAX_PATH];
+	snprintf(parent, sizeof(parent), "%s", path);
+	char* slash = strrchr(parent, '/');
+	if (slash)
+		*slash = '\0';
+	// Exact row first; the parent folder only when it really is a folder game (a pinned console folder such as
+	// Roms/Ports (PORTS) on Home would otherwise just open as a list and launch nothing).
+	Entry* row = NULL;
+	for (int i = 0; top && i < top->entries->count && !row; i++) {
+		Entry* e = top->entries->items[i];
+		if (exactMatch(e->path, path))
+			row = e;
+	}
+	for (int i = 0; top && i < top->entries->count && !row; i++) {
+		Entry* e = top->entries->items[i];
+		char game_file[MAX_PATH];
+		if (e->type == ENTRY_DIR && exactMatch(e->path, parent) &&
+			(hasCue(e->path, game_file) || hasFolderM3u(e->path, game_file)))
+			row = e;
+	}
+	Entry* tmp = row ? NULL : Entry_new(path, ENTRY_ROM);
+	if (!row && !tmp)
+		return 0;
+
+	resume.should_resume = false; // a fresh start: openRom then picks the default slot, never a save state
+	if (MenuTabs_savedHomeLaunch())
+		MenuTabs_markHomeLaunch(); // opened from Home: the game's return must open Home too (Entry_open clears it)
+	Entry_open(row ? row : tmp);
+	if (tmp)
+		Entry_free(tmp);
+	return quit ? 1 : 0;
+}
+
+// Queue "<path>/launch.sh" as the next command. Returns false (and stays on
+// the menu) if the escaped command doesn't fit.
+static bool queuePakLaunch(char* path) {
+	char escaped_path[MAX_PATH * 4]; // 4x so worst-case escaping can't overflow
+	strncpy(escaped_path, path, sizeof(escaped_path) - 1);
+	escaped_path[sizeof(escaped_path) - 1] = '\0';
+
+	char cmd[MAX_PATH * 5]; // worst-case escaped path + quotes + "/launch.sh"
+	int n = snprintf(cmd, sizeof(cmd), "'%s/launch.sh'", escapeSingleQuotes(escaped_path, sizeof(escaped_path)));
+	if (n < 0 || (size_t)n >= sizeof(cmd)) {
+		LOG_error("queuePakLaunch: launch command too long, aborting\n");
+		startgame = false; // keep the launcher on the menu instead of blanking
+		return false;
+	}
+	queueNext(cmd);
+	return true;
+}
+
+// The list on screen is the Home tab itself (not a folder opened from it).
+static bool onHomeTab(void) {
+	return stack->count == 1 && MenuTabs_current() == MENU_TAB_HOME;
+}
+
+void openPak(char* path) {
+	// Launched from the Home tab: save the pinned row's real path as is, so
+	// loadLast reselects that row (the tab lists the pak under this path).
+	char* save_path = path;
+	char virt_path[MAX_PATH];
+	char paks_tools_path[MAX_PATH];
+	snprintf(paks_tools_path, sizeof(paks_tools_path), "%s/Tools/", PAKS_PATH);
+	if (!onHomeTab() && prefixMatch(paks_tools_path, save_path)) {
+		// system tool pak: save the SD-shaped path so loadLast lands in
+		// Tools (the merged view lists this pak there)
+		char* name = strrchr(save_path, '/');
+		snprintf(virt_path, sizeof(virt_path), "%s%s", TOOLS_PATH, name);
+		save_path = virt_path;
+	}
+	saveLast(save_path);
+	queuePakLaunch(path);
+}
+
+void openPakInPlace(char* path) {
+	// F1/F2 tool shortcut: the pak wasn't picked from the list it lives in, so
+	// restore wherever the user was browsing instead — the selected entry,
+	// saved the same way Entry_open would (loadLast reopens its directory and
+	// reselects it), or the bare directory when the list is empty.
+	char* save_path = top->path;
+	char virt_path[MAX_PATH];
+	if (top->selected >= 0 && top->selected < top->entries->count) {
+		Entry* entry = top->entries->items[top->selected];
+		save_path = entry->path;
+		if (MenuTabs_underPath(top->path, COLLECTIONS_PATH)) {
+			// collections list ROMs under their real path; save the
+			// collection-shaped path (as Entry_open does) so loadLast walks
+			// back into the collection rather than the ROM's console folder
+			char* tmp = strrchr(entry->path, '/');
+			if (tmp) {
+				snprintf(virt_path, sizeof(virt_path), "%s%s", top->path, tmp);
+				save_path = virt_path;
+			}
+		}
+	}
+	saveLast(save_path);
+	queuePakLaunch(path);
+}
+void openScript(char* script_path, char* arg, char* last_path) {
+	// Tools-style round trip: run a pak script and come back to this list
+	// position (saveLast is what loadLast() restores from on relaunch).
+	saveLast(last_path);
+
+	// escapeSingleQuotes modifies its buffer, so use separate copies.
+	// 4x MAX_PATH so worst-case escaping can't overflow / unbalance quotes.
+	char escaped_script[MAX_PATH * 4];
+	strncpy(escaped_script, script_path, sizeof(escaped_script) - 1);
+	escaped_script[sizeof(escaped_script) - 1] = '\0';
+
+	char escaped_arg[MAX_PATH * 4];
+	strncpy(escaped_arg, arg, sizeof(escaped_arg) - 1);
+	escaped_arg[sizeof(escaped_arg) - 1] = '\0';
+
+	char cmd[MAX_PATH * 8]; // holds two worst-case escaped MAX_PATH strings + quotes
+	int n = snprintf(cmd, sizeof(cmd), "'%s' '%s'", escapeSingleQuotes(escaped_script, sizeof(escaped_script)), escapeSingleQuotes(escaped_arg, sizeof(escaped_arg)));
+	if (n < 0 || (size_t)n >= sizeof(cmd)) {
+		LOG_error("openScript: command too long, aborting\n");
+		return;
+	}
+	queueNext(cmd);
+}
+void openRom(char* path, char* last) {
+	LOG_info("openRom(%s,%s)\n", path, last);
+
+	char sd_path[MAX_PATH];
+	strcpy(sd_path, path);
+
+	char m3u_path[MAX_PATH];
+	int has_m3u = hasM3u(sd_path, m3u_path);
+
+	char recent_path[MAX_PATH];
+	strcpy(recent_path, has_m3u ? m3u_path : sd_path);
+
+	if (has_m3u && suffixMatch(".m3u", sd_path)) {
+		getFirstDisc(m3u_path, sd_path);
+	}
+
+	char emu_name[MAX_PATH];
+	getEmuName(sd_path, emu_name);
+
+	if (resume.should_resume) {
+		char slot[16];
+		getFile(resume.slot_path, slot, 16);
+		putFile(RESUME_SLOT_PATH, slot);
+		resume.should_resume = false;
+
+		if (has_m3u) {
+			char rom_file[MAX_PATH];
+			char* m3u_slash = strrchr(m3u_path, '/');
+			if (!m3u_slash)
+				return;
+			strcpy(rom_file, m3u_slash + 1);
+
+			// get disc for state
+			char disc_path_path[MAX_PATH];
+			snprintf(disc_path_path, sizeof(disc_path_path), "%s/.minui/%s/%s.%s.txt", SHARED_USERDATA_PATH, emu_name, rom_file, slot); // /.userdata/arm-480/.minui/<EMU>/<romname>.ext.0.txt
+
+			if (exists(disc_path_path)) {
+				// switch to disc path (written by minarch; a hand edit may end it with CR/LF)
+				char disc_path[MAX_PATH];
+				getFile(disc_path_path, disc_path, MAX_PATH);
+				size_t disc_len = strlen(disc_path);
+				while (disc_len > 0 && (disc_path[disc_len - 1] == '\n' || disc_path[disc_len - 1] == '\r'))
+					disc_path[--disc_len] = '\0';
+				// built aside, so a path that doesn't fit leaves sd_path on the m3u's first disc
+				char switched[MAX_PATH];
+				int n = -1;
+				if (disc_path[0] == '/')
+					n = snprintf(switched, sizeof(switched), "%s", disc_path); // absolute
+				else if (disc_len > 0) {									   // relative
+					char* tmp = strrchr(m3u_path, '/');
+					if (!tmp)
+						return;
+					n = snprintf(switched, sizeof(switched), "%.*s/%s", (int)(tmp - m3u_path), m3u_path, disc_path);
+				}
+				if (n > 0 && (size_t)n < sizeof(switched))
+					strcpy(sd_path, switched);
+				else if (n >= 0)
+					LOG_error("openRom: disc path too long, keeping %s\n", sd_path);
+			}
+		}
+	} else
+		putInt(RESUME_SLOT_PATH, RESUME_SLOT_DEFAULT);
+
+	char emu_path[MAX_PATH];
+	getEmuPath(emu_name, emu_path);
+
+	// Queue the launch command FIRST to minimize delay — queueNext writes
+	// /tmp/next and sets quit=true so the main loop exits ASAP.
+	// escapeSingleQuotes modifies its buffer, so use separate copies.
+	// 4x MAX_PATH so worst-case escaping can't overflow / unbalance quotes.
+	char escaped_emu[MAX_PATH * 4];
+	char escaped_sd[MAX_PATH * 4];
+	strncpy(escaped_emu, emu_path, sizeof(escaped_emu) - 1);
+	escaped_emu[sizeof(escaped_emu) - 1] = '\0';
+	strncpy(escaped_sd, sd_path, sizeof(escaped_sd) - 1);
+	escaped_sd[sizeof(escaped_sd) - 1] = '\0';
+
+	char cmd[MAX_PATH * 8]; // holds two worst-case escaped MAX_PATH strings + quotes
+	int n = snprintf(cmd, sizeof(cmd), "'%s' '%s'", escapeSingleQuotes(escaped_emu, sizeof(escaped_emu)), escapeSingleQuotes(escaped_sd, sizeof(escaped_sd)));
+	if (n < 0 || (size_t)n >= sizeof(cmd)) {
+		LOG_error("openRom: launch command too long, aborting\n");
+		startgame = false; // keep the launcher on the menu instead of blanking
+		return;
+	}
+	queueNext(cmd);
+
+	// Non-critical bookkeeping — happens after quit is already set
+	Recents_add(recent_path, Recents_getAlias());
+
+	// For multi-disc games in a subfolder, save the game folder instead of
+	// the disc file path so we return to the console folder on next launch.
+	char parent_dir[MAX_PATH];
+	if (last == NULL) {
+		strncpy(parent_dir, sd_path, MAX_PATH - 1);
+		parent_dir[MAX_PATH - 1] = '\0';
+		char* slash = strrchr(parent_dir, '/');
+		if (slash) {
+			*slash = '\0';
+			// Only save parent if ROM is inside a game subfolder (not directly
+			// in a console directory). This avoids navigating into disc listings.
+			if (!isConsoleDir(parent_dir)) {
+				last = parent_dir;
+			}
+		}
+	}
+
+	char* save_path = (last == NULL) ? sd_path : last;
+	saveLast(save_path);
+
+	char* gametimectl_argv[] = {"gametimectl.elf", "start", sd_path, NULL};
+	runCommandAsync("gametimectl.elf", gametimectl_argv);
+}
+
+static bool isDirectSubdirectory(const Directory* parent, const char* child_path) {
+	const char* parent_path = parent->path;
+
+	size_t parent_len = strlen(parent_path);
+	size_t child_len = strlen(child_path);
+
+	// Child must be longer than parent to be a subdirectory
+	if (child_len <= parent_len || strncmp(child_path, parent_path, parent_len) != 0) {
+		return false;
+	}
+
+	// Next char after parent path must be '/'
+	if (child_path[parent_len] != '/')
+		return false;
+
+	// Walk through the child path after parent, skipping PLATFORM segments
+	const char* cursor = child_path + parent_len + 1; // skip the slash
+
+	int levels = 0;
+	while (*cursor) {
+		const char* next = strchr(cursor, '/');
+		size_t segment_len = next ? (size_t)(next - cursor) : strlen(cursor);
+
+		if (segment_len == 0)
+			break;
+
+		// Copy segment into a buffer to compare
+		char segment[PATH_MAX];
+		if (segment_len >= PATH_MAX)
+			return false;
+		strncpy(segment, cursor, segment_len);
+		segment[segment_len] = '\0';
+
+		// Count level only if it's not PLATFORM
+		if (strcmp(segment, PLATFORM) != 0 && strcmp(segment, "Roms") != 0) {
+			levels++;
+		}
+
+		if (!next)
+			break;
+		cursor = next + 1;
+	}
+
+	return (levels == 1); // exactly one meaningful level deeper
+}
+
+static Array* pathToStack(const char* path) {
+	Array* array = Array_new();
+
+	if (!path || strlen(path) == 0)
+		return array;
+
+	if (!MenuTabs_underPath(path, SDCARD_PATH))
+		return array;
+
+	// Start from the tab the path belongs to and walk the segments below it
+	MenuTabId tab = MenuTabs_forPathVisible(path);
+	const char* base = MenuTabs_path(tab);
+	if (!MenuTabs_underPath(path, base))
+		base = SDCARD_PATH; // e.g. Roms/… while Consoles is hidden: walk from the card root as before
+
+	// Always include the tab's root directory
+	Directory* root_dir = Directory_new((char*)MenuTabs_path(tab), 0);
+	int root_rows = GameList_rowCountAt(true);
+	int list_rows = GameList_rowCountAt(false); // a directory below the root is a game list (its own header)
+	ListWindow_fromTop(root_dir->entries->count, root_rows, &root_dir->start, &root_dir->end);
+	Array_push(array, root_dir);
+	MenuTabs_setCurrent(tab);
+
+	if (exactMatch(path, base))
+		return array;
+
+	char temp_path[PATH_MAX];
+	strcpy(temp_path, base);
+	size_t current_len = strlen(base);
+
+	const char* cursor = path + current_len;
+	if (*cursor == '/')
+		cursor++;
+
+	while (*cursor) {
+		const char* next = strchr(cursor, '/');
+		size_t segment_len = next ? (size_t)(next - cursor) : strlen(cursor);
+		if (segment_len == 0 || segment_len >= PATH_MAX)
+			break;
+
+		char segment[PATH_MAX];
+		strncpy(segment, cursor, segment_len);
+		segment[segment_len] = '\0';
+
+		// Append '/' if needed
+		if (temp_path[current_len - 1] != '/') {
+			if (current_len + 1 >= PATH_MAX)
+				break;
+			temp_path[current_len++] = '/';
+			temp_path[current_len] = '\0';
+		}
+
+		// Append segment
+		if (current_len + segment_len >= PATH_MAX)
+			break;
+		strcat(temp_path, segment);
+		current_len += segment_len;
+
+		if (strcmp(segment, PLATFORM) == 0) {
+			// Merge with previous directory
+			if (array->count > 0) {
+				// Remove the previous directory
+				Directory* last = (Directory*)array->items[array->count - 1];
+				Array_pop(array);
+				Directory_free(last); // assuming you have a Directory_free
+
+				// Replace with updated one using combined path (the root's rows when it replaces the root)
+				Directory* merged = Directory_new(temp_path, 0);
+				int rows = array->count == 0 ? root_rows : list_rows;
+				ListWindow_fromTop(merged->entries->count, rows, &merged->start, &merged->end);
+				Array_push(array, merged);
+			}
+		} else {
+			Directory* dir = Directory_new(temp_path, 0);
+			ListWindow_fromTop(dir->entries->count, list_rows, &dir->start, &dir->end);
+			Array_push(array, dir);
+		}
+
+		if (!next)
+			break;
+		cursor = next + 1;
+	}
+
+	return array;
+}
+
+void openDirectory(char* path, int auto_launch) {
+	char auto_path[MAX_PATH];
+	if (hasCue(path, auto_path) && auto_launch) {
+		startgame = true;
+		openRom(auto_path, path);
+		return;
+	}
+	MenuTabs_leaveFocus(); // a list opens (pushed or rebuilt): B back to the root returns to the lit content
+
+	char m3u_path[MAX_PATH];
+	if (hasFolderM3u(path, m3u_path) && auto_launch) {
+		auto_path[0] = '\0';
+		if (getFirstDisc(m3u_path, auto_path)) {
+			startgame = true;
+			openRom(auto_path, path);
+			return;
+		}
+		// TODO: doesn't handle empty m3u files
+	}
+
+	// If this is the exact same directory for some reason, just return.
+	if (top && strcmp(top->path, path) == 0)
+		return;
+
+	// If this path is a direct subdirectory of top, push it on top of the stack
+	// If it isnt, we need to recreate the stack to keep navigation consistent
+	if (!top || isDirectSubdirectory(top, path)) {
+		int selected = 0;
+		int start = 0;
+		int end = 0;
+		if (top && top->entries->count > 0) {
+			if (restore.depth == stack->count && top->selected == restore.relative &&
+				exactMatch(restore.path, path)) {
+				selected = restore.selected;
+				start = restore.start;
+				end = restore.end;
+			}
+		}
+
+		top = Directory_new(path, selected);
+		int rc = GameList_rowCountAt(!stack || stack->count == 0); // pushed next: a root when the stack is empty
+		int count = top->entries->count;
+		if (selected >= count || end > count) {
+			// saved state can outlive the listing it described (entries
+			// deleted, or map.txt re-filtering) — a stale window here means
+			// the render indexes past entries: fall back to the top
+			top->selected = 0;
+			ListWindow_fromTop(count, rc, &top->start, &top->end);
+		} else {
+			top->start = start;
+			top->end = end ? end : ((count < rc) ? count : rc);
+		}
+
+		Array_push(stack, top);
+	} else {
+		// keep a copy of path, which might be a reference into stack which is about to be freed
+		char temp_path[MAX_PATH];
+		strncpy(temp_path, path, MAX_PATH - 1);
+		temp_path[MAX_PATH - 1] = '\0';
+
+		// construct a fresh stack by walking upwards until SDCARD_ROOT. The old root is parked first, as a tab
+		// switch parks it (a deep pinned folder opened from Home lands in Consoles: Home keeps its row), and
+		// pathToStack's MenuTabs_setCurrent moves the generation when the tab changes (the caller's background
+		// refresh keys on it)
+		MenuTabs_releaseStack();
+		Array_free(stack);
+
+		stack = pathToStack(temp_path);
+		if (stack->count == 0) {
+			// pathToStack yields an empty stack for non-SD paths — fall back
+			// to the first tab (Home, unless it is hidden) rather than indexing
+			// items[-1] (sets stack and top)
+			MenuTabs_openRoot(MenuTabs_at(0));
+		} else {
+			top = stack->items[stack->count - 1];
+		}
+	}
+}
+
+void closeDirectory(void) {
+	if (!top || stack->count <= 1)
+		return; // never pop root
+	snprintf(restore.path, sizeof(restore.path), "%s", top->path);
+	restore.selected = top->selected;
+	restore.start = top->start;
+	restore.end = top->end;
+	DirectoryArray_pop(stack);
+	restore.depth = stack->count;
+	top = stack->items[stack->count - 1];
+	restore.relative = top->selected;
+}
+
+// self is one of top's rows (the very entry, or one with its path: Search and the switcher open copies).
+static bool inTopList(const Entry* self) {
+	for (int i = 0; i < top->entries->count; i++) {
+		Entry* entry = top->entries->items[i];
+		if (entry == self || exactMatch(entry->path, self->path))
+			return true;
+	}
+	return false;
+}
+
+void Entry_open(Entry* self) {
+	MenuTabs_leaveFocus(); // any launch or open: the content has focus, lit, when the menu shows again
+	Recents_setAlias(self->name);
+	if (self->type == ENTRY_ROM) {
+		startgame = true;
+		char* last = NULL;
+		char last_path[MAX_PATH];
+		// opened from a collection's list (the Collections tab itself only lists
+		// the collections; a ROM opened over a collection by Search or the
+		// switcher isn't one of its rows, and is saved by its own path)
+		if (MenuTabs_underPath(top->path, COLLECTIONS_PATH) && !exactMatch(COLLECTIONS_PATH, top->path) &&
+			inTopList(self)) {
+			char* tmp;
+			char filename[MAX_PATH];
+			filename[0] = '\0';
+
+			tmp = strrchr(self->path, '/');
+			if (tmp)
+				strcpy(filename, tmp + 1);
+
+			snprintf(last_path, sizeof(last_path), "%s/%s", top->path, filename);
+			last = last_path;
+		} else if (onHomeTab()) {
+			// save the pinned row itself, not a game folder it sits in, so
+			// loadLast reselects it on the Home tab
+			last = self->path;
+		}
+		openRom(self->path, last);
+	} else if (self->type == ENTRY_PAK) {
+		startgame = true;
+		openPak(self->path);
+	} else if (self->type == ENTRY_DIR) {
+		openDirectory(self->path, 1);
+	}
+	// A launch above already wrote MENU_TAB_PATH (saveLast runs synchronously); otherwise nothing
+	// launched (a plain folder, an aborted command) and a Home mark must not reach a later launch.
+	MenuTabs_clearHomeLaunch();
+}
+
+///////////////////////////////////////
+
+void saveLast(char* path) {
+	putFile(LAST_PATH, path);
+	MenuTabs_saveState();
+}
+// One copy for both callers (the root context menu's Consoles, Collections and Tools items, and loadLast re-pushing
+// the list after a launch from it), which had drifted apart for Tools. Kept from each, deliberately:
+//  - the window is clamped to the selection (boot copy, via MenuTabs_clampWindow): with select_path NULL the row is 0
+//    and this is the plain top window the menu copy built, and on boot the tool's row must be visible;
+//  - MenuTabs_leaveFocus (menu copy): a list was opened over the tab, so the content has focus, lit. On boot it is a
+//    no-op in practice (Entry_open already left focus before the launch), and it keeps the two pushes identical.
+// The list is titled as its tab ("Consoles", not the Roms folder's name). The resume probe is the caller's: the
+// context menu re-probes whatever is selected after any action, so only loadLast probes here.
+void pushTabOverTab(MenuTabId id, const char* select_path) {
+	Directory* list = Directory_new((char*)MenuTabs_path(id), 0);
+	free(list->name);
+	list->name = strdup(MenuTabs_label(id));
+	int count = list->entries->count;
+	int sel = 0;
+	if (select_path) { // a system tool pak is saved SD-shaped, TOOLS_PATH/<name>, so match on the name too
+		const char* name = strrchr(select_path, '/');
+		char paks_tools_path[MAX_PATH];
+		snprintf(paks_tools_path, sizeof(paks_tools_path), "%s/Tools/", PAKS_PATH);
+		for (int i = 0; i < count; i++) {
+			Entry* entry = list->entries->items[i];
+			if (exactMatch(entry->path, (char*)select_path) ||
+				(name && prefixMatch(paks_tools_path, entry->path) && suffixMatch((char*)name, entry->path))) {
+				sel = i;
+				break;
+			}
+		}
+	}
+	list->selected = sel;
+	list->start = list->end = 0; // rebuilt around the selection, with a game list's rows (pushed over the tab)
+	MenuTabs_clampWindow(count, GameList_rowCountAt(false), &list->selected, &list->start, &list->end);
+	MenuTabs_leaveFocus();
+	Array_push(stack, list);
+	top = list;
+}
+
+void loadLast(void) { // call after loading root directory
+	if (!exists(LAST_PATH))
+		return;
+
+	char last_path[MAX_PATH];
+	getFile(LAST_PATH, last_path, MAX_PATH);
+
+	// guard against a corrupt/foreign LAST_PATH (empty, or not under SDCARD):
+	// the truncation loop below assumes every iteration contains a '/' and
+	// eventually equals SDCARD_PATH — otherwise strrchr returns NULL and the
+	// pointer subtraction writes through a wild offset
+	if (!MenuTabs_underPath(last_path, SDCARD_PATH))
+		return;
+
+	bool home_launch = MenuTabs_savedHomeLaunch();
+	bool pushed_list = false;
+	MenuTabId pushed = MenuTabs_savedPush();
+	if (pushed != MENU_TAB_HOME) {
+		// a launch from a hidden tab's list pushed over a tab: boot opened that tab, re-push the list
+		char pushed_dir[MAX_PATH];
+		snprintf(pushed_dir, sizeof(pushed_dir), "%s/", MenuTabs_path(pushed));
+		if (prefixMatch(pushed_dir, last_path) && MenuTabs_pushable(pushed)) {
+			if (pushed == MENU_TAB_TOOLS) { // on the tool's row
+				pushTabOverTab(pushed, last_path);
+				if (top->entries->count > 0)
+					readyResume(top->entries->items[top->selected]);
+				return;
+			}
+			// Consoles, Collections: the walk below goes on from the list into the console or collection
+			pushTabOverTab(pushed, NULL);
+			pushed_list = true;
+		}
+	}
+
+	// Home tab: the saved path is the pinned row itself — select it, don't walk
+	// into a pinned parent folder on the way
+	if (MenuTabs_current() == MENU_TAB_HOME && !pushed_list) {
+		for (int i = 0; i < top->entries->count; i++) {
+			Entry* entry = top->entries->items[i];
+			if (exactMatch(entry->path, last_path)) {
+				top->selected = i;
+				if (i >= top->end)
+					ListWindow_selectAtTop(top->entries->count, GameList_rowCount(), i, &top->start, &top->end);
+				readyResume(entry);
+				return;
+			}
+		}
+		// a launch from Home itself (Continue or a pin) comes back to Home only: walking the path would
+		// land inside a pinned folder's tab (Consoles › … › folder) when the row is gone
+		if (home_launch)
+			return;
+	}
+
+	char full_path[MAX_PATH];
+	strcpy(full_path, last_path);
+
+	char* tmp;
+	char filename[MAX_PATH];
+	tmp = strrchr(last_path, '/');
+	if (tmp)
+		strcpy(filename, tmp + 1);
+
+	// separator-anchored basename for the system Tools match below, so
+	// "Settings.pak" doesn't spuriously match "Emulator Settings.pak"
+	char slash_name[MAX_PATH];
+	snprintf(slash_name, sizeof(slash_name), "/%s", filename);
+
+	char paks_tools_path[MAX_PATH];
+	snprintf(paks_tools_path, sizeof(paks_tools_path), "%s/Tools/", PAKS_PATH);
+
+	Array* last = Array_new();
+	while (!exactMatch(last_path, SDCARD_PATH)) {
+		Array_push(last, strdup(last_path));
+
+		char* slash = strrchr(last_path, '/');
+		if (!slash)
+			break;
+		last_path[(slash - last_path)] = '\0';
+	}
+
+	while (last->count > 0) {
+		char* path = Array_pop(last);
+		if (!exactMatch(path, ROMS_PATH)) { // romsDir is effectively root as far as restoring state after a game
+			char collated_path[MAX_PATH];
+			collated_path[0] = '\0';
+			if (suffixMatch(")", path) && isConsoleDir(path)) {
+				strcpy(collated_path, path);
+				tmp = strrchr(collated_path, '(');
+				if (tmp)
+					tmp[1] = '\0'; // 1 because we want to keep the opening parenthesis to avoid collating "Game Boy Color" and "Game Boy Advance" into "Game Boy"
+			}
+
+			for (int i = 0; i < top->entries->count; i++) {
+				Entry* entry = top->entries->items[i];
+
+				// NOTE: strlen() is required for collated_path, '\0' wasn't reading as NULL for some reason
+				if (exactMatch(entry->path, path) || (strlen(collated_path) && prefixMatch(collated_path, entry->path) && isConsoleDir(entry->path)) || (MenuTabs_underPath(full_path, COLLECTIONS_PATH) && suffixMatch(filename, entry->path)) || (prefixMatch(paks_tools_path, entry->path) && suffixMatch(slash_name, entry->path))) {
+					top->selected = i;
+					if (i >= top->end)
+						ListWindow_selectAtTop(top->entries->count, GameList_rowCount(), i, &top->start, &top->end);
+					if (last->count == 0 && !exactMatch(entry->path, FAUX_RECENT_PATH) && !(!exactMatch(entry->path, COLLECTIONS_PATH) && MenuTabs_underPath(entry->path, COLLECTIONS_PATH)))
+						break; // don't show contents of auto-launch dirs
+
+					if (entry->type == ENTRY_DIR) {
+						// Don't navigate into auto-launch game folders
+						// (directories with a matching .cue or .m3u file)
+						char auto_path[MAX_PATH];
+						if (hasCue(entry->path, auto_path) || hasFolderM3u(entry->path, auto_path)) {
+							break; // just select the game folder
+						}
+						openDirectory(entry->path, 0);
+						break;
+					}
+				}
+			}
+		}
+		free(path); // we took ownership when we popped it
+	}
+
+	StringArray_free(last);
+
+	if (top->selected >= 0 && top->selected < top->entries->count) {
+		Entry* selected_entry = top->entries->items[top->selected];
+		readyResume(selected_entry);
+	}
+}

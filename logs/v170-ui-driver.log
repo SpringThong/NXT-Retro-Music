@@ -1,0 +1,5 @@
+PASS native RGB save/cancel, 64-icon/emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS native RGB save/cancel, 64-icon/emoji paged navigation, theme preview/apply/cancel preserves Original color, wallpaper and cover mode.
+PASS SELECT preset grid -> apply Rock / Custom five sliders, actual controller gain edits and all 12 DSP presets.
+PASS 24 native home/player interfaces, preserved lyrics/quality/output lanes, 64 icons + emoji, 105 spectrum combinations, 6 LED color functions, 640/1024 native surfaces under ASan/UBSan. Audio, account and physical-device inputs are fixtures.

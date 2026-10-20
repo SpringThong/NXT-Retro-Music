@@ -1,0 +1,66 @@
+warning: librespot-core@0.8.0: not within a suitable 'git' worktree!
+warning: librespot-core@0.8.0: VERGEN_GIT_COMMIT_DATE set to default
+warning: librespot-core@0.8.0: VERGEN_GIT_SHA set to default
+   Compiling alsa-sys v0.3.1
+   Compiling symphonia-format-ogg v0.5.5
+   Compiling symphonia-bundle-flac v0.5.5
+   Compiling librespot-core v0.8.0 (/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/spotify/vendor/librespot-dev/core)
+   Compiling ctr v0.9.2
+   Compiling symphonia-bundle-mp3 v0.5.5
+   Compiling async-trait v0.1.92
+   Compiling rand_distr v0.5.1
+error: failed to run custom build command for `alsa-sys v0.3.1`
+
+Caused by:
+  process didn't exit successfully: `/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/spotify/backend/target/debug/build/alsa-sys-e8a1edf6004f4c88/build-script-build` (exit status: 101)
+  --- stdout
+  cargo:rerun-if-env-changed=ALSA_NO_PKG_CONFIG
+  cargo:rerun-if-env-changed=PKG_CONFIG_x86_64-unknown-linux-gnu
+  cargo:rerun-if-env-changed=PKG_CONFIG_x86_64_unknown_linux_gnu
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG
+  cargo:rerun-if-env-changed=PKG_CONFIG
+  cargo:rerun-if-env-changed=ALSA_STATIC
+  cargo:rerun-if-env-changed=ALSA_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64-unknown-linux-gnu
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH_x86_64_unknown_linux_gnu
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64-unknown-linux-gnu
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_x86_64_unknown_linux_gnu
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64-unknown-linux-gnu
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_x86_64_unknown_linux_gnu
+  cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+  cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+
+  --- stderr
+
+  thread 'main' (21) panicked at /workspace/scratch/d7cab07fb248/nxt-v17-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/alsa-sys-0.3.1/build.rs:13:18:
+
+  pkg-config exited with status code 127
+  > PKG_CONFIG_PATH=/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.host-tools/usr/lib/x86_64-linux-gnu/pkgconfig PKG_CONFIG_SYSROOT_DIR=/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.host-tools PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.host-tools/usr/bin/pkgconf --libs --cflags alsa
+
+  pkg-config output:
+    /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.host-tools/usr/bin/pkgconf: error while loading shared libraries: libpkgconf.so.3: cannot open shared object file: No such file or directory
+
+  The system library `alsa` required by crate `alsa-sys` was not found.
+  The file `alsa.pc` needs to be installed and the PKG_CONFIG_PATH environment variable must contain its parent directory.
+  PKG_CONFIG_PATH contains the following:
+      - /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.host-tools/usr/lib/x86_64-linux-gnu/pkgconfig
+
+  HINT: you may need to install a package such as alsa, alsa-dev or alsa-devel.
+
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: build failed, waiting for other jobs to finish...
+warning: this lint expectation is unfulfilled
+  --> /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/spotify/vendor/librespot-dev/core/src/authentication.rs:69:14
+   |
+69 |     #[expect(deprecated)]
+   |              ^^^^^^^^^^
+   |
+   = note: `#[warn(unfulfilled_lint_expectations)]` on by default
+
+warning: `librespot-core` (lib) generated 1 warning

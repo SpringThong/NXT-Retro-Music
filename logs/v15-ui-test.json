@@ -1,0 +1,27 @@
+{
+  "ui_and_controls": {
+    "exit": 0,
+    "input_redraw_immediate": true,
+    "native_idle_10_vs_marquee_90_paints_per_625_polls": true,
+    "sleep_hidden_wake_clock_wrap": true,
+    "text_cache_eviction_and_font_invalidation": true,
+    "statistics_cache_reacts_to_sql_writes": true,
+    "sizes": [
+      640,
+      1024
+    ],
+    "action_button_combinations": 336,
+    "four_personal_tabs": true,
+    "cold_start_listener_chooser": true,
+    "avatar_icons": 24,
+    "wallpaper_presets": 20,
+    "translucent_panels": true,
+    "actual_text_pages": true,
+    "actual_rgb_palette": true,
+    "theme_contrast_palettes": 69,
+    "dark_light_wallpaper_and_statistics": true,
+    "defaults_and_preview_restore": true,
+    "asan_ubsan": true,
+    "physical_hardware_tested": false
+  }
+}

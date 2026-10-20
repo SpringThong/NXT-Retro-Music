@@ -1,0 +1,39 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "native_sizes": [
+    640,
+    1024
+  ],
+  "legacy_themes": 50,
+  "total_themes": 51,
+  "fonts": 60,
+  "real_translation_worker_local_fixture": true,
+  "draft_transaction_background_frame_guard": true,
+  "apply_cancel_save_failure": true,
+  "exact_RGB_channel_edits": true,
+  "font_jump_wrap": true,
+  "both_preview_views_all_51_themes": true,
+  "demo_lyrics_state_isolated": true,
+  "status_clock_frozen_for_warm_cache_test": true,
+  "area_sampling_and_alpha_reference": true,
+  "rounded_coverage_and_line_clip": true,
+  "multi_size_icons_100_warm_frames_no_surface_allocations": true,
+  "auralis_each_state_30_warm_frames_no_surface_allocations": true,
+  "physical_device_tested": false,
+  "version": "1.9.7.7",
+  "source_sha256": {
+    "upstream/src/nxt.h": "b2e8d0e7fa7cf9de71a81fb26f5c28a8565dd422b3463f4c92c5a5fc54d3edbb",
+    "upstream/src/nxt_auralis.c": "f112d5b7cd709075afc2aa98e02b051aae4e058c52ecdff1d503060c1e2b8032",
+    "upstream/src/nxt_avatar_v18.inc": "7968b7e490f55b6a4751dde5cfe6e63527d6601763b30da5f8e0991a79da8dd2",
+    "upstream/src/nxt_custom.c": "aa92caf9266db9bf05e311b5b0283d52a0dc663b0e2a777ddf74ac5ee6b5da53",
+    "upstream/src/nxt_record.c": "e2e47ef5eaa6be425078780ed8f60a56bd8911e538ac0c44fb24792ed14c2d89",
+    "upstream/src/nxt_screens.c": "05927a7b8615bda9286e393feb678aed93f4f2571a9d9e7c73b2b2db49ea1aa9",
+    "upstream/src/nxt_skin.c": "e6e5b4f2333c29a64c37401815436a3f3ef946337f590fa1c3aa832578b1f838",
+    "upstream/src/nxt_skin.h": "941ad227d5bf6632c5c72fae576de274070cc9a41c5a00adf76348acacbfbeb0",
+    "upstream/src/nxt_theme.c": "83a7cd4be24d7c070c67248fa7244f9c1a0b158bece0aa2f85719656c308ff76",
+    "upstream/src/nxt_theme_v18.inc": "959536413cedfbdae50068d7bcac2ca78d294d9344f8dfcaa253917d1609de73"
+  },
+  "fixture_sha256": "9c845d5f4150c40b51d8d426dfcfb02ed49d15f52b8098008dca935067204141",
+  "native_png_frames": 396
+}

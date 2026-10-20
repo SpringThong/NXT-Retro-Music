@@ -1,0 +1,15 @@
+{
+  "ui_and_controls": {
+    "exit": 0,
+    "sizes": [
+      640,
+      1024
+    ],
+    "action_button_combinations": 336,
+    "actual_text_pages": true,
+    "actual_rgb_palette": true,
+    "defaults_and_preview_restore": true,
+    "asan_ubsan": true,
+    "physical_hardware_tested": false
+  }
+}

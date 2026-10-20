@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "actual_plugin_test": "qa/test_soundcloud_public_plugin.py",
+  "MONETIZE_BLACKBOX_AD_SUPPORTED_and_missing_model_accepted": true,
+  "public_search_playlist_hydration_and_play_routes": true,
+  "private_preview_blocked_nonstreamable_and_SUB_HIGH_TIER_rejected": true,
+  "full_format_preview_and_encrypted_filter_preserved": true,
+  "source_sha256": "b50455fb037bf984dad108c2a14cd648fb393d7e6504e46f93ac3a8b0bc9765d"
+}

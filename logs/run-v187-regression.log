@@ -1,0 +1,20 @@
+{"test": "bit_worker", "exit": 0, "seconds": 1.96}
+{"test": "decoder", "exit": 0, "seconds": 4.52}
+{"test": "audio_core", "exit": 0, "seconds": 2.47}
+{"test": "bluetooth", "exit": 0, "seconds": 6.32}
+{"test": "volume", "exit": 0, "seconds": 1.47}
+{"test": "stock_volume_audio", "exit": 0, "seconds": 0.96}
+{"test": "volume_keys", "exit": 0, "seconds": 2.3}
+{"test": "normal_audio", "exit": 0, "seconds": 11.16}
+{"test": "spotify_ipc", "exit": 0, "seconds": 3.58}
+{"test": "loader", "exit": 0, "seconds": 0.68}
+{"test": "drive_decode", "exit": 0, "seconds": 3.76}
+{"test": "soundcloud_ipc", "exit": 0, "seconds": 5.01}
+{"test": "theme_catalog", "exit": 1, "seconds": 0.3}
+{"test": "baseline", "exit": 0, "seconds": 3.69}
+{"test": "sleep_timer", "exit": 0, "seconds": 10.05}
+Traceback (most recent call last):
+  File "/workspace/scratch/d7cab07fb248/nxt-v187-work/NXT_Retro_Music_v1.8.7_Source/qa/run_v187_regression.py", line 13, in <module>
+    assert all(x['exit']==0 for x in results),results
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [{'test': 'decoder', 'exit': 0, 'seconds': 4.52}, {'test': 'normal_audio', 'exit': 0, 'seconds': 11.16}, {'test': 'bit_worker', 'exit': 0, 'seconds': 1.96}, {'test': 'bluetooth', 'exit': 0, 'seconds': 6.32}, {'test': 'audio_core', 'exit': 0, 'seconds': 2.47}, {'test': 'volume', 'exit': 0, 'seconds': 1.47}, {'test': 'volume_keys', 'exit': 0, 'seconds': 2.3}, {'test': 'stock_volume_audio', 'exit': 0, 'seconds': 0.96}, {'test': 'spotify_ipc', 'exit': 0, 'seconds': 3.58}, {'test': 'soundcloud_ipc', 'exit': 0, 'seconds': 5.01}, {'test': 'drive_decode', 'exit': 0, 'seconds': 3.76}, {'test': 'loader', 'exit': 0, 'seconds': 0.68}, {'test': 'baseline', 'exit': 0, 'seconds': 3.69}, {'test': 'sleep_timer', 'exit': 0, 'seconds': 10.05}, {'test': 'theme_catalog', 'exit': 1, 'seconds': 0.3}]

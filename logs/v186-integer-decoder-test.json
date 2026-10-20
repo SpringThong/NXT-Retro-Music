@@ -1,0 +1,99 @@
+{
+  "exit": 0,
+  "actual_ARM64_decoder": true,
+  "cases": [
+    {
+      "file": "44100-16-2.wav",
+      "exit": 0,
+      "reference_pcm_sha256": "da6952c57f9bb68d0ebfb7fdb969848238cdf26525c78298f6a326c91a610d55",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "44100-16-2.flac",
+      "exit": 0,
+      "reference_pcm_sha256": "da6952c57f9bb68d0ebfb7fdb969848238cdf26525c78298f6a326c91a610d55",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "44100-16-2.m4a",
+      "exit": 0,
+      "reference_pcm_sha256": "da6952c57f9bb68d0ebfb7fdb969848238cdf26525c78298f6a326c91a610d55",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "48000-24-2.wav",
+      "exit": 0,
+      "reference_pcm_sha256": "f582c9faa0205a83c9c37c0fb2f418d4c1fde20714f2909018b52327c25160bd",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "48000-24-2.flac",
+      "exit": 0,
+      "reference_pcm_sha256": "f582c9faa0205a83c9c37c0fb2f418d4c1fde20714f2909018b52327c25160bd",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "48000-24-2.m4a",
+      "exit": 0,
+      "reference_pcm_sha256": "f582c9faa0205a83c9c37c0fb2f418d4c1fde20714f2909018b52327c25160bd",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "96000-24-1.wav",
+      "exit": 0,
+      "reference_pcm_sha256": "12e5c0a268cb0c2144f20ef9f56cd25fe6e1fde36ddf9c733e6a509fdb9bf70f",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "96000-24-1.flac",
+      "exit": 0,
+      "reference_pcm_sha256": "12e5c0a268cb0c2144f20ef9f56cd25fe6e1fde36ddf9c733e6a509fdb9bf70f",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "96000-24-1.m4a",
+      "exit": 0,
+      "reference_pcm_sha256": "12e5c0a268cb0c2144f20ef9f56cd25fe6e1fde36ddf9c733e6a509fdb9bf70f",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "192000-32-2.wav",
+      "exit": 0,
+      "reference_pcm_sha256": "5267fae902fd7449751dc0e17f5ef76b693eadf3bc2363d45e0052e7e05dc12c",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "44100-16-1.wav",
+      "exit": 0,
+      "reference_pcm_sha256": "c383ab0b708618fc6ca04af1f105614e4b17c0e8489ad8b87873d0fbdace9d42",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "44100-16-1.flac",
+      "exit": 0,
+      "reference_pcm_sha256": "c383ab0b708618fc6ca04af1f105614e4b17c0e8489ad8b87873d0fbdace9d42",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    },
+    {
+      "file": "44100-16-1.m4a",
+      "exit": 0,
+      "reference_pcm_sha256": "c383ab0b708618fc6ca04af1f105614e4b17c0e8489ad8b87873d0fbdace9d42",
+      "exact_integer_decode": true,
+      "exact_native_seek": true
+    }
+  ],
+  "lossy_source_rejected": true,
+  "physical_DAC_tested": false
+}

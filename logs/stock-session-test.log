@@ -1,0 +1,35 @@
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘fixture_send’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:49:132: warning: ignoring return value of ‘ftruncate’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   49 |         f=fopen(response_path,"rb");if(f){char reply[1200];size_t n=fread(reply,1,sizeof(reply),f);fclose(f);unlink(response_path);ftruncate(fd,0);lseek(fd,0,SEEK_SET);if(write(fd,reply,n)!=(ssize_t)n)return -1;lseek(fd,0,SEEK_SET);return (ssize_t)length;}
+      |                                                                                                                                    ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘main’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:112:72: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |             direct=fixture_server=true;direct_fd=fixture_socket(0,0,0);write(direct_fd,argv[i+1],strlen(argv[i+1]));lseek(direct_fd,0,SEEK_SET);server=1;poll_client();printf("%s",direct_reply);fprintf(stderr,"ATTACHED=%d\n",attach);return 0;
+      |                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘fixture_send’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:49:132: warning: ignoring return value of ‘ftruncate’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   49 |         f=fopen(response_path,"rb");if(f){char reply[1200];size_t n=fread(reply,1,sizeof(reply),f);fclose(f);unlink(response_path);ftruncate(fd,0);lseek(fd,0,SEEK_SET);if(write(fd,reply,n)!=(ssize_t)n)return -1;lseek(fd,0,SEEK_SET);return (ssize_t)length;}
+      |                                                                                                                                    ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘main’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:112:72: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |             direct=fixture_server=true;direct_fd=fixture_socket(0,0,0);write(direct_fd,argv[i+1],strlen(argv[i+1]));lseek(direct_fd,0,SEEK_SET);server=1;poll_client();printf("%s",direct_reply);fprintf(stderr,"ATTACHED=%d\n",attach);return 0;
+      |                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘fixture_send’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:49:132: warning: ignoring return value of ‘ftruncate’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   49 |         f=fopen(response_path,"rb");if(f){char reply[1200];size_t n=fread(reply,1,sizeof(reply),f);fclose(f);unlink(response_path);ftruncate(fd,0);lseek(fd,0,SEEK_SET);if(write(fd,reply,n)!=(ssize_t)n)return -1;lseek(fd,0,SEEK_SET);return (ssize_t)length;}
+      |                                                                                                                                    ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘main’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:112:72: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |             direct=fixture_server=true;direct_fd=fixture_socket(0,0,0);write(direct_fd,argv[i+1],strlen(argv[i+1]));lseek(direct_fd,0,SEEK_SET);server=1;poll_client();printf("%s",direct_reply);fprintf(stderr,"ATTACHED=%d\n",attach);return 0;
+      |                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘fixture_send’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:49:132: warning: ignoring return value of ‘ftruncate’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   49 |         f=fopen(response_path,"rb");if(f){char reply[1200];size_t n=fread(reply,1,sizeof(reply),f);fclose(f);unlink(response_path);ftruncate(fd,0);lseek(fd,0,SEEK_SET);if(write(fd,reply,n)!=(ssize_t)n)return -1;lseek(fd,0,SEEK_SET);return (ssize_t)length;}
+      |                                                                                                                                    ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c: In function ‘main’:
+/workspace/scratch/d7cab07fb248/nxt-v1882-work/NXT_Retro_Music_v1.8.8.2_Source/qa/session_fixture.c:112:72: warning: ignoring return value of ‘write’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |             direct=fixture_server=true;direct_fd=fixture_socket(0,0,0);write(direct_fd,argv[i+1],strlen(argv[i+1]));lseek(direct_fd,0,SEEK_SET);server=1;poll_client();printf("%s",direct_reply);fprintf(stderr,"ATTACHED=%d\n",attach);return 0;
+      |                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

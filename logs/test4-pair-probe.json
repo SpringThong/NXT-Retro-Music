@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "device_code_received": true,
+  "user_code_received": true,
+  "verification_host": "spotify.com",
+  "expires_in": 3599,
+  "poll_interval": 5,
+  "scopes_requested": [
+    "streaming",
+    "user-read-private"
+  ],
+  "approval_tested": false,
+  "playback_tested": false
+}

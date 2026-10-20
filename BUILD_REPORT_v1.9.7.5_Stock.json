@@ -1,0 +1,64 @@
+{
+  "version": "1.9.7.5",
+  "rom": "stock",
+  "baseline": "v1.9.7.4 feature removal, restored v1.9.7.3 audio/UI/control paths",
+  "build": {
+    "exit": 0,
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_STOCK",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "d454deb79834fd5677286bd216bd75b6c733bb44b169cd57e134e83a453edf5e",
+  "installer": "NXT_Retro_Music_v1.9.7.5_Stock.zip",
+  "installer_size": 145353166,
+  "installer_sha256": "3ad7485baa9f0021dbe9609289950084fe9713d9a3e01484d6181d5364f60c84",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.7.5_Stock.zip",
+  "OTA_kit_size": 145373398,
+  "OTA_kit_sha256": "3360b52dc43b4e7555135e92482c98c2171c775671ff30a75142258201144b83",
+  "checks": {
+    "v1975-preservation.json": {
+      "sha256": "46af4c00b0165c505461983f983e4799a0112635213131693d46b362766a7323"
+    },
+    "v1975-ui-test.json": {
+      "sha256": "725cbe342c75fdb916d2c0c7a7b83fc88f2980ff8da4af7d313127a77c7a17ef"
+    },
+    "v1975-config-test.json": {
+      "sha256": "d9322ee5a7bfebdae775bf88ee9d98f1dac1be13092b29af60c2cb4319a7ca89"
+    },
+    "v1975-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v1975-screenoff.json": {
+      "sha256": "f231b2d02ec73c6b5700b39657bddd4ca09e8e8a83a28eb518a4c80d3b205bb6"
+    },
+    "v1975-dsd-test-nxredux.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v1975-loader-stock.json": {
+      "sha256": "0c3af5144e6a28280347aa9a7e7495fe3381da57d82aa12243fffa9535808eac"
+    },
+    "v1975-package-qa-stock.json": {
+      "sha256": "0fb12f648a1d9f012fb1b448da12999020dedb73e47ce1d0a2691fa2337d07d8"
+    },
+    "v1975-ota-qa-stock.json": {
+      "sha256": "062e74cf77cb6b197a8016571873aff8a7ac8c88b2df149a1882eff73ba6fe0d"
+    },
+    "v1975-ota-publisher-kit-stock.json": {
+      "sha256": "8b5fcae055e9390cfd52d8566bf7b11c564ef49237a96141a19cde390e29015f"
+    }
+  },
+  "feature": "Remove centre-cancellation audio processing, vocal shortcut/action/settings/K status. Do not remove bilingual lyrics, lyric highlighting or any other listening feature.",
+  "migration": "Saved action 22 becomes Unassigned on all 16 keys and per-profile preferences; valid action IDs preserved, especially action 21 Stop. L3 default Unassigned.",
+  "preservation": "827 build inputs, all 746 resources and online backends byte-identical to pre-vocal v1.9.7.3. Only header, safe config migration, and release notes differ.",
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "themes_total": 51,
+  "fonts_total": 60,
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "actual_device_FPS_measured": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

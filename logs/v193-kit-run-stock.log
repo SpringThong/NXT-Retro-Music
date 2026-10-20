@@ -1,0 +1,15 @@
+Created /workspace/scratch/d7cab07fb248/v193-project/NXT_Retro_Music_v1.9.2_Source/dist/OTA_Google_Drive_v1.9.3_Stock/templates/update.json (111681681 bytes, SHA-256 2fcf8ff862889fe1a5b369375f9a97acb3157c418fcbefb4649588c55f7cc6d1)
+{
+  "version": "1.9.3",
+  "rom": "stock",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.3_Stock.zip",
+  "kit_sha256": "abba49a8fdf4bd1ddac9fe6c4fb89ce812a4394d24aa3e61ba409a7bedfe59f4",
+  "size": 111707551,
+  "installer": "NXT_Retro_Music_v1.9.3_Stock.zip",
+  "installer_sha256": "2fcf8ff862889fe1a5b369375f9a97acb3157c418fcbefb4649588c55f7cc6d1",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

@@ -1,0 +1,147 @@
+@ok 1
+@state playback=0 position_ms=0 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=
+@ok 2
+@ok 3
+@ok 4
+@ok 5
+@ok 6
+@ok 7
+@state playback=1 position_ms=938 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 8
+@ok 9
+@ok 10
+@ok 11
+@state playback=1 position_ms=1493 lock=0 font=0 bands=10 off=0 spectrum=1 color=1 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 12
+@ok 13
+@ok 14
+@state playback=1 position_ms=1962 lock=0 font=0 bands=10 off=0 spectrum=1 color=2 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 15
+@ok 16
+@ok 17
+@state playback=1 position_ms=2432 lock=0 font=0 bands=10 off=0 spectrum=1 color=3 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 18
+@ok 19
+@ok 20
+@state playback=1 position_ms=2922 lock=0 font=0 bands=10 off=0 spectrum=1 color=4 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 21
+@ok 22
+@ok 23
+@state playback=1 position_ms=3413 lock=0 font=0 bands=10 off=0 spectrum=0 color=4 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 24
+@ok 25
+@ok 26
+@state playback=1 position_ms=3882 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 27
+@ok 28
+@ok 29
+@state playback=1 position_ms=4330 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=1 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 30
+@ok 31
+@ok 32
+@ok 33
+@state playback=1 position_ms=4842 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 34
+@ok 35
+@ok 36
+@state playback=1 position_ms=5866 lock=0 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 37
+@ok 38
+@state playback=1 position_ms=7488 lock=0 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 39
+@ok 40
+@ok 41
+@state playback=1 position_ms=7936 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 42
+@ok 43
+@ok 44
+@state playback=2 position_ms=7978 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 45
+@ok 46
+@ok 47
+@state playback=2 position_ms=7978 lock=0 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 48
+@ok 49
+@state playback=2 position_ms=7978 lock=0 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 50
+@ok 51
+@ok 52
+@state playback=2 position_ms=7978 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 53
+@ok 54
+@ok 55
+@state playback=1 position_ms=8384 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 56
+@ok 57
+@ok 58
+@state playback=1 position_ms=9856 lock=1 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 59
+@ok 60
+@ok 61
+@state playback=1 position_ms=10986 lock=1 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 62
+@ok 63
+@ok 64
+@state playback=1 position_ms=11456 lock=1 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 65
+@ok 66
+@ok 67
+@state playback=1 position_ms=12928 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 68
+@ok 69
+@ok 70
+@state playback=1 position_ms=13290 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=1 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 71
+@ok 72
+@ok 73
+@ok 74
+@state playback=1 position_ms=14079 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=1 dac=1 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 75
+@ok 76
+@ok 77
+@ok 78
+@state playback=1 position_ms=14484 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=1 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 79
+@ok 80
+@ok 81
+@ok 82
+@state playback=1 position_ms=15273 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 83
+@ok 84
+@ok 85
+@ok 86
+@state playback=1 position_ms=15764 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 87
+@ok 88
+@ok 89
+@state playback=1 position_ms=16788 lock=0 font=0 bands=10 off=1 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 90
+@ok 91
+@ok 92
+@state playback=1 position_ms=17257 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 93
+@ok 94
+@ok 95
+@ok 96
+@ok 97
+@ok 98
+@ok 99
+@ok 100
+@ok 101
+@ok 102
+@ok 103
+@ok 104
+@ok 105
+@ok 106
+@ok 107
+@ok 108
+@ok 109
+@ok 110
+@state playback=1 position_ms=21417 lock=0 font=0 bands=10 off=0 spectrum=1 color=0 favorite=0 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 111
+@ok 112
+@ok 113
+@ok 114
+@state playback=1 position_ms=22505 lock=0 font=0 bands=10 off=0 spectrum=0 color=4 favorite=1 jack=0 dac=0 output=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 115
+@bye

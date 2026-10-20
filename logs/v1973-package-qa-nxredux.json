@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "version": "1.9.7.3",
+  "rom": "nxredux",
+  "binary_sha256": "81ab1c5954b09c7ef6d4315a0cfbe01773e9c8accee0dcf42ce919d3be6caf0a",
+  "installer_size": 144675584,
+  "installer_sha256": "0366ada8efa26fe95d04da3f275d3968f151c587da15b7164ef738cb4a25fcbb",
+  "kit_size": 144693845,
+  "kit_sha256": "7c46e1945a023fb16a2d750743e1d587b217c2659fa0e1de5998eb2df1f27386",
+  "official_OTA_URL": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing",
+  "cached_version_and_config_current": true,
+  "correct_ROM_paths_and_libraries": true,
+  "original_resource_assets_verified": 746,
+  "online_backends_preserved": true,
+  "no_userdata_credentials_or_other_ROM_feed": true,
+  "executable_modes_CRC_checked": true,
+  "current_build_fingerprints_match": true,
+  "exact_installer_in_OTA_kit": true,
+  "offline_OTA_generator_metadata_and_guide_current": true,
+  "live_feed_uploaded": false,
+  "hardware_tested": false
+}

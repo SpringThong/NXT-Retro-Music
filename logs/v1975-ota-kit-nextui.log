@@ -1,0 +1,15 @@
+Created /workspace/scratch/d7cab07fb248/transition-diagnosis/native/NXT_Retro_Music_v1.9.7.2_Source/dist/OTA_Google_Drive_v1.9.7.5_NextUI/templates/update.json (142994890 bytes, SHA-256 17b76f9fb94263680e48ee365a811837737352eee558d31938ccf768409c677e)
+{
+  "version": "1.9.7.5",
+  "rom": "nextui",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.7.5_NextUI.zip",
+  "kit_sha256": "713e862626e32aa88342b42cadcd118855ca9cc42fb084e7e1abfee187801b5b",
+  "size": 143015185,
+  "installer": "NXT_Retro_Music_v1.9.7.5_NextUI.zip",
+  "installer_sha256": "17b76f9fb94263680e48ee365a811837737352eee558d31938ccf768409c677e",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

@@ -1,0 +1,5 @@
+PASS NextUI production: connected A2DP detection ignores gamepad; private ALSA route parses without merge conflicts; speaker/Bluetooth/DAC and headset changes reopen named PCM after closing/resetting cache; stale firmware sink is corrected; transport retry recovers; local, Spotify and SoundCloud PCM remains nonzero; idle does not reopen audio. No physical headset test.
+NXT audio: QA BlueALSA transport not ready
+PASS real Bluetooth mixer helper: A2DP control selected instead of Battery/SCO, explicit unmute with requested volume, absent control does not issue a command, later control recovers, system mute still outputs zero volume. No physical headset test.
+PASS real Bluetooth mixer helper: A2DP control selected instead of Battery/SCO, explicit unmute with requested volume, absent control does not issue a command, later control recovers, system mute still outputs zero volume. No physical headset test.
+PASS real Bluetooth mixer helper: A2DP control selected instead of Battery/SCO, explicit unmute with requested volume, absent control does not issue a command, later control recovers, system mute still outputs zero volume. No physical headset test.

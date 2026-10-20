@@ -1,0 +1,92 @@
+[
+  {
+    "file": "assets/fonts/Harmony-license.txt",
+    "bytes": 3352,
+    "sha256": "327e0147d4a3ca2d89e81abce45b210576b0f9fe2b29d900f64b58039f12a102"
+  },
+  {
+    "file": "assets/fonts/Harmony.ttf",
+    "bytes": 155992,
+    "sha256": "f4bd33a8067ceb13730701ccbc17f55f62b304b8783042799d58e99116d8faae"
+  },
+  {
+    "file": "assets/fonts/HarmonyCondensed.ttf",
+    "bytes": 142996,
+    "sha256": "82b47ec0a1a2465aabe282c21778d471d901a68921f0b66d0d9367d5414279b7"
+  },
+  {
+    "file": "assets/fonts/HarmonyCondensedItalic.ttf",
+    "bytes": 141540,
+    "sha256": "2583d784e3be331ce272b71b67a95513d306cc3cb6af8359f9a76c05213f6c27"
+  },
+  {
+    "file": "assets/fonts/HarmonyItalic.ttf",
+    "bytes": 142680,
+    "sha256": "87fb761f46ec072f687a920dc4df16b3097f884b42e403cececd6eac7956f8e1"
+  },
+  {
+    "file": "assets/fonts/OPPO-license.txt",
+    "bytes": 3304,
+    "sha256": "b013f80fa2fa6f6db4a31b793676f787af78263b568088a2d896e9d9b3e5fde7"
+  },
+  {
+    "file": "assets/fonts/OPPOSans4.ttf",
+    "bytes": 22775460,
+    "sha256": "4f58dbaeaea78ebe9dafaadd2bec60f50983ef15de31605beff55aac94420dd2"
+  },
+  {
+    "file": "assets/fonts/notosans-Italic.ttf",
+    "bytes": 2322640,
+    "sha256": "58e6e0ebd1931b29a365aa2d3e2ee9a9e831a3af7cf3ad1462d4e72154f0b291"
+  },
+  {
+    "file": "assets/fonts/notosans-OFL.txt",
+    "bytes": 4396,
+    "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a"
+  },
+  {
+    "file": "assets/fonts/notosans-Regular.ttf",
+    "bytes": 2049096,
+    "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d"
+  },
+  {
+    "file": "assets/fonts/roboto-Italic.ttf",
+    "bytes": 530944,
+    "sha256": "9725a847af6b460ffca162ae66d20dad48b01876137947180b42d7dcd7887182"
+  },
+  {
+    "file": "assets/fonts/roboto-OFL.txt",
+    "bytes": 4394,
+    "sha256": "061402327a96aadb0bfb694a960ed289ecd38d383e396243831ab81feb109c41"
+  },
+  {
+    "file": "assets/fonts/roboto-Regular.ttf",
+    "bytes": 488584,
+    "sha256": "d7598e12c5dbef095ff8272cfc55da0250bd07fbdecbac8a530b9b277872a134"
+  },
+  {
+    "file": "assets/fonts/robotocondensed-Italic.ttf",
+    "bytes": 388124,
+    "sha256": "78f643b1923008b00dfc9b371a2ecd4d80a017722925f1a3fac9940be56d1b7d"
+  },
+  {
+    "file": "assets/fonts/robotocondensed-OFL.txt",
+    "bytes": 4393,
+    "sha256": "0e4cc6ece88573545be2ed25835363662a6182ba4a4c1b5c8feda52add30e8a6"
+  },
+  {
+    "file": "assets/fonts/robotocondensed-Regular.ttf",
+    "bytes": 371616,
+    "sha256": "dace262afcee68a5276f200d8026c57221735c0118ab5fda8c2c0d3dc409a8d0"
+  },
+  {
+    "file": "assets/fonts/robotoslab-LICENSE.txt",
+    "bytes": 11358,
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "file": "assets/fonts/robotoslab-Regular.ttf",
+    "bytes": 251880,
+    "sha256": "786ae192477447d33c6672c3055fba7cbfe45184c9a79e77a14f15716ca05b16"
+  }
+]

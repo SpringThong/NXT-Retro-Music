@@ -1,0 +1,5 @@
+/workspace/scratch/d7cab07fb248/nxt-v1891-work/NXT_Retro_Music_v1.8.9_Source/nxredux/launcher-source/workspace/tg5040/platform/platform.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Built official v2.1.2 launcher with NXT Tools icon; original mappings retained.

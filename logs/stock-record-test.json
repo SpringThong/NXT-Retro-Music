@@ -1,0 +1,26 @@
+{
+  "native_record": {
+    "exit": 0,
+    "production_skin_and_frame_controller": true,
+    "asan_ubsan_bounds_and_undefined_behavior": true,
+    "leaksan": "unavailable: runtime cannot read /proc/task under its tracer; leak scan disabled",
+    "cache_release_asserted": true,
+    "playing_pause_resume_tonearm": true,
+    "imported_wallpaper_dark_light": true,
+    "rotates_with_spectrum_off": true,
+    "no_hidden_display_off_menu_animation": true,
+    "track_cover_theme_resize_clock_wrap": true,
+    "cached_surfaces_reused": true,
+    "render_sizes": [
+      1024,
+      640
+    ],
+    "sources_tested": [
+      "Spotify fixture",
+      "local fixture",
+      "Drive fixture"
+    ],
+    "audio_and_dac_fixture": true,
+    "physical_hardware_tested": false
+  }
+}

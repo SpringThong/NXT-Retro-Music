@@ -1,0 +1,21 @@
+{
+  "version": "1.9.7.2",
+  "rom": "stock",
+  "exit": 0,
+  "binary_sha256": "a9a5afead27a4e2d35b6a2cfd1588be17270942a9f197f274c51f3f0bb2754bd",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.7.2\nStock \u00b7 v1.9.7.2 \u00b7 StableFrame-DarkControls\n"
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.7.2 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/theme-diagnosis/native/NXT_Retro_Music_v1.9.7.1_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

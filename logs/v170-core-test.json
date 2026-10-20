@@ -1,0 +1,8 @@
+{
+  "exit": 0,
+  "production_config_migration_persistence": true,
+  "kernel_sensor_files_and_SQLite_history": true,
+  "five_band_DSP_response_and_PCM": true,
+  "ASan_UBSan": true,
+  "physical_hardware_tested": false
+}

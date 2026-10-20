@@ -1,0 +1,15 @@
+{
+  "exit": 0,
+  "actual_original_lyrics_parser_revision": true,
+  "same_count_replacement": true,
+  "timestamps_and_offset_preserved": true,
+  "UTF8_unchanged": true,
+  "plain_unsynced_preserved": true,
+  "no_revision_churn_when_unchanged": true,
+  "ASan_UBSan": true,
+  "sources": {
+    "lyrics.c": "cfbf7f41bf9e607f7f08dbe09957d4ea4bf6b2babd7ebec851c4d06ca841a8fb",
+    "lyrics.h": "52dba0aa8fa33af57cae010ba4bee6d5512f0b750215d3f07b985762a1f67d68",
+    "lyric_window.c": "c8e2fcea03cd6cc74bf0295d91a3e7ee730657d7729b658c8b5228609decb844"
+  }
+}

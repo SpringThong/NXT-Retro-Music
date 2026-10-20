@@ -1,0 +1,2 @@
+PASS actual library UI/scheduler: saved rows before worker, one startup check, no re-entry scans, stable live/folder views, generation refresh, hidden pause, upload debounce, favorites and recursive scope
+PASS actual library UI/scheduler: saved rows before worker, one startup check, no re-entry scans, stable live/folder views, generation refresh, hidden pause, upload debounce, favorites and recursive scope

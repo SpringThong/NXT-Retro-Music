@@ -1,0 +1,22 @@
+/workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt_transfer.c: In function ‘request’:
+/workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt_transfer.c:58:70: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 244 and 254 [-Wformat-truncation=]
+   58 |  if(ok)for(int i=0;i<1000;i++){if(i)snprintf(final,sizeof(final),"%d-%s",i,name);if(install_file(tmp,final)){installed=true;break;}if(errno!=EEXIST)break;}
+      |                                                                      ^~    ~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/native-v181/.cache/render-sp/include/SDL2/SDL_stdinc.h:43,
+                 from /workspace/scratch/d7cab07fb248/native-v181/.cache/render-sp/include/SDL2/SDL_main.h:25,
+                 from /workspace/scratch/d7cab07fb248/native-v181/.cache/render-sp/include/SDL2/SDL.h:32,
+                 from /workspace/scratch/d7cab07fb248/native-v181/.cache/render-sp/include/SDL2/SDL_ttf.h:39,
+                 from /workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt.h:7,
+                 from /workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt_transfer.h:3,
+                 from /workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt_transfer.c:2:
+In function ‘snprintf’,
+    inlined from ‘request’ at /workspace/scratch/d7cab07fb248/native-v181/upstream/src/nxt_transfer.c:58:37:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 3 and 268 bytes into a destination of size 256
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+PASS auth, invalid names/UTF-8, header isolation, no overwrite/symlink escape, 16 MiB streaming, cancellation and shutdown cleanup under ASan/UBSan.

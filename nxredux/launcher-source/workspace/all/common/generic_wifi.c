@@ -1,0 +1,824 @@
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// File: common/generic_wifi.c
+// Generic implementations of wifi functions, to be used by platforms that don't
+// provide their own implementations.
+// Used by: tg5050
+// Library dependencies: none
+// Tool dependencies: wpa_cli, wpa_supplicant, iproute2 (ip command)
+// Script dependencies: $SYSTEM_PATH/etc/wifi/wifi_init.sh
+
+// \note This files does not have an acompanying header, as all functions are declared in api.h
+// with minimal fallback implementations
+// \sa FALLBACK_IMPLEMENTATION
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#include "defines.h"
+#include "api.h"
+#include "config.h"
+#include "utils.h"
+
+#include <unistd.h>
+
+bool PLAT_hasWifi() {
+	return true;
+}
+
+// Normally defined by the including platform.c before this file; fallback
+// keeps this file parseable standalone (clangd) and matches both platforms.
+#ifndef WIFI_SOCK_DIR
+#define WIFI_SOCK_DIR "/etc/wifi/sockets"
+#endif
+
+#define WIFI_INTERFACE "wlan0"
+#define WPA_CLI_CMD "wpa_cli -p " WIFI_SOCK_DIR " -i " WIFI_INTERFACE
+
+#define wifilog(fmt, ...) \
+	LOG_note(PLAT_wifiDiagnosticsEnabled() ? LOG_INFO : LOG_DEBUG, fmt, ##__VA_ARGS__)
+
+// Helper function to run a command and capture output
+static int wifi_run_cmd(const char* cmd, char* output, size_t output_len) {
+	wifilog("Running command: %s\n", cmd);
+	int exit_code = run_cmd_capture(cmd, output, output_len);
+	if (exit_code < 0)
+		LOG_error("wifi_run_cmd: failed to run command: %s\n", cmd);
+	else
+		wifilog("Command exit code: %d\n", exit_code);
+	return exit_code;
+}
+
+// Helper to check if wpa_supplicant is running
+
+// Helper to get IP address of wifi interface
+static bool wifi_get_ip(char* ip, size_t len) {
+	char cmd[256];
+	char output[256];
+	snprintf(cmd, sizeof(cmd), "ip -4 addr show %s 2>/dev/null | grep -o 'inet [0-9.]*' | cut -d' ' -f2", WIFI_INTERFACE);
+	if (wifi_run_cmd(cmd, output, sizeof(output)) == 0 && output[0] != '\0') {
+		trimTrailingNewlines(output);
+		strncpy(ip, output, len - 1);
+		ip[len - 1] = '\0';
+		return true;
+	}
+	ip[0] = '\0';
+	return false;
+}
+
+// Helper to escape a string for wpa_cli (double quotes/backslashes) and shell (single quotes)
+static void wifi_escape(char* dest, const char* src, size_t dest_len) {
+	size_t j = 0;
+	for (size_t i = 0; src[i] != '\0' && j < dest_len - 1; i++) {
+		// Double quotes and backslashes need to be escaped for wpa_cli (inside its own quotes)
+		if (src[i] == '"' || src[i] == '\\') {
+			if (j < dest_len - 2) {
+				dest[j++] = '\\';
+			}
+		}
+		// Single quotes need to be escaped for the shell (outside wpa_cli's quotes but inside shell's)
+		else if (src[i] == '\'') {
+			if (j < dest_len - 5) {
+				dest[j++] = '\''; // close single quote
+				dest[j++] = '\\'; // escape
+				dest[j++] = '\''; // the actual quote
+				dest[j++] = '\''; // open single quote again
+			}
+			continue;
+		}
+
+		if (j < dest_len - 1) {
+			dest[j++] = src[i];
+		}
+	}
+	dest[j] = '\0';
+}
+
+void PLAT_wifiInit() {
+	// We should never have to do this manually, as wifi_init.sh should be
+	// started/stopped by the platform init scripts.
+	//PLAT_wifiEnable(CFG_getWifi());
+
+	PLAT_wifiDiagnosticsEnable(CFG_getWifiDiagnostics());
+	wifilog("Wifi init\n");
+}
+
+// PLAT_wifiEnabled is polled every rendered frame (menu-bar wifi indicator via
+// GFX_blitHardwareGroup), and the sysfs open/read/close costs ~1-2ms of frame
+// budget. Cache the result for 1s — outside toggles (e.g. the OSD overlay)
+// still show within a second, and our own toggles bust the cache immediately.
+static uint32_t wifi_enabled_checked_at = 0;
+static bool wifi_enabled_cached = false;
+
+bool PLAT_wifiEnabled() {
+	uint32_t now = SDL_GetTicks();
+	if (wifi_enabled_checked_at != 0 && now - wifi_enabled_checked_at < 1000)
+		return wifi_enabled_cached;
+	// Live interface state (IFF_UP), not the cached config value: wifi can be
+	// toggled outside this process (e.g. the OSD overlay) and the UI should
+	// reflect reality.
+	wifi_enabled_checked_at = now ? now : 1;
+	FILE* f = fopen("/sys/class/net/" WIFI_INTERFACE "/flags", "r");
+	if (!f) {
+		wifi_enabled_cached = false;
+		return false;
+	}
+	unsigned int flags = 0;
+	bool up = fscanf(f, "%x", &flags) == 1 && (flags & 0x1); // IFF_UP
+	fclose(f);
+	wifi_enabled_cached = up;
+	return up;
+}
+
+void PLAT_wifiEnable(bool on) {
+	if (on) {
+		wifilog("turning wifi on...\n");
+		system(SYSTEM_PATH "/etc/wifi/wifi_init.sh start > /dev/null 2>&1");
+		// Keep config in sync (after the script, so CFG_sync captures the
+		// radio state the script actually produced)
+		CFG_setWifi(on);
+	} else {
+		wifilog("turning wifi off...\n");
+		system(SYSTEM_PATH "/etc/wifi/wifi_init.sh stop > /dev/null 2>&1");
+		// Keep config in sync
+		CFG_setWifi(on);
+	}
+	wifi_enabled_checked_at = 0; // bust the PLAT_wifiEnabled cache immediately
+}
+
+int PLAT_wifiScan(struct WIFI_network* networks, int max) {
+	if (!PLAT_wifiEnabled()) {
+		LOG_error("PLAT_wifiScan: wifi is currently disabled.\n");
+		return -1;
+	}
+
+	wifilog("PLAT_wifiScan: Starting WiFi scan...\n");
+	// Trigger a scan
+	system(WPA_CLI_CMD " scan 2>/dev/null");
+	wifilog("PLAT_wifiScan: Waiting 2s for scan to complete...\n");
+	usleep(2000000); // Give time for scan to complete
+
+	wifilog("PLAT_wifiScan: Retrieving scan results...\n");
+	// Get scan results
+	char results[16384];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s scan_results 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, results, sizeof(results)) != 0) {
+		LOG_error("PLAT_wifiScan: failed to get scan results.\n");
+		return -1;
+	}
+
+	// wpa_cli scan_results format:
+	// bssid / frequency / signal level / flags / ssid
+	// 04:b4:fe:32:f9:73	2462	-63	[WPA2-PSK-CCMP][WPS][ESS]	frynet
+
+	wifilog("%s\n", results);
+
+	const char* current = results;
+
+	// Skip header line
+	const char* next = strchr(current, '\n');
+	if (!next) {
+		LOG_warn("PLAT_wifiScan: no scan results lines found.\n");
+		return 0;
+	}
+	current = next + 1;
+
+	int count = 0;
+	char line[512];
+
+	while (current && *current && count < max) {
+		next = strchr(current, '\n');
+		size_t len = next ? (size_t)(next - current) : strlen(current);
+		if (len >= sizeof(line)) {
+			LOG_warn("PLAT_wifiScan: line too long, truncating.\n");
+			len = sizeof(line) - 1;
+		}
+
+		memcpy(line, current, len);
+		line[len] = '\0';
+
+		char features[128];
+		struct WIFI_network* network = &networks[count];
+
+		// Initialize fields
+		network->bssid[0] = '\0';
+		network->ssid[0] = '\0';
+		network->freq = -1;
+		network->rssi = -1;
+		network->security = SECURITY_NONE;
+
+		int parsed = sscanf(line, "%17[0-9a-fA-F:]\t%d\t%d\t%127[^\t]\t%127[^\n]",
+							network->bssid, &network->freq, &network->rssi,
+							features, network->ssid);
+
+		if (parsed < 4) {
+			LOG_warn("PLAT_wifiScan: malformed line skipped (parsed %d fields): '%s'\n", parsed, line);
+			current = next ? next + 1 : NULL;
+			continue;
+		}
+
+		// Trim only a trailing CR (defensive against CRLF output). Do NOT
+		// trim spaces/tabs: 802.11 SSIDs are byte strings where trailing
+		// whitespace is significant — trimming it here made the connect
+		// path save a profile that can never match the AP's real SSID, so
+		// the supplicant scans forever ("cannot connect" with no error).
+		size_t ssid_len = strlen(network->ssid);
+		while (ssid_len > 0 && network->ssid[ssid_len - 1] == '\r') {
+			network->ssid[ssid_len - 1] = '\0';
+			ssid_len--;
+		}
+
+		if (network->ssid[0] == '\0') {
+			LOG_warn("Ignoring network %s with empty SSID\n", network->bssid);
+			current = next ? next + 1 : NULL;
+			continue;
+		}
+
+		if (containsString(features, "WPA2-PSK"))
+			network->security = SECURITY_WPA2_PSK;
+		else if (containsString(features, "WPA-PSK"))
+			network->security = SECURITY_WPA_PSK;
+		else if (containsString(features, "WEP"))
+			network->security = SECURITY_WEP;
+		else if (containsString(features, "EAP"))
+			network->security = SECURITY_UNSUPPORTED;
+
+		count++;
+		current = next ? next + 1 : NULL;
+	}
+
+	wifilog("PLAT_wifiScan: Found %d networks\n", count);
+	return count;
+}
+
+bool PLAT_wifiConnected() {
+	if (!PLAT_wifiEnabled()) {
+		wifilog("PLAT_wifiConnected: wifi is currently disabled.\n");
+		return false;
+	}
+
+	wifilog("PLAT_wifiConnected: Checking WiFi connection status...\n");
+	char output[256];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s status 2>/dev/null | grep '^wpa_state=' | cut -d= -f2", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, output, sizeof(output)) != 0) {
+		return false;
+	}
+
+	trimTrailingNewlines(output);
+	wifilog("PLAT_wifiConnected: wifi state is %s\n", output);
+
+	return strcmp(output, "COMPLETED") == 0;
+}
+
+int PLAT_wifiConnection(struct WIFI_connection* connection_info) {
+	if (!PLAT_wifiEnabled()) {
+		wifilog("PLAT_wifiConnection: wifi is currently disabled.\n");
+		connection_reset(connection_info);
+		return -1;
+	}
+
+	wifilog("PLAT_wifiConnection: Retrieving connection details...\n");
+	// Get status from wpa_cli
+	char status[2048];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s status 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, status, sizeof(status)) != 0) {
+		connection_reset(connection_info);
+		return -1;
+	}
+
+	// Parse wpa_state
+	char* state_line = strstr(status, "wpa_state=");
+	if (!state_line || strstr(state_line, "COMPLETED") == NULL) {
+		connection_reset(connection_info);
+		wifilog("PLAT_wifiConnection: Not connected\n");
+		return 0;
+	}
+
+	// We're connected, fill in the info
+	connection_info->valid = true;
+
+	// Parse SSID
+	wifilog("PLAT_wifiConnection: Parsing connection info...\n");
+	char* ssid_line = strstr(status, "\nssid=");
+	if (ssid_line) {
+		ssid_line += 6; // skip "\nssid="
+		char* end = strchr(ssid_line, '\n');
+		size_t len = end ? (size_t)(end - ssid_line) : strlen(ssid_line);
+		if (len >= SSID_MAX)
+			len = SSID_MAX - 1;
+		strncpy(connection_info->ssid, ssid_line, len);
+		connection_info->ssid[len] = '\0';
+	} else {
+		connection_info->ssid[0] = '\0';
+	}
+
+	// Parse frequency
+	char* freq_line = strstr(status, "\nfreq=");
+	if (freq_line) {
+		connection_info->freq = atoi(freq_line + 6);
+	} else {
+		connection_info->freq = -1;
+	}
+
+	// Get IP address
+	wifi_get_ip(connection_info->ip, sizeof(connection_info->ip));
+
+	// Get signal strength from iw
+	wifilog("PLAT_wifiConnection: Retrieving signal strength...\n");
+	connection_info->rssi = -1;
+	connection_info->link_speed = -1;
+	connection_info->noise = -1;
+
+	snprintf(cmd, sizeof(cmd), "iw dev %s link 2>/dev/null", WIFI_INTERFACE);
+	char link_info[1024];
+	if (wifi_run_cmd(cmd, link_info, sizeof(link_info)) == 0) {
+		// Parse signal: -XX dBm
+		char* signal = strstr(link_info, "signal:");
+		if (signal) {
+			connection_info->rssi = atoi(signal + 7);
+		}
+		// Parse tx bitrate: XXX.X MBit/s
+		char* bitrate = strstr(link_info, "tx bitrate:");
+		if (bitrate) {
+			connection_info->link_speed = (int)atof(bitrate + 11);
+		}
+	} else {
+		wifilog("iw command is not supported.");
+		connection_info->rssi = -60;
+	}
+
+	wifilog("Connected AP: %s\n", connection_info->ssid);
+	wifilog("IP address: %s\n", connection_info->ip);
+	wifilog("Signal strength: %d dBm, Link speed: %d Mbps\n", connection_info->rssi, connection_info->link_speed);
+
+	return 0;
+}
+
+bool PLAT_wifiHasCredentials(char* ssid, WifiSecurityType sec) {
+	// Validate input SSID (reject tabs/newlines)
+	for (int i = 0; ssid[i]; ++i) {
+		if (ssid[i] == '\t' || ssid[i] == '\n') {
+			LOG_warn("PLAT_wifiHasCredentials: SSID contains invalid control characters.\n");
+			return false;
+		}
+	}
+
+	if (!PLAT_wifiEnabled()) {
+		LOG_error("PLAT_wifiHasCredentials: wifi is currently disabled.\n");
+		return false;
+	}
+
+	// Get list of configured networks from wpa_cli
+	char list_results[4096];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s list_networks 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, list_results, sizeof(list_results)) != 0) {
+		wifilog("PLAT_wifiHasCredentials: failed to get network list.\n");
+		return false;
+	}
+
+	wifilog("LIST:\n%s\n", list_results);
+
+	// wpa_cli list_networks format:
+	// network id / ssid / bssid / flags
+	// 0	MyNetwork	any	[CURRENT]
+
+	const char* current = list_results;
+
+	// Skip header line
+	const char* next = strchr(current, '\n');
+	if (!next) {
+		LOG_warn("PLAT_wifiHasCredentials: network list has no data lines.\n");
+		return false;
+	}
+	current = next + 1;
+
+	char line[256];
+
+	while (current && *current) {
+		next = strchr(current, '\n');
+		size_t len = next ? (size_t)(next - current) : strlen(current);
+		if (len >= sizeof(line)) {
+			LOG_warn("PLAT_wifiHasCredentials: line too long, truncating.\n");
+			len = sizeof(line) - 1;
+		}
+
+		memcpy(line, current, len);
+		line[len] = '\0';
+
+		wifilog("Parsing line: '%s'\n", line);
+
+		// Tokenize line by tabs
+		char* saveptr = NULL;
+		char* token_id = strtok_r(line, "\t", &saveptr);
+		char* token_ssid = strtok_r(NULL, "\t", &saveptr);
+
+		if (!(token_id && token_ssid)) {
+			LOG_warn("PLAT_wifiHasCredentials: Malformed line skipped: '%s'\n", line);
+			current = next ? next + 1 : NULL;
+			continue;
+		}
+
+		if (strcmp(token_ssid, ssid) == 0) {
+			return true;
+		}
+
+		current = next ? next + 1 : NULL;
+	}
+
+	return false;
+}
+
+// Helper to find network ID by SSID
+static int wifi_find_network_id(const char* ssid) {
+	wifilog("wifi_find_network_id: Looking for network '%s'...\n", ssid);
+	char list_results[4096];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s list_networks 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, list_results, sizeof(list_results)) != 0) {
+		wifilog("wifi_find_network_id: Failed to get network list\n");
+		return -1;
+	}
+
+	const char* current = list_results;
+	const char* next = strchr(current, '\n');
+	if (!next)
+		return -1;
+	current = next + 1;
+
+	char line[256];
+	while (current && *current) {
+		next = strchr(current, '\n');
+		size_t len = next ? (size_t)(next - current) : strlen(current);
+		if (len >= sizeof(line))
+			len = sizeof(line) - 1;
+		memcpy(line, current, len);
+		line[len] = '\0';
+
+		char* saveptr = NULL;
+		char* token_id = strtok_r(line, "\t", &saveptr);
+		char* token_ssid = strtok_r(NULL, "\t", &saveptr);
+
+		if (token_id && token_ssid && strcmp(token_ssid, ssid) == 0) {
+			int id = atoi(token_id);
+			wifilog("wifi_find_network_id: Found network '%s' with id %d\n", ssid, id);
+			return id;
+		}
+
+		current = next ? next + 1 : NULL;
+	}
+
+	wifilog("wifi_find_network_id: Network '%s' not found\n", ssid);
+	return -1;
+}
+
+void PLAT_wifiForget(char* ssid, WifiSecurityType sec) {
+	if (!PLAT_wifiEnabled()) {
+		LOG_error("PLAT_wifiForget: wifi is currently disabled.\n");
+		return;
+	}
+
+	int network_id = wifi_find_network_id(ssid);
+	if (network_id >= 0) {
+		char cmd[128];
+		snprintf(cmd, sizeof(cmd), "%s remove_network %d 2>/dev/null", WPA_CLI_CMD, network_id);
+		system(cmd);
+		system(WPA_CLI_CMD " save_config 2>/dev/null");
+		wifilog("PLAT_wifiForget: removed network %s (id=%d)\n", ssid, network_id);
+	} else {
+		wifilog("PLAT_wifiForget: network %s not found\n", ssid);
+	}
+}
+
+// Forget (remove) every configured network whose SSID starts with `prefix`.
+// Used to purge accumulated netplay hotspot entries: each join adds and saves a
+// uniquely-named hotspot network (e.g. NextUI-AB12), and sessions that end without
+// a clean teardown (failed join, crash, power-off) never remove theirs, so the
+// wpa_supplicant config grows without bound. Returns the number removed.
+int PLAT_wifiForgetPrefix(const char* prefix) {
+	if (!PLAT_wifiEnabled()) {
+		LOG_error("PLAT_wifiForgetPrefix: wifi is currently disabled.\n");
+		return 0;
+	}
+	if (!prefix || !prefix[0])
+		return 0;
+
+	char list_results[8192];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s list_networks 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, list_results, sizeof(list_results)) != 0) {
+		wifilog("PLAT_wifiForgetPrefix: failed to get network list\n");
+		return 0;
+	}
+
+	size_t prefix_len = strlen(prefix);
+	int ids[128];
+	int n_ids = 0;
+
+	// Skip the header line ("network id / ssid / bssid / flags").
+	const char* current = strchr(list_results, '\n');
+	current = current ? current + 1 : NULL;
+
+	char line[256];
+	while (current && *current && n_ids < (int)(sizeof(ids) / sizeof(ids[0]))) {
+		const char* next = strchr(current, '\n');
+		size_t len = next ? (size_t)(next - current) : strlen(current);
+		if (len >= sizeof(line))
+			len = sizeof(line) - 1;
+		memcpy(line, current, len);
+		line[len] = '\0';
+
+		char* saveptr = NULL;
+		char* token_id = strtok_r(line, "\t", &saveptr);
+		char* token_ssid = strtok_r(NULL, "\t", &saveptr);
+
+		if (token_id && token_ssid && strncmp(token_ssid, prefix, prefix_len) == 0) {
+			ids[n_ids++] = atoi(token_id);
+		}
+
+		current = next ? next + 1 : NULL;
+	}
+
+	if (n_ids == 0)
+		return 0;
+
+	// remove_network does not renumber the remaining networks, so removing by the
+	// ids we collected up front is safe.
+	for (int i = 0; i < n_ids; i++) {
+		snprintf(cmd, sizeof(cmd), "%s remove_network %d 2>/dev/null", WPA_CLI_CMD, ids[i]);
+		system(cmd);
+	}
+	system(WPA_CLI_CMD " save_config 2>/dev/null");
+	wifilog("PLAT_wifiForgetPrefix: removed %d network(s) matching '%s'\n", n_ids, prefix);
+	return n_ids;
+}
+
+// Re-enable all configured networks. select_network (used for netplay hotspot join)
+// disables every network except the chosen one; this restores the others so the
+// saved config isn't left with home/other networks stuck disabled. Caller persists.
+void PLAT_wifiEnableAll(void) {
+	if (!PLAT_wifiEnabled())
+		return;
+	system(WPA_CLI_CMD " enable_network all 2>/dev/null");
+}
+
+// True when wpa_supplicant reports wpa_state=COMPLETED on exactly `network_id`.
+// PLAT_wifiConnected() alone is not enough here: right after select_network
+// the supplicant can still be COMPLETED on the previous network for a moment,
+// which would read as instant success when switching networks.
+static bool wifi_connected_to(int network_id) {
+	char status[2048];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s status 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, status, sizeof(status)) != 0)
+		return false;
+	if (!strstr(status, "wpa_state=COMPLETED"))
+		return false;
+	char id_line[32];
+	snprintf(id_line, sizeof(id_line), "\nid=%d\n", network_id);
+	return strstr(status, id_line) != NULL;
+}
+
+// True when wpa_supplicant has temporarily disabled `network_id`. The
+// supplicant does that itself after a failed 4-way handshake (its
+// CTRL-EVENT-SSID-TEMP-DISABLED reason=WRONG_KEY), so the flag in
+// list_networks is the reliable "wrong password" signal -- wpa_state alone
+// just drops back to SCANNING with no hint why.
+static bool wifi_network_temp_disabled(int network_id) {
+	char list_results[4096];
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s list_networks 2>/dev/null", WPA_CLI_CMD);
+	if (wifi_run_cmd(cmd, list_results, sizeof(list_results)) != 0)
+		return false;
+
+	// Skip the header line ("network id / ssid / bssid / flags").
+	const char* current = strchr(list_results, '\n');
+	current = current ? current + 1 : NULL;
+
+	char line[256];
+	while (current && *current) {
+		const char* next = strchr(current, '\n');
+		size_t len = next ? (size_t)(next - current) : strlen(current);
+		if (len >= sizeof(line))
+			len = sizeof(line) - 1;
+		memcpy(line, current, len);
+		line[len] = '\0';
+
+		// id <tab> ssid <tab> bssid <tab> flags. Flags is the last field (may
+		// be empty); the SSID cannot contain a tab (rejected on connect).
+		char* tab = strchr(line, '\t');
+		if (tab) {
+			*tab = '\0';
+			if (atoi(line) == network_id) {
+				const char* flags = strrchr(tab + 1, '\t');
+				return flags && strstr(flags, "[TEMP-DISABLED]") != NULL;
+			}
+		}
+		current = next ? next + 1 : NULL;
+	}
+	return false;
+}
+
+int PLAT_wifiConnect(char* ssid, WifiSecurityType sec) {
+	return PLAT_wifiConnectPass(ssid, sec, NULL);
+}
+
+// How long to wait for the association. A wrong key is reported by the
+// supplicant well inside this window (measured 3-4s on tg5040: 4WAY_HANDSHAKE
+// then TEMP-DISABLED), so the full wait is only spent on an AP that never
+// answers.
+#define WIFI_CONNECT_WAIT_MS 10000
+#define WIFI_CONNECT_POLL_MS 500
+
+int PLAT_wifiConnectPass(const char* ssid, WifiSecurityType sec, const char* pass) {
+	if (!PLAT_wifiEnabled()) {
+		wifilog("PLAT_wifiConnectPass: wifi is currently disabled.\n");
+		return WIFI_CONNECT_ERROR;
+	}
+
+	if (ssid == NULL) {
+		// Disconnect request
+		wifilog("PLAT_wifiConnectPass: Disconnecting from WiFi...\n");
+		system(WPA_CLI_CMD " disconnect 2>/dev/null");
+		wifilog("PLAT_wifiConnectPass: disconnected\n");
+		return WIFI_CONNECT_OK;
+	}
+
+	// Validation
+	for (int i = 0; ssid[i]; i++) {
+		if (ssid[i] == '\t' || ssid[i] == '\n' || ssid[i] == '\r') {
+			LOG_error("PLAT_wifiConnectPass: SSID contains invalid characters\n");
+			return WIFI_CONNECT_ERROR;
+		}
+	}
+	if (pass) {
+		for (int i = 0; pass[i]; i++) {
+			if (pass[i] == '\n' || pass[i] == '\r') {
+				LOG_error("PLAT_wifiConnectPass: Password contains invalid characters\n");
+				return WIFI_CONNECT_ERROR;
+			}
+		}
+	}
+
+	wifilog("PLAT_wifiConnectPass: Attempting to connect to SSID '%s' (security=%d)\n", ssid, sec);
+
+	char escaped_ssid[SSID_MAX * 5];
+	char escaped_pass[SSID_MAX * 5];
+	wifi_escape(escaped_ssid, ssid, sizeof(escaped_ssid));
+	if (pass)
+		wifi_escape(escaped_pass, pass, sizeof(escaped_pass));
+
+	// Check if network already exists
+	int network_id = wifi_find_network_id(ssid);
+	bool added = false; // profile created by this attempt; rolled back on failure
+	char cmd[1024];
+	char output[128];
+
+	if (network_id < 0) {
+		// Add new network
+		snprintf(cmd, sizeof(cmd), "%s add_network 2>/dev/null", WPA_CLI_CMD);
+		if (wifi_run_cmd(cmd, output, sizeof(output)) != 0) {
+			LOG_error("PLAT_wifiConnectPass: failed to add network\n");
+			return WIFI_CONNECT_ERROR;
+		}
+		network_id = atoi(output);
+		added = true;
+		wifilog("Added new network with id %d\n", network_id);
+
+		// Set SSID (needs quotes for wpa_cli)
+		wifilog("Setting network SSID...\n");
+		snprintf(cmd, sizeof(cmd), "%s set_network %d ssid '\"%s\"' 2>/dev/null", WPA_CLI_CMD, network_id, escaped_ssid);
+		system(cmd);
+
+		// Set password or open network
+		if (pass && pass[0] != '\0') {
+			wifilog("Setting network password...\n");
+			snprintf(cmd, sizeof(cmd), "%s set_network %d psk '\"%s\"' 2>/dev/null", WPA_CLI_CMD, network_id, escaped_pass);
+			system(cmd);
+		} else if (sec == SECURITY_NONE) {
+			wifilog("Configuring as open network...\n");
+			snprintf(cmd, sizeof(cmd), "%s set_network %d key_mgmt NONE 2>/dev/null", WPA_CLI_CMD, network_id);
+			system(cmd);
+		}
+	} else if (pass && pass[0] != '\0') {
+		// Update password for existing network
+		wifilog("Updating password for existing network...\n");
+		snprintf(cmd, sizeof(cmd), "%s set_network %d psk '\"%s\"' 2>/dev/null", WPA_CLI_CMD, network_id, escaped_pass);
+		system(cmd);
+	} else {
+		wifilog("Using existing network configuration...\n");
+	}
+
+	// Enable and select network (select_network also disables every other
+	// saved network for this session; undone below whatever the outcome)
+	wifilog("Enabling and selecting network %d...\n", network_id);
+	snprintf(cmd, sizeof(cmd), "%s enable_network %d 2>/dev/null", WPA_CLI_CMD, network_id);
+	system(cmd);
+	snprintf(cmd, sizeof(cmd), "%s select_network %d 2>/dev/null", WPA_CLI_CMD, network_id);
+	system(cmd);
+
+	// Wait for the association. Nothing is saved yet: save_config runs only
+	// once the supplicant accepted the key, so a rejected password never
+	// reaches the config file (and never makes the network look "known").
+	wifilog("Waiting for connection (up to %d ms)...\n", WIFI_CONNECT_WAIT_MS);
+	int result = WIFI_CONNECT_TIMEOUT;
+	for (int waited = 0; waited < WIFI_CONNECT_WAIT_MS; waited += WIFI_CONNECT_POLL_MS) {
+		usleep(WIFI_CONNECT_POLL_MS * 1000);
+		if (wifi_connected_to(network_id)) {
+			result = WIFI_CONNECT_OK;
+			break;
+		}
+		if (wifi_network_temp_disabled(network_id)) {
+			result = WIFI_CONNECT_WRONG_KEY;
+			break;
+		}
+	}
+
+	if (result == WIFI_CONNECT_OK) {
+		wifilog("PLAT_wifiConnectPass: connected successfully to '%s'\n", ssid);
+
+		// Re-enable all saved networks so wpa_supplicant can auto-reconnect
+		// to any known network if the current connection drops (e.g. during
+		// pak transitions). select_network disables all other networks, which
+		// prevents auto-reconnection. Done BEFORE save_config: saving first
+		// persisted disabled=1 for every other network, so after a reboot
+		// only the last-joined one could ever auto-connect.
+		wifilog("Re-enabling all saved networks for auto-reconnect...\n");
+		system(WPA_CLI_CMD " enable_network all 2>/dev/null");
+
+		// Save configuration
+		wifilog("Saving network configuration...\n");
+		system(WPA_CLI_CMD " save_config 2>/dev/null");
+
+		// Request IP via DHCP (persistent so lease renewals keep working)
+		// Kill existing instance first to force a fresh lease on the new network
+		wifilog("Requesting IP address via DHCP...\n");
+		system("kill $(pgrep -f udhcpc) 2>/dev/null; sleep 0.1");
+		char dhcp_cmd[128];
+		snprintf(dhcp_cmd, sizeof(dhcp_cmd), "udhcpc -i %s -b 2>/dev/null &", WIFI_INTERFACE);
+		system(dhcp_cmd);
+		return WIFI_CONNECT_OK;
+	}
+
+	if (result == WIFI_CONNECT_WRONG_KEY)
+		LOG_error("PLAT_wifiConnectPass: wrong key for '%s' (supplicant temp-disabled the network)\n", ssid);
+	else
+		LOG_error("PLAT_wifiConnectPass: connection timeout after %d ms for '%s'\n", WIFI_CONNECT_WAIT_MS, ssid);
+
+	if (added) {
+		// Drop the profile this attempt created: nothing was saved, and leaving
+		// it would make the UI treat the network as known and silently reuse
+		// the bad key on the next Connect.
+		snprintf(cmd, sizeof(cmd), "%s remove_network %d 2>/dev/null", WPA_CLI_CMD, network_id);
+		system(cmd);
+		wifilog("PLAT_wifiConnectPass: removed network %d added by this attempt\n", network_id);
+	}
+	// A pre-existing profile keeps its (possibly stale) key; the caller sees
+	// WRONG_KEY and can ask for a new one. Either way undo select_network's
+	// exclusivity so the other saved networks can reconnect.
+	system(WPA_CLI_CMD " enable_network all 2>/dev/null");
+	return result;
+}
+
+void PLAT_wifiSelectOnly(const char* ssid) {
+	if (!PLAT_wifiEnabled()) {
+		LOG_error("PLAT_wifiSelectOnly: wifi is currently disabled.\n");
+		return;
+	}
+	if (!ssid || !ssid[0])
+		return;
+
+	int network_id = wifi_find_network_id(ssid);
+	if (network_id < 0) {
+		wifilog("PLAT_wifiSelectOnly: network %s not found\n", ssid);
+		return;
+	}
+
+	// select_network enables this network and disables all others, then triggers
+	// (re)association. Intentionally NOT followed by save_config: the disable of the
+	// other networks is a runtime-only state, restored when the wifi stack restarts.
+	char cmd[128];
+	snprintf(cmd, sizeof(cmd), "%s select_network %d 2>/dev/null", WPA_CLI_CMD, network_id);
+	system(cmd);
+	wifilog("PLAT_wifiSelectOnly: selected network %s (id=%d)\n", ssid, network_id);
+}
+
+void PLAT_wifiDisconnect() {
+	PLAT_wifiConnectPass(NULL, SECURITY_WPA2_PSK, NULL);
+}
+
+bool PLAT_wifiDiagnosticsEnabled() {
+	return CFG_getWifiDiagnostics();
+}
+
+void PLAT_wifiDiagnosticsEnable(bool on) {
+	CFG_setWifiDiagnostics(on);
+	// set wpa_cli log level
+	if (on) {
+		system(WPA_CLI_CMD " log_level DEBUG 2>/dev/null");
+	} else {
+		system(WPA_CLI_CMD " log_level WARNING 2>/dev/null");
+	}
+}

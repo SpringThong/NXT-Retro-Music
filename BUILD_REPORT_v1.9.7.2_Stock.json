@@ -1,0 +1,72 @@
+{
+  "version": "1.9.7.2",
+  "rom": "stock",
+  "baseline": "unified v1.9.7.1",
+  "build": {
+    "exit": 0,
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_STOCK",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "a9a5afead27a4e2d35b6a2cfd1588be17270942a9f197f274c51f3f0bb2754bd",
+  "installer": "NXT_Retro_Music_v1.9.7.2_Stock.zip",
+  "installer_size": 145351732,
+  "installer_sha256": "e8a526d662f62b532a616fc284cd98b10f903d12ab5163d7a8284d74830eb694",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.7.2_Stock.zip",
+  "OTA_kit_sha256": "0e07c4421f8bdd93f79480bb3652b954fb50ac26a98667ddda79269d5553d8e6",
+  "checks": {
+    "v1972-preservation.json": {
+      "sha256": "745abdb1e6f3ee94317ac1228793921f9fea0ae5ecec1f220110ea283433120a"
+    },
+    "v1972-ui-test.json": {
+      "sha256": "b86bc4598462b0c92675715c80ba7abca6b3b96920c44d4215ec270b98829c36"
+    },
+    "v1972-config-test.json": {
+      "sha256": "d9322ee5a7bfebdae775bf88ee9d98f1dac1be13092b29af60c2cb4319a7ca89"
+    },
+    "v1972-volume-test.json": {
+      "sha256": "527d294317b3ed003199de93d15139d1d72d0a58bf0bc99e6e866b243a9fa930"
+    },
+    "v1972-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v1972-motion-lyrics.json": {
+      "sha256": "c05e6816f5426d9953f4dcdabba54a7145847387688f57408dc59053584e1f1d"
+    },
+    "v1972-screenoff.json": {
+      "sha256": "f231b2d02ec73c6b5700b39657bddd4ca09e8e8a83a28eb518a4c80d3b205bb6"
+    },
+    "v1972-page-baseline-regression.json": {
+      "sha256": "1b6a594cf11d5b3dbaf6e1ef7471d93896fa9c4882e16def1832cc349cdf5d66"
+    },
+    "v1972-dsd-test-nxredux.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v1972-loader-stock.json": {
+      "sha256": "2c638d98a76d2b1be237df9c09cfc9da6866fd946222779234796e8caccc1dc4"
+    },
+    "v1972-package-qa-stock.json": {
+      "sha256": "afbfa6473de3bf1ff5c3bb0d2cd9d689de1127b53a2216f76ddb07d6f16c5827"
+    },
+    "v1972-ota-qa-stock.json": {
+      "sha256": "c295679b065611d8180abfeaab2cf3e9820ce90eee43dcd2e401efe4a2364d38"
+    },
+    "v1972-ota-publisher-kit-stock.json": {
+      "sha256": "af2dbc91dd1e63d5b8baecd9053bcdd1fef1e7a2328104ea7c92139a4ddd1484"
+    }
+  },
+  "root_cause": "Two page identities restarted Original Now Playing entrance on every repaint; reproduced with baseline and fixed by one identity per playback page.",
+  "screen_off_controls": "Persisted device-wide, default off; mapped keys/volume remain active while dark, Power wakes, hold SELECT lock/unlock, wake release guards, no Now Playing redraw while off.",
+  "preserved": "831 source inputs reviewed; 746 resources and online backend executables byte-identical; audio/network engines unchanged",
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "fonts_total": 60,
+  "themes_total": 51,
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "actual_device_FPS_measured": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

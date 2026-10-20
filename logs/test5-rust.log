@@ -1,0 +1,32 @@
+warning: librespot-core@0.8.0: not within a suitable 'git' worktree!
+warning: librespot-core@0.8.0: VERGEN_GIT_COMMIT_DATE set to default
+warning: librespot-core@0.8.0: VERGEN_GIT_SHA set to default
+warning: this lint expectation is unfulfilled
+  --> /workspace/scratch/766af1647819/spotify-experimental/vendor/librespot-dev/core/src/authentication.rs:69:14
+   |
+69 |     #[expect(deprecated)]
+   |              ^^^^^^^^^^
+   |
+   = note: `#[warn(unfulfilled_lint_expectations)]` on by default
+
+warning: `librespot-core` (lib) generated 1 warning
+   Compiling nxt-spotify-backend v0.1.0 (/workspace/scratch/766af1647819/spotify-experimental/backend)
+    Finished `release` profile [optimized] target(s) in 1.27s
+     Running unittests src/main.rs (spotify-experimental/backend/target/release/deps/nxt_spotify_backend-66761fbf34fdd893)
+
+running 12 tests
+test api::tests::catalog_parses_null_playlists_and_album_tracks ... ok
+test catalog::tests::compatibility_login_never_mixes_accounts ... ok
+test api::tests::metadata_preserves_scripts_and_selects_cover ... ok
+test lyrics::tests::plain_text_does_not_claim_sync ... ok
+test api::tests::credentials_reject_wrong_application ... ok
+test lyrics::tests::timestamped_unicode_lyrics_preserve_milliseconds ... ok
+test pair::tests::pairing_diagnostics_never_forward_response_secrets ... ok
+test pcm::tests::framed_pcm_and_generation ... ok
+test api::tests::playback_credentials_match_session_and_are_separate_from_library ... ok
+test pair::tests::saved_pair_credentials_are_private_and_atomic ... ok
+test pair::tests::qr_url_builds_square_binary_matrix ... ok
+test lyrics::tests::malformed_or_overlong_lyrics_are_rejected ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

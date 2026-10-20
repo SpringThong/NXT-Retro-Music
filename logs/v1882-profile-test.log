@@ -1,0 +1,3 @@
+PASS mixed-source history selects the correct provider, keeps only Local/Drive in the decoder queue, preserves selected index and resume, and rejects invalid selection.
+PASS actual profile persistence, shared Spotify path, private SoundCloud/playlist path, dynamic path allocation, per-profile favorites, PCM-time stats, paused/seek/underrun/output recovery, short-track/repeat qualification and recording off.
+PASS confirmed deletion backend: active/inactive, final listener guard, favorite/history cleanup, transaction rollback, failed-switch refusal, queued writer drain, no-follow shortcut cleanup, music/shared credentials preserved, no resurrection and clean reused ID.

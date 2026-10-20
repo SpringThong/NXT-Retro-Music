@@ -1,0 +1,33 @@
+{
+  "version": "1.9.7.1",
+  "exit": 0,
+  "baseline_version": "1.9.7",
+  "baseline_sha256": "d5c42040e044661361ac9061e3ebfd61bd665941d12e9095e893cf14e10bf33e",
+  "baseline_frontend_inputs_checked": 829,
+  "modified_frontend_inputs": [
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_appearance.c",
+    "upstream/src/nxt_auralis.c",
+    "upstream/src/nxt_screens.c",
+    "upstream/src/nxt_skin.c",
+    "upstream/src/nxt_text.c",
+    "upstream/src/nxt_text.h",
+    "upstream/src/nxt_theme.c",
+    "upstream/src/nxt_theme_v18.inc",
+    "upstream/src/nxt_ui.c"
+  ],
+  "new_frontend_inputs": [
+    "upstream/src/nxt_lyric_preview.c",
+    "upstream/src/nxt_lyric_preview.h"
+  ],
+  "original_resources_preserved": 676,
+  "first_50_palettes_and_all_51_names_preserved": true,
+  "first_22_font_indices_preserved": true,
+  "online_backends_byte_identical": true,
+  "current_binaries": {
+    "stock": "8dd91740fd480ff8d379e491a901c78ddfdfe3f8440e6977e55c5833fb1d80d7",
+    "nextui": "1d926ae7d783c3fa600e61ef8fd8372ef926b2bfc85f99efe531ff841842f00f",
+    "nxredux": "f0b44236ab1724e1347ac23bfbd8d45df330c980579df948acaf61ec720792e6"
+  },
+  "physical_tested": false
+}

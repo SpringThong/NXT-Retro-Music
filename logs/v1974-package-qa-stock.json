@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "version": "1.9.7.4",
+  "rom": "stock",
+  "binary_sha256": "987b999bdb87cd806691ac5e5900f21fbe0d8704e348c251a469ff5b8e4b1bef",
+  "installer_size": 145356760,
+  "installer_sha256": "a4c1ecb87a09a992d63c9803c7d13038f5a30e488509fcd085d562a70f67ff92",
+  "kit_size": 145378623,
+  "kit_sha256": "01d6b86879a44345bb3969611a38430279fef9168dcbf656fb61c5ba218fe048",
+  "official_OTA_URL": "https://drive.google.com/file/d/1OUrxqAs2fOnjKeqZscGcMEiX5Yv3jP5m/view?usp=sharing",
+  "cached_version_and_config_current": true,
+  "correct_ROM_paths_and_libraries": true,
+  "original_resource_assets_verified": 746,
+  "online_backends_preserved": true,
+  "no_userdata_credentials_or_other_ROM_feed": true,
+  "executable_modes_CRC_checked": true,
+  "current_build_fingerprints_match": true,
+  "exact_installer_in_OTA_kit": true,
+  "offline_OTA_generator_metadata_and_guide_current": true,
+  "live_feed_uploaded": false,
+  "hardware_tested": false
+}

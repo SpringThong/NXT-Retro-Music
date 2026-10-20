@@ -1,0 +1,33 @@
+Log: /workspace/scratch/nxt-v185-work/NXT_Retro_Music_v1.8.4_Source/logs/20261011T213947Z-sdk-5.log
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 1 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 23 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 45 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 67 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 89 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 111 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 133 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 155 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 177 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 200 MiB
+Tải gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz: 221 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 1 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 18 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 36 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 53 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 71 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 89 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 106 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 124 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 142 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 159 MiB
+Tải SDK_usr_tg5040_a133p.tgz: 176 MiB
+Giải nén compiler...
+Giải nén sysroot...
+aarch64-nextui-linux-gnu-gcc (crosstool-NG 1.25.0) 8.3.0
+Copyright (C) 2018 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Sysroot compiler: /workspace/scratch/nxt-v185-work/NXT_Retro_Music_v1.8.4_Source/.nxt-sdk/tg5040/compiler/bin/../aarch64-nextui-linux-gnu/libc
+libsamplerate-0.2.2-source.tar.gz: OK
+libzip-1.10.1-source.tar.gz: OK

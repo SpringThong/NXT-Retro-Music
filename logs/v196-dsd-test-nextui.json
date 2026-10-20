@@ -1,0 +1,23 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "parser_golden_cases": 576,
+  "eight_transports_byte_equal": true,
+  "DSF_LSB_MSB_DFF_mono_stereo_eight_rates": true,
+  "DoP_markers_partial_reads_seek": true,
+  "malformed_DST_truncated_nonregular_rejected": true,
+  "production_worker_pause_seek_EOF_removal": true,
+  "PCM_regression": true,
+  "PCM_only_DAC_native_rejected": true,
+  "exact_rate_and_observed_mismatch_rejected": true,
+  "production_audio_policy": true,
+  "explicit_auto_Native_then_DoP_byte_equal": true,
+  "preserve_device0_format_error_when_later_devices_absent": true,
+  "hardware_tested": false,
+  "sources": {
+    "nxt_dsd.c": "31374e7bced2d07d334f1e6994447c9a3549804e704a579f7ffa6de90701f5ba",
+    "nxt_dsd_alsa.c": "c62c3427464ed181eab9a81a247626a6cefaa64fa888be7945706aea31dbde2f",
+    "nxt_bitperfect.c": "314b336c7226d489393a5150740bd7ffa880119c311d139b84279d0b74f5b73d",
+    "nxt_audio_mode.c": "47c33a4e9ad01c55449a5995ab1335c54587bd5aa4847d36072158340882ce02"
+  }
+}

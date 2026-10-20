@@ -1,0 +1,14 @@
+{
+  "lyrics": {
+    "exit": 0,
+    "production_code": true,
+    "ASan_UBSan": true,
+    "physical_FPS_tested": false
+  },
+  "motion": {
+    "exit": 0,
+    "production_code": true,
+    "ASan_UBSan": true,
+    "physical_FPS_tested": false
+  }
+}

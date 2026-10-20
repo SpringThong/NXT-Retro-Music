@@ -1,0 +1,1 @@
+PASS actual JPG/PNG header limits, high-bit PNG width without UB, old v1.5 overlay migration and later profile opacity preservation.

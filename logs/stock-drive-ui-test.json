@@ -1,0 +1,17 @@
+{
+  "drive_io": {
+    "exit": 0,
+    "curl_decoder_player_fixtures": true
+  },
+  "folder_queue": {
+    "exit": 0,
+    "play_all_and_selected_song": true,
+    "natural_order_and_correct_start": true,
+    "persistent_stream_uri_m3u": true,
+    "folder_navigation_refresh_and_empty_audio": true,
+    "cancel_exit_write_failure": true
+  },
+  "local_folder_mapping": {
+    "exit": 0
+  }
+}

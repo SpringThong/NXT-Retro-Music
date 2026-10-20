@@ -1,0 +1,9 @@
+STOCK PASS ROM keymon duplicate-before/after ordering and repeated hold: ten app events change ten fine levels, external changes reconcile after quiet time.
+PASS 85->86->87 fine raw output, independent sinks, external ROM reconciliation, clamping/mute and debounced save.
+PASS real volume controller: hardware PCM control selected, all channels/mute, clamping, cached mixer/card change; write/missing control falls back to Normal with live software gain; no forced-DAC warning. ALSA and ROM are fixtures.
+NEXTUI PASS ROM keymon duplicate-before/after ordering and repeated hold: ten app events change ten fine levels, external changes reconcile after quiet time.
+PASS 85->86->87 fine raw output, independent sinks, external ROM reconciliation, clamping/mute and debounced save.
+PASS real volume controller: hardware PCM control selected, all channels/mute, clamping, cached mixer/card change; write/missing control falls back to Normal with live software gain; no forced-DAC warning. ALSA and ROM are fixtures.
+NXREDUX PASS ROM keymon duplicate-before/after ordering and repeated hold: ten app events change ten fine levels, external changes reconcile after quiet time.
+PASS 85->86->87 fine raw output, independent sinks, external ROM reconciliation, clamping/mute and debounced save.
+PASS real volume controller: hardware PCM control selected, all channels/mute, clamping, cached mixer/card change; write/missing control falls back to Normal with live software gain; no forced-DAC warning. ALSA and ROM are fixtures.

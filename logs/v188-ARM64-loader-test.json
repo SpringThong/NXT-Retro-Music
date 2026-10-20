@@ -1,0 +1,93 @@
+{
+  "exit": 0,
+  "roms": {
+    "stock": {
+      "rom": "stock",
+      "version": "1.8.8",
+      "exit": 0,
+      "binary_sha256": "04a02e8bd93ae5bc90052f2c53d1cb4bc01323a49a91f26414b15e974e30e0c1",
+      "actual_release_ELF": true,
+      "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+      "checks": [
+        {
+          "args": [
+            "--build-info"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8\nStock · v1.8.8\n"
+        },
+        {
+          "args": [
+            "--help"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v188-work/NXT_Retro_Music_v1.8.8_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+        }
+      ],
+      "physical_ROM_boot_tested": false
+    },
+    "nextui": {
+      "rom": "nextui",
+      "version": "1.8.8",
+      "exit": 0,
+      "binary_sha256": "a703bcb41cdf555e5873a29ca2fef6fc82f055b77098547a6ee157ca624b079e",
+      "actual_release_ELF": true,
+      "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+      "checks": [
+        {
+          "args": [
+            "--build-info"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8\nNextUI · v1.8.8\n"
+        },
+        {
+          "args": [
+            "--help"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8 for NextUI\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v188-work/NXT_Retro_Music_v1.8.8_Source/upstream/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+        }
+      ],
+      "physical_ROM_boot_tested": false
+    },
+    "nxredux": {
+      "rom": "nxredux",
+      "version": "1.8.8",
+      "exit": 0,
+      "binary_sha256": "80c6d780d65231877c6f397c8d03024267baf26d56abe51aba559b0b110e8960",
+      "actual_release_ELF": true,
+      "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+      "checks": [
+        {
+          "args": [
+            "--build-info"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8\nNX Redux · v1.8.8\n"
+        },
+        {
+          "args": [
+            "--help"
+          ],
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.8.8 for NX Redux\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v188-work/NXT_Retro_Music_v1.8.8_Source/nxredux/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+        }
+      ],
+      "physical_ROM_boot_tested": false
+    }
+  },
+  "backend_quit_checks": {
+    "nxt-spotify-backend": {
+      "exit": 0,
+      "sha256": "0f12fa810b387910e64a18c0a895cdd6a4782e6b177f9cdbe1eefc9be7815a5b",
+      "stdout": "{\"build\":\"Stock-v1.3-Hardware-Login-Fix2\",\"connect_service\":false,\"event\":\"ready\",\"experimental\":false,\"version\":\"1.3\"}\n{\"event\":\"closed\"}\n"
+    },
+    "nxt-soundcloud-backend": {
+      "exit": 0,
+      "sha256": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463",
+      "stdout": "{\"api\":\"yt-dlp-public-unofficial\",\"build\":\"Stock-v1.3-SoundCloud\",\"credentials_required\":false,\"event\":\"ready\"}\n"
+    }
+  },
+  "authenticated_streaming_tested": false
+}

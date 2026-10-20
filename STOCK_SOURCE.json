@@ -1,0 +1,66 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.9.7.4",
+  "variant": "Stock",
+  "revision": "v1.9.7.4 · Fonts and Live Preview",
+  "baseline_input": {
+    "filename": "NXT_Retro_Music_v1.8.2_NXRedux_Source.zip",
+    "sha256": "4ede8e50f96ec523538174095e3b192874f06654985203b3a21e993ca2aabfa2",
+    "revision": "Unified v1.8.2 source with historical Stock/NextUI and native NX Redux"
+  },
+  "led_protocol_reference": {
+    "filename": "NXT_Retro_Music_v1.3_Stock_Source.zip",
+    "sha256": "66c2d6cc3a76d9d34a0f33d57fae5a24d1bb221bce9f9b0b6d3408190db6fe35",
+    "revision": "Stock · LED Driver Fix3"
+  },
+  "device": "TrimUI Brick Pro / TG4040",
+  "sdk_platform": "tg5040",
+  "official_reference": {
+    "firmware": {
+      "version": "v1.1.1-20260717",
+      "url": "https://github.com/trimui/firmware_brickpro/releases/download/v1.1.1-20260717/trimui_tg4040_20260717_v1.1.1.7z",
+      "sha256": "36189b7966717c520901e6ef7318d1b092067598959b030cc0fd66b0747e5585"
+    },
+    "sd_base": {
+      "version": "v1.0.0-20260626",
+      "url": "https://github.com/trimui/assets_brickpro/releases/download/v1.0.0-20260626/trimui_brick_pro_tg4040_sd_base_20260626.7z",
+      "sha256": "bf029612fab90bb427c54c11a816f862c2bbf33e3d64e5830c38e8fc1b9fc8eb"
+    }
+  },
+  "install_path": "Apps/NXT_Retro_Music",
+  "userdata_path": ".userdata/nxt-stock/shared/nxt-retro-music",
+  "build_define": "NXT_ROM_STOCK",
+  "build_command": "python3 tools/build-release.py --rom stock",
+  "frontend_translation_units": 145,
+  "glibc_in_verified_rootfs": "2.33",
+  "sdl_in_verified_rootfs": "2.30.8",
+  "physical_hardware_tested": false,
+  "live_account_tested_in_this_revision": false,
+  "live_google_drive_ota_tested": false,
+  "stock_manifest_file_id": "1OUrxqAs2fOnjKeqZscGcMEiX5Yv3jP5m",
+  "stock_default_source_packaged": true,
+  "live_manifest_retrieval": "Attempted with web/HTTPS downloader; unavailable or timed out in build environment; does not establish Drive sharing status",
+  "nextui_build_included": true,
+  "source_license": "GPL-3.0; see component licenses and relink instructions",
+  "online_helpers_retained_sha256": {
+    "nxt-spotify-backend": "c03f6a0f3b552bac850245d9cd89c897556fbdaa455ad30fabdbbb803080d217",
+    "nxt-soundcloud-backend": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463"
+  },
+  "current_report": "BUILD_REPORT_v1.9.7.4_Stock.json",
+  "official_OTA_source": "https://drive.google.com/file/d/1OUrxqAs2fOnjKeqZscGcMEiX5Yv3jP5m/view?usp=sharing",
+  "stage": "v1.9.7.4-unified-three-rom",
+  "release_ready": true,
+  "current_build_report": "BUILD_REPORT_v1.9.7.4_Stock.json",
+  "current_build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ],
+  "hardware_test_status": "All three fresh ARM64 builds and software/rendering/installer/OTA fixtures passed. No physical ROM/DAC/FPS/heat or live Groq singing measurement.",
+  "verification": "RELEASE_QA_v1.9.7.4.md",
+  "build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ]
+}

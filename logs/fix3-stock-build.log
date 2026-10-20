@@ -1,0 +1,168 @@
+Stock: utils.c
+Stock: scaler.c
+Stock: config.c
+In file included from /workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/NextUI/workspace/tg5040/platform/platform.c:903:
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c: In function 'wifi_find_network_id':
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:449:9: warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]
+         strncpy(line, current, len);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:447:56: note: length computed here
+         size_t len = next ? (size_t)(next - current) : strlen(current);
+                                                        ^~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/album_art.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: add_to_playlist.c
+Stock: album_art.c
+Stock: kiss_fft.c
+Stock: kiss_fftr.c
+Stock: background.c
+Stock: platform.c
+Stock: api.c
+Stock: sonic.c
+Stock: browser.c
+Stock: db_schema.c
+Stock: db.c
+Stock: db_statement.c
+Stock: debug.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/downloader.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: display_helper.c
+Stock: frame_state.c
+Stock: file_utils.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/http_download.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: http_download.c
+Stock: downloader.c
+Stock: yxml.c
+Stock: keyboard_map.c
+Stock: list_nav.c
+Stock: keyboard.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/lyrics.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: lyric_window.c
+Stock: list_nav_pad.c
+Stock: parson.c
+Stock: menu_rows.c
+Stock: lyrics.c
+Stock: module_downloader.c
+Stock: module_common.c
+Stock: module_library.c
+Stock: module_menu.c
+Stock: module_playlist.c
+Stock: module_radio.c
+Stock: module_podcast.c
+Stock: module_player.c
+Stock: module_settings.c
+Stock: mp3_seek.c
+Stock: musicplayer.c
+Stock: nxt_config.c
+Stock: nxt_decoder.c
+Stock: nxt_controls.c
+Stock: nxt_dsp.c
+Stock: nxt_drive_parser.c
+Stock: nxt_drive.c
+Stock: nxt_eq.c
+Stock: nxt_i18n.c
+Stock: nxt_led.c
+Stock: nxt_music_playing.c
+Stock: nxt_hardware.c
+Stock: nxt_pcm.c
+Stock: nxt_pad.c
+Stock: nxt_library.c
+Stock: nxt_presets.c
+Stock: nxt_player_core.c
+Stock: nxt_record.c
+Stock: nxt_session.c
+Stock: nxt_sort.c
+Stock: nxt_screens.c
+Stock: nxt_skin.c
+Stock: nxt_stock.c
+Stock: nxt_soundcloud.c
+Stock: nxt_spotify.c
+Stock: nxt_telex.c
+Stock: nxt_stream.c
+Stock: nxt_usb.c
+Stock: nxt_text.c
+Stock: nxt_radio_decoders.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/podcast.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: playlist_m3u.c
+Stock: playlist.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/podcast_rss.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: podcast_episode_layout.c
+Stock: nxt_ui.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/podcast_search.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: podcast_rss.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/radio.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE  // For strcasestr
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/radio_curated.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: podcast_search.c
+Stock: podcast.c
+Stock: radio_curated.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/radio_hls.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/radio_net.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: radio_hls.c
+Stock: resume.c
+Stock: radio.c
+Stock: screen_title.c
+Stock: seek_scan.c
+Stock: radio_net.c
+Stock: selfupdate.c
+Stock: spectrum_ceiling.c
+Stock: settings.c
+Stock: spectrum.c
+Stock: toast_state.c
+Stock: ui_album_art.c
+Stock: toast.c
+Stock: ui_fonts.c
+Stock: ui_icons.c
+Stock: ui_downloader.c
+Stock: ui_keyboard.c
+Stock: ui_layers.c
+Stock: ui_music.c
+Stock: ui_main.c
+Stock: ui_playlist.c
+Stock: ui_radio.c
+Stock: ui_podcast_playing.c
+Stock: ui_radio_playing.c
+Stock: ui_podcast.c
+Stock: ui_settings.c
+Stock: ui_system.c
+Stock: ui_theme.c
+Stock: ui_theme_utils.c
+/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/upstream/src/wget_fetch.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: utf8.c
+Stock: wget_fetch.c
+Stock: wifi.c
+Stock: ui_utils.c
+Stock release built: /workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/stock/bin/tg5040/musicplayer.elf

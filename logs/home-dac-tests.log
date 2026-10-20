@@ -1,0 +1,4 @@
+PASS PCM: actual hw_params, supported integer/float formats, 44.1–384 kHz, active substream, correct DAC card/device, closed/missing/malformed inputs and unconfirmed fallback.
+PASS production input: HOME stops full session and saves current position; ordinary MENU preserves behavior; HID volume stays functional.
+PASS lock/display-off exit: stop request passes the actual lock input filter.
+PASS NextUI lifecycle/mapping: Brick Pro logo maps HOME; stop prevents detached background session; DAC actual PCM is shown in Now Playing.

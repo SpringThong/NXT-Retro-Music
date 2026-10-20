@@ -1,0 +1,21 @@
+{
+  "version": "1.9.7.4",
+  "rom": "stock",
+  "exit": 0,
+  "binary_sha256": "987b999bdb87cd806691ac5e5900f21fbe0d8704e348c251a469ff5b8e4b1bef",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.7.4\nStock \u00b7 v1.9.7.4 \u00b7 LiveVocal-Karaoke\n"
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.7.4 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/transition-diagnosis/native/NXT_Retro_Music_v1.9.7.2_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

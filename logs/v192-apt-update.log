@@ -1,0 +1,15 @@
+E: setgroups 65534 failed - setgroups (1: Operation not permitted)
+E: setegid 65534 failed - setegid (22: Invalid argument)
+E: seteuid 42 failed - seteuid (22: Invalid argument)
+E: setgroups 0 failed - setgroups (1: Operation not permitted)
+rm: cannot remove '/var/cache/apt/archives/partial/*.deb': Permission denied
+Reading package lists...
+W: chown to _apt:root of directory /var/lib/apt/lists/partial failed - SetupAPTPartialDirectory (22: Invalid argument)
+W: chown to _apt:root of directory /var/lib/apt/lists/auxfiles failed - SetupAPTPartialDirectory (22: Invalid argument)
+E: setgroups 65534 failed - setgroups (1: Operation not permitted)
+E: setegid 65534 failed - setegid (22: Invalid argument)
+E: seteuid 42 failed - seteuid (22: Invalid argument)
+E: setgroups 0 failed - setgroups (1: Operation not permitted)
+E: Method gave invalid 400 URI Failure message: Failed to setgroups - setgroups (1: Operation not permitted)
+E: Method https has died unexpectedly!
+E: Sub-process https returned an error code (112)

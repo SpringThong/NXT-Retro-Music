@@ -1,0 +1,15 @@
+{
+  "version": "1.7.1",
+  "rom": "stock",
+  "exit": 0,
+  "actual_v171_full_installer": true,
+  "baseline_installed_version_fixture": "1.6",
+  "production_worker_and_installer": true,
+  "drive_download_confirmation_fixture": true,
+  "sha_size_rom_checks": true,
+  "userdata_and_wallpaper_preserved": true,
+  "previous_app_backup": true,
+  "asan_ubsan": true,
+  "publisher_live_url_tested": false,
+  "hardware_tested": false
+}

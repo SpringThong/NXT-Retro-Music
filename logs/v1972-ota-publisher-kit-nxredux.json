@@ -1,0 +1,14 @@
+{
+  "version": "1.9.7.2",
+  "rom": "nxredux",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.7.2_NXRedux.zip",
+  "kit_sha256": "a79d18ea1e67803dab3c755f9c16591f1bb0cf259c69cced95b35dbde7fd7804",
+  "size": 144693729,
+  "installer": "NXT_Retro_Music_v1.9.7.2_NXRedux.zip",
+  "installer_sha256": "97a8992f6be31e118755e00b2ada3c3dd3e6edabbee0b08d2f22ddfac6480abe",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

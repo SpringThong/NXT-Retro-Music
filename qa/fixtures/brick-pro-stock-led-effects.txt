@@ -1,0 +1,9 @@
+TRIMUI LED Animation Effect names:
+0 - disable
+1 - linear
+2 - breath
+3 - sniff
+4 - static
+5 - blink1
+6 - blink2
+7 - blink3

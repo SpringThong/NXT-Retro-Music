@@ -1,0 +1,27 @@
+{
+  "exit": 0,
+  "production_NextUI_discovery_route_and_audio_reopen": true,
+  "actual_ALSA_config_parser": true,
+  "connected_A2DP_not_gamepad": true,
+  "private_route_not_firmware_global": true,
+  "v181_original_selector_reproduces_user_log": true,
+  "v181_hardware_source_sha256": "dbe8e467385fd06b9ea8a2d190ee319972463495be4548f079c73641f52e9c83",
+  "fixed_source_recovers_requested_BT_with_stale_speaker_config": true,
+  "firmware_global_asoundrc_unchanged": true,
+  "speaker_BT_DAC_handoff": true,
+  "new_headset_and_stale_firmware_setting": true,
+  "PCM_transport_retry": true,
+  "nonzero_local_Spotify_SoundCloud_PCM": true,
+  "idle_no_audio_reopen": true,
+  "Bluetooth_volume_explicit_unmute_both_ROMs": true,
+  "ASan_UBSan": true,
+  "sources": {
+    "nxt_nextui.c": "f1345b9b056eae687b515a2d1fe6ad5150cd8eff495178d541023a4c521da194",
+    "nxt_hardware.c": "05ad17b1a52950e377a0d90a1c67e9b3087d499502374f1478261c806e1e8039",
+    "nxt_player_core.c": "b189be2cd7cf9cfb64d151a29629c8b2b03f70a6723605babb2ad62fe17c1f39"
+  },
+  "msettings_sha256": "a32cd06729541a4977eae2770e32030e679b8b57480563a919472fe967b5f18d",
+  "hardware_tested": false,
+  "actual_Bluetooth_transport_tested": false,
+  "release_build_paused_by_user": false
+}

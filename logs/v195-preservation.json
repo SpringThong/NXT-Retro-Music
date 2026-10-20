@@ -1,0 +1,45 @@
+{
+  "version": "1.9.5",
+  "exit": 0,
+  "baseline_version": "1.9.4",
+  "baseline_sha256": "75b73d917fc1a60616884a4e9872e4a01f09b18fc205d69918cae088021573ae",
+  "baseline_frontend_inputs_checked": 823,
+  "modified_frontend_inputs": [
+    "upstream/src/album_art.c",
+    "upstream/src/lyrics.c",
+    "upstream/src/lyrics.h",
+    "upstream/src/module_common.c",
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_appearance.c",
+    "upstream/src/nxt_appearance.h",
+    "upstream/src/nxt_auralis.c",
+    "upstream/src/nxt_auralis.h",
+    "upstream/src/nxt_config.c",
+    "upstream/src/nxt_controls.c",
+    "upstream/src/nxt_music_playing.c",
+    "upstream/src/nxt_performance.c",
+    "upstream/src/nxt_screens.c",
+    "upstream/src/nxt_skin.c",
+    "upstream/src/nxt_skin.h",
+    "upstream/src/nxt_text.c",
+    "upstream/src/nxt_text.h",
+    "upstream/src/nxt_ui.c",
+    "upstream/src/nxt_v18_palette.inc",
+    "upstream/src/spectrum.c",
+    "upstream/src/spectrum.h"
+  ],
+  "new_frontend_inputs": [
+    "upstream/src/nxt_motion.c",
+    "upstream/src/nxt_motion.h"
+  ],
+  "original_resources_preserved": 668,
+  "first_50_palettes_and_all_51_names_preserved": true,
+  "first_17_font_indices_preserved": true,
+  "online_backends_byte_identical": true,
+  "current_binaries": {
+    "stock": "dd5f1d44ad4b2feda56e18e09b9ad5c6010c0cf1efb188aa5a943a286fa69469",
+    "nextui": "3375a9ccd4faebfc6c61b21b680c2d06e82d2946991c415b4627b8a16007af97",
+    "nxredux": "1e6c55ed4de6779a7d5bc74e12574f8d947780e63b0bfb9d0c21f2626980130e"
+  },
+  "physical_tested": false
+}

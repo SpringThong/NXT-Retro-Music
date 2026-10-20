@@ -1,0 +1,19 @@
+{
+  "STOCK": {
+    "exit": 0,
+    "actual_volume_controller": true,
+    "ASan_UBSan": true
+  },
+  "NEXTUI": {
+    "exit": 0,
+    "actual_volume_controller": true,
+    "ASan_UBSan": true
+  },
+  "NXREDUX": {
+    "exit": 0,
+    "actual_volume_controller": true,
+    "ASan_UBSan": true
+  },
+  "source_sha256": "4feba0e88dbf7bc33abc94edcf6ea495f35ff2d506196001e3f0406ff90ec96b",
+  "physical_DAC_tested": false
+}

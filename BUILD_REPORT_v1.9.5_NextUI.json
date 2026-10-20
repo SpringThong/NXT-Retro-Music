@@ -1,0 +1,72 @@
+{
+  "version": "1.9.5",
+  "rom": "nextui",
+  "baseline": "unified v1.9.4",
+  "source_scope": "Shared source, separate ROM adapters and installers",
+  "build": {
+    "exit": 0,
+    "entrypoint": "python3 tools/build-release.py --rom all --jobs 4",
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_NEXTUI",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "3375a9ccd4faebfc6c61b21b680c2d06e82d2946991c415b4627b8a16007af97",
+  "installer": "NXT_Retro_Music_v1.9.5_NextUI.zip",
+  "installer_size": 132011688,
+  "installer_sha256": "c247679a54cbd45316b3bab92b6851f093d7b595d8d2a003062672bc5f37f4db",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.5_NextUI.zip",
+  "OTA_kit_sha256": "2a0440ed6d4195f1c89f1cced533bce053305f133e220030fcecb6a251b284cc",
+  "checks": {
+    "v195-preservation.json": {
+      "sha256": "3b9b0ea6b17840b6389606c60be969605e82f9edb8cd9e8b0c93011fdd29963a"
+    },
+    "v195-ui-test.json": {
+      "sha256": "ad0e7f7e9f0305360089e6ae8d61afddcc6ffbc737cc0cb44f05c650ecdce41a"
+    },
+    "v195-config-test.json": {
+      "sha256": "10bb89ef104f01677795cc0431575469d486f2ec2aa0c5772bac87b09e7e79cd"
+    },
+    "v195-volume-test.json": {
+      "sha256": "253e90c691411226a4de43a864142fc53da6d295a3d573e73815abb54ade23bf"
+    },
+    "v195-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v195-index.json": {
+      "sha256": "5101848a52964fb8ae2bb87e10586fabada57a0fe9dd69fed2922a85a28741a0"
+    },
+    "v195-motion-lyrics.json": {
+      "sha256": "c05e6816f5426d9953f4dcdabba54a7145847387688f57408dc59053584e1f1d"
+    },
+    "v195-frame-budget.json": {
+      "sha256": "62d1e9ef4245d11ecde3af113aa116ea65ca410638339f160822eefe204d2c2e"
+    },
+    "v195-dsd-test-nextui.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v195-library-flow-nextui.json": {
+      "sha256": "1f7879d93140a2bc2c00731d94d18684648cae1346cbd3a94244c1881a4669da"
+    },
+    "v195-loader-nextui.json": {
+      "sha256": "ba8d063d732a0eee1ecc9b5cdc5f3606c11e493bba48cae9e6e654dc89092b30"
+    },
+    "v195-package-qa-nextui.json": {
+      "sha256": "7dc129bbde81866946c417f10a3bcf43fa9292090f1ee158c2e9f0bf80358919"
+    },
+    "v195-ota-qa-nextui.json": {
+      "sha256": "f3a52b272d14a28e8c0294108123f966ac5b50529f56616dcfff0655331284f7"
+    }
+  },
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "fonts_total": 22,
+  "themes_total": 51,
+  "animation_target_Hz": 60,
+  "actual_device_FPS_measured": false,
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

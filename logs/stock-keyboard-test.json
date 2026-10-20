@@ -1,0 +1,20 @@
+{
+  "keyboard": {
+    "exit": 0,
+    "production_frame_loop": true,
+    "shortcuts": "ABXY L1 R1 SELECT",
+    "render_sizes": [
+      1024,
+      640
+    ],
+    "runtime_layouts": [
+      "TELEX",
+      "LAT"
+    ],
+    "active_mode_label": true,
+    "mode_switches_tested": 12,
+    "vietnamese_pad_phrases": 6,
+    "real_map_with_glyph_filter": true,
+    "latin_url_preserved": true
+  }
+}

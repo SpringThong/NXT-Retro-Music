@@ -1,0 +1,1 @@
+PASS: Stock Wi-Fi interface/IP detection, Home OSD request/acknowledgement/timeout, keymon stays stopped during OSD, daemon handoff, background inhibitors, inode ownership, quit cleanup and Bluetooth validation.

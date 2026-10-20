@@ -1,0 +1,9 @@
+PASS exclusive native format 0: exact bytes, partial writes/EAGAIN, paused silence, EOF and idle worker
+PASS exclusive native format 1: exact bytes, partial writes/EAGAIN, paused silence, EOF and idle worker
+PASS exclusive native format 2: exact bytes, partial writes/EAGAIN, paused silence, EOF and idle worker
+PASS exclusive native format 3: exact bytes, partial writes/EAGAIN, paused silence, EOF and idle worker
+PASS connect/disconnect, pause/seek/resume without speaker fallback
+PASS busy DAC pauses; no plug/dmix fallback
+PASS incompatible rate rejected without resampling
+PASS incompatible source rejected before hardware open
+PASS graceful worker termination; ALSA and source in this test are explicit simulators

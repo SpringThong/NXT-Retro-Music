@@ -1,0 +1,339 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.2",
+  "variant": "Stock",
+  "revision": "Stock · Vinyl Player Fix1",
+  "baseline_inputs": {
+    "stock_source": {
+      "version": 2,
+      "sha256": "f47573bb742d2129ff3124d4a097dd95b71326915e446dbb89a10c130afcae77"
+    },
+    "nextui_source": {
+      "version": 14,
+      "sha256": "29623248f386f0ac67fe233cbaa0dde24a5c9dcec0ef68a284692dd986b5001c",
+      "revision": "NextUI · Vinyl Player Fix2"
+    }
+  },
+  "device": "TrimUI Brick Pro / TG4040",
+  "sdk_platform": "tg5040",
+  "official_reference": {
+    "firmware": {
+      "version": "v1.1.1-20260717",
+      "url": "https://github.com/trimui/firmware_brickpro/releases/download/v1.1.1-20260717/trimui_tg4040_20260717_v1.1.1.7z",
+      "sha256": "36189b7966717c520901e6ef7318d1b092067598959b030cc0fd66b0747e5585"
+    },
+    "sd_base": {
+      "version": "v1.0.0-20260626",
+      "url": "https://github.com/trimui/assets_brickpro/releases/download/v1.0.0-20260626/trimui_brick_pro_tg4040_sd_base_20260626.7z",
+      "sha256": "bf029612fab90bb427c54c11a816f862c2bbf33e3d64e5830c38e8fc1b9fc8eb"
+    }
+  },
+  "install_path": "Apps/NXT_Retro_Music",
+  "userdata_path": ".userdata/nxt-stock",
+  "build_define": "NXT_ROM_STOCK",
+  "frontend_translation_units": 109,
+  "glibc_in_verified_rootfs": "2.33",
+  "sdl_in_verified_rootfs": "2.30.8",
+  "build_command": "make stock",
+  "helper_policy": "byte-identical v1.2 NextUI backends",
+  "physical_hardware_tested": false,
+  "online_account_tested_in_this_port": false,
+  "source_license": "GPL-3.0; see component licenses and relink instructions",
+  "frontend_sha256": "373f50ca4d4ac82f47e270b01f213b6ca0875f5ea6d4199616787216181dfdf7",
+  "settings_library_sha256": "40a736a1333f8004fe020f2ab5d1b73a15c72d63964ddda9b00676ea592505d5",
+  "installer_sha256": "9482102c87f434c5f9e037e4654befe0246ac828cfa220713921f6962d4c337a",
+  "installer_bytes": 77501995,
+  "installer_filename": "NXT_Retro_Music_v1.2_Stock_Vinyl_Fix1.zip",
+  "rootfs_smoke_tests": {
+    "musicplayer.elf --help": {
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.2 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-stock-vinyl/NXT_Retro_Music_v1.2_Stock_Source/dist/stock-stage/Apps/NXT_Retro_Music/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n",
+      "stderr": ""
+    },
+    "musicplayer.elf --build-info": {
+      "exit": 0,
+      "stdout": "NXT Retro Music\nStock · Vinyl Player Fix1\n",
+      "stderr": ""
+    },
+    "musicplayer.elf --stock-info": {
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.2 — Stock · Vinyl Player Fix1 / TrimUI Brick Pro\nSDL 2.30.8\nVideo drivers: mali\nRender drivers: opengles2 opengles software\nResources: /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res\nSettings: /mnt/SDCARD/.userdata/nxt-stock/system\nOK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/font1.ttf\nOK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/font2.ttf\nOK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/assets@3x.png\nOK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/inputs@3x.png\nOK ./res/icons/spotify-source.png\nOK ./res/icons/soundcloud-source.png\n",
+      "stderr": ""
+    },
+    "nxt-spotify-backend ": {
+      "exit": 0,
+      "stdout": "{\"build\":\"NextUI-v1.1\",\"connect_service\":false,\"event\":\"ready\",\"experimental\":false,\"version\":\"1.1\"}\n{\"event\":\"closed\"}\n",
+      "stderr": "Spotify v1.1.0: Backend build: NextUI-v1.1\n"
+    },
+    "nxt-soundcloud-backend ": {
+      "exit": 0,
+      "stdout": "{\"api\":\"yt-dlp-public-unofficial\",\"build\":\"NextUI-v1.2-SoundCloud\",\"credentials_required\":false,\"event\":\"ready\"}\n",
+      "stderr": ""
+    },
+    "yt-dlp-runtime/yt-dlp --version": {
+      "exit": 0,
+      "stdout": "2026.08.19\n",
+      "stderr": ""
+    }
+  },
+  "runtime_test": "PASS: Stock Home OSD request/acknowledgement/timeout, keymon stays stopped during OSD, daemon handoff, background inhibitors, inode ownership, quit cleanup and Bluetooth validation.",
+  "shell_and_relink_test": "PASS Stock shell syntax and relink: all 109 corresponding objects reproduce the installed frontend byte-for-byte.",
+  "dac_volume_regression": {
+    "compile_volume": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "hid_pcm_volume": {
+      "exit": 0,
+      "stdout": "Failed to open mixer\nPASS DAC volume: 200 HID presses, foreground/background evdev input, bounds/mute, PCM gain changes, unchanged sink/device, zero DAC mixer writes, speaker path retained.\n"
+    },
+    "compile_route": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "dac_route": {
+      "exit": 0,
+      "stdout": "PASS DAC route: volume preserves selected PCM; short disconnect/reconnect retains DAC; sustained unplug follows setting; new ALSA card and explicit speaker selection work.\n"
+    },
+    "compile_sdl": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "official_named_pcm": {
+      "exit": 0,
+      "stdout": "PASS official stock SDL/ALSA: AUDIODEV opens the named music PCM instead of another default output.\n"
+    }
+  },
+  "current_feature_regression": {
+    "controls-drive": {
+      "telex": {
+        "exit": 0,
+        "cases": 18,
+        "utf8_limits_and_undo": true
+      },
+      "drive_parser": {
+        "exit": 0,
+        "public_links_resource_keys_unicode_and_confirmation": true
+      },
+      "natural_sort": {
+        "exit": 0,
+        "numbers_case_and_vietnamese": true,
+        "order": [
+          "1 Remix",
+          "2 Remix",
+          "10 Remix",
+          "100 Remix",
+          "an 2",
+          "Ắn 12",
+          "duong 2",
+          "Đường 3",
+          "Zebra"
+        ]
+      }
+    },
+    "input": {
+      "shortcuts": {
+        "exit": 0
+      },
+      "both_sticks": {
+        "exit": 0
+      }
+    },
+    "keyboard": {
+      "keyboard": {
+        "exit": 0,
+        "production_frame_loop": true,
+        "shortcuts": "ABXY L1 R1 SELECT",
+        "render_sizes": [
+          1024,
+          640
+        ],
+        "runtime_layouts": [
+          "TELEX",
+          "LAT"
+        ],
+        "active_mode_label": true,
+        "mode_switches_tested": 12,
+        "vietnamese_pad_phrases": 6,
+        "real_map_with_glyph_filter": true,
+        "latin_url_preserved": true
+      }
+    },
+    "drive-ui": {
+      "drive_io": {
+        "exit": 0,
+        "curl_decoder_player_fixtures": true
+      },
+      "folder_queue": {
+        "exit": 0,
+        "play_all_and_selected_song": true,
+        "natural_order_and_correct_start": true,
+        "persistent_stream_uri_m3u": true,
+        "folder_navigation_refresh_and_empty_audio": true,
+        "cancel_exit_write_failure": true
+      },
+      "local_folder_mapping": {
+        "exit": 0
+      }
+    },
+    "drive-queue": {
+      "queue_controller": {
+        "exit": 0,
+        "production_module_player_and_playlist": true,
+        "auto_advance_repeat_shuffle_manual_navigation": true,
+        "saved_drive_uri_m3u_resume": true,
+        "audio_load_fixture": true
+      }
+    },
+    "decoder": {
+      "local_10_formats": {
+        "exit": 0,
+        "actual_arm64_decoder": true
+      },
+      "dsp_replaygain_eq_limiter": {
+        "exit": 0
+      }
+    },
+    "record": {
+      "native_record": {
+        "exit": 0,
+        "production_skin_and_frame_controller": true,
+        "asan_ubsan_bounds_and_undefined_behavior": true,
+        "leaksan": "unavailable: runtime cannot read /proc/task under its tracer; leak scan disabled",
+        "cache_release_asserted": true,
+        "playing_pause_resume_tonearm": true,
+        "rotates_with_spectrum_off": true,
+        "no_hidden_display_off_menu_animation": true,
+        "track_cover_theme_resize_clock_wrap": true,
+        "cached_surfaces_reused": true,
+        "render_sizes": [
+          1024,
+          640
+        ],
+        "sources_tested": [
+          "Spotify fixture",
+          "local fixture",
+          "Drive fixture"
+        ],
+        "audio_and_dac_fixture": true,
+        "physical_hardware_tested": false
+      }
+    },
+    "session": {
+      "current-build-open": {
+        "exit": 0,
+        "production_server_handler": true,
+        "socket_transport_fixture": true
+      },
+      "wrong-build-refused": {
+        "exit": 0,
+        "production_server_handler": true,
+        "socket_transport_fixture": true
+      },
+      "missing-newline-refused": {
+        "exit": 0,
+        "production_server_handler": true,
+        "socket_transport_fixture": true
+      },
+      "legacy-open-not-attached": {
+        "exit": 0,
+        "production_server_handler": true,
+        "socket_transport_fixture": true
+      },
+      "legacy-attach-compatible": {
+        "exit": 0,
+        "production_server_handler": true,
+        "socket_transport_fixture": true
+      },
+      "old-session-refused-then-reboot": {
+        "exit": 0,
+        "production_client_server_protocol_and_launcher": true,
+        "transport_audio_ui_fixture": true,
+        "real_unix_ipc": "unavailable: managed runtime denies sockets",
+        "no_product_signal_to_old_or_unrelated_process": true
+      },
+      "same-build-reattach": {
+        "exit": 0,
+        "production_client_server_protocol_and_launcher": true,
+        "transport_audio_ui_fixture": true,
+        "real_unix_ipc": "unavailable: managed runtime denies sockets",
+        "no_product_signal_to_old_or_unrelated_process": true
+      },
+      "stale-state-pid": {
+        "exit": 0,
+        "production_client_server_protocol_and_launcher": true,
+        "transport_audio_ui_fixture": true,
+        "real_unix_ipc": "unavailable: managed runtime denies sockets",
+        "no_product_signal_to_old_or_unrelated_process": true
+      },
+      "stale-endpoint": {
+        "exit": 0,
+        "production_client_server_protocol_and_launcher": true,
+        "transport_audio_ui_fixture": true,
+        "real_unix_ipc": "unavailable: managed runtime denies sockets",
+        "no_product_signal_to_old_or_unrelated_process": true
+      }
+    }
+  },
+  "manual_quality_check": {
+    "pages": 20,
+    "all_pages_visually_reviewed": true,
+    "changed_pages_reviewed": [
+      1,
+      3,
+      16,
+      20
+    ],
+    "language": "vi-VN",
+    "formats": [
+      "PDF",
+      "DOCX",
+      "Markdown"
+    ],
+    "no_clipped_tables_or_text": true,
+    "content_source": "docs/manual-v1.2.json and production UI/keyboard handlers",
+    "pdf_sha256": "76f775b197ad512572a5d22bae3a3acd63d60f893c852a3742dcb2b1ec1cdb97"
+  },
+  "live_network_tested_in_this_port": false,
+  "drive_limits": {
+    "sharing": "public links only",
+    "playback": "cancellable network stream with bounded RAM buffering; no audio file download",
+    "queue": "all audio entries in current folder; starts at selected song or Play All; auto-next/repeat/shuffle",
+    "recursive_folder_queue": false,
+    "folder_entries": 4096,
+    "folder_depth": 32,
+    "saved_links": 64
+  },
+  "features": [
+    "rotating circular artwork and pause/resume tonearm",
+    "Vietnamese Telex and Latin only",
+    "public Drive streaming and whole-folder queue",
+    "Stock Home native quick panel",
+    "SELECT with D-pad and either analog for volume/brightness",
+    "natural numeric and alphabetical folder order",
+    "version-free startup title",
+    "build-specific safe background reattach"
+  ],
+  "dac_volume_changes": [
+    "USB PCM gain without hardware mixer writes",
+    "named music PCM pinned through AUDIODEV",
+    "1500-ms confirmed DAC disconnect",
+    "reopen DAC after transient reconnect",
+    "HID volume during detached playback"
+  ],
+  "runtime_qa_limits": "Signals use real children; proc entries are fixtures for executor PID namespaces.",
+  "stream_queue_qa_limits": "Production queue/controller and URI persistence; curl/audio/UI boundaries are fixtures. No live account or network playback claim.",
+  "session_qa_limits": "Production handshake and Stock launcher; file transport fixture substitutes for denied sockets.",
+  "record_qa_limits": "Production renderer/controller under ASan/UBSan. Artwork, audio and DAC are fixtures. LeakSanitizer unavailable under runtime tracer; cache release asserted.",
+  "python_qa_limits": "QEMU uses the PyInstaller onedir child path; installed bootloader is unchanged.",
+  "physical_test_required": [
+    "GPU/display",
+    "button and joystick mapping",
+    "power and resume",
+    "speaker/headphones",
+    "USB DAC and hotplug",
+    "Bluetooth",
+    "concurrent game/background mixing"
+  ],
+  "payload_validation": "ZIP CRC, matching ELF/launcher/guide/resource bytes, executable attributes, no account state"
+}

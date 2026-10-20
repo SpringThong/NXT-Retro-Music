@@ -1,0 +1,3738 @@
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// File: common/generic_video.c
+// Generic implementations of video functions, to be used by platforms that don't
+// provide their own implementations.
+// Used by: tg5050
+// Library dependencies: SDL2, OpenGL (e.g. gles2), pthread, NEON
+// Tool dependencies: none
+// Script dependencies: none
+
+// \note This files does not have an acompanying header, as all functions are declared in api.h
+// with minimal fallback implementations
+// \sa FALLBACK_IMPLEMENTATION
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+#include "defines.h"
+#include "platform.h"
+#include "api.h"
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <time.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <sys/file.h>
+
+static void bandShadowInvalidate(void);
+
+
+#if defined(__has_feature)
+#if __has_feature(thread_sanitizer)
+#define NEXTUI_TSAN 1
+#endif
+#endif
+#if defined(__SANITIZE_THREAD__)
+#define NEXTUI_TSAN 1
+#endif
+
+static int finalScaleFilter = GL_LINEAR;
+static int reloadShaderTextures = 1;
+static int shaderResetRequested = 0;
+
+// shader stuff
+
+typedef struct Shader {
+	int srcw;
+	int srch;
+	int texw;
+	int texh;
+	int filter;
+	GLuint shader_p;
+	int scale;
+	int srctype;
+	int scaletype;
+	char* filename;
+	GLuint texture;
+	int updated;
+	GLint u_FrameDirection;
+	GLint u_FrameCount;
+	GLint u_OutputSize;
+	GLint u_TextureSize;
+	GLint u_InputSize;
+	GLint OrigInputSize;
+	GLint u_OrigTextureSize;
+	GLint u_OrigTexture;
+	GLint texLocation;
+	GLint texelSizeLocation;
+	ShaderParam* pragmas; // Dynamic array of parsed pragma parameters
+	int num_pragmas;	  // Count of valid pragma parameters
+
+} Shader;
+
+GLuint g_shader_default = 0;
+GLuint g_shader_overlay = 0;
+GLuint g_noshader = 0;
+
+Shader* shaders[MAXSHADERS] = {
+	&(Shader){.shader_p = 0, .scale = 1, .filter = GL_LINEAR, .scaletype = 1, .srctype = 0, .filename = "stock.glsl", .texture = 0, .updated = 1},
+	&(Shader){.shader_p = 0, .scale = 1, .filter = GL_LINEAR, .scaletype = 1, .srctype = 0, .filename = "stock.glsl", .texture = 0, .updated = 1},
+	&(Shader){.shader_p = 0, .scale = 1, .filter = GL_LINEAR, .scaletype = 1, .srctype = 0, .filename = "stock.glsl", .texture = 0, .updated = 1},
+};
+
+static int nrofshaders = 0; // choose between 1 and 3 pipelines, > pipelines = more cpu usage, but more shader options and shader upscaling stuff
+
+// The untouched pass-0 input frame, exposed to shaders as OrigTexture (unit 1)
+// / OrigTextureSize. Shaders written for current NextUI (upstream PR #720)
+// declare these; an unset sampler falls back to unit 0 but an unset
+// OrigTextureSize reads as vec2(0) and any coordinate math dividing by it goes
+// NaN — undefined per-frame sampling that shows up as screen flicker
+// (e.g. PT_SkyWalker541). Our source texture is allocated at exactly the frame
+// size, so OrigTextureSize == the frame dimensions.
+static GLuint orig_texture_gl = 0;
+static int orig_frame_w = 0, orig_frame_h = 0;
+
+///////////////////////////////
+
+static struct VID_Context {
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	SDL_Texture* target_layer1;
+	SDL_Texture* target_layer2;
+	SDL_Texture* stream_layer1;
+	SDL_Texture* target_layer3;
+	SDL_Texture* target_layer4;
+	SDL_Texture* target_layer5;
+	SDL_Texture* target;
+	SDL_Texture* effect;
+	SDL_Texture* overlay;
+	SDL_Surface* screen;
+	SDL_GLContext gl_context;
+
+	GFX_Renderer* blit; // yeesh
+	int width;
+	int height;
+	int pitch;
+	int sharpness;
+} vid;
+static bool screen_premult = false; // the screen texture composites with the premultiplied blend (PLAT_setScreenDim)
+
+// libretro GPU-render (hardware core) support. The core draws into hwr.fbo on
+// the game context. With no shader passes PLAT_GL_Swap scales color_tex to the
+// screen directly (hwr_present_program flips it and forces it opaque); shader
+// passes get it blitted (flipped upright, opaque) into copy_tex first, in place
+// of the CPU upload.
+static struct {
+	GLuint fbo, color_tex, depth_rb;
+	unsigned w, h;
+	GLuint copy_fbo, copy_tex;
+	unsigned copy_w, copy_h;
+	unsigned frame_w, frame_h; // the core's last frame: the bottom-left w x h of fbo
+	int frame_flip;			   // the frame is bottom-left origin (GL), not row 0 = top
+	int frame_ready;		   // fbo holds a frame to present
+	int copy_valid;			   // copy_tex holds that frame
+	GLuint present_program;	   // direct-present shader (0 = not built yet)
+	GLint present_uvmap, present_uvclamp;
+	int state_dirty; // the core ran since our last draw: drop cached GL state
+	GLuint hud_tex;	 // debug HUD drawn over the game (0 = none)
+	int hud_w, hud_h;
+	GLuint avg_fbo, avg_tex; // downsample target for ambient LED colour
+	int avg_w, avg_h;
+} hwr;
+
+void PLAT_HWR_makeCurrent(void) {
+	SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+}
+
+void* PLAT_HWR_getProcAddress(const char* sym) {
+	return SDL_GL_GetProcAddress(sym);
+}
+
+int PLAT_HWR_maxTextureSize(void) {
+	GLint max = 0;
+	PLAT_HWR_makeCurrent();
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
+	return max;
+}
+
+static void hwr_delete_copy(void) {
+	if (hwr.copy_fbo)
+		glDeleteFramebuffers(1, &hwr.copy_fbo);
+	if (hwr.copy_tex)
+		glDeleteTextures(1, &hwr.copy_tex);
+	hwr.copy_fbo = hwr.copy_tex = 0;
+	hwr.copy_w = hwr.copy_h = 0;
+	hwr.copy_valid = 0;
+}
+
+void PLAT_HWR_destroy(void) {
+	PLAT_HWR_makeCurrent();
+	hwr_delete_copy();
+	if (hwr.hud_tex)
+		glDeleteTextures(1, &hwr.hud_tex);
+	if (hwr.avg_fbo)
+		glDeleteFramebuffers(1, &hwr.avg_fbo);
+	if (hwr.avg_tex)
+		glDeleteTextures(1, &hwr.avg_tex);
+	if (hwr.depth_rb)
+		glDeleteRenderbuffers(1, &hwr.depth_rb);
+	if (hwr.fbo)
+		glDeleteFramebuffers(1, &hwr.fbo);
+	if (hwr.color_tex)
+		glDeleteTextures(1, &hwr.color_tex);
+	if (hwr.present_program)
+		glDeleteProgram(hwr.present_program);
+	memset(&hwr, 0, sizeof(hwr));
+}
+
+unsigned PLAT_HWR_create(unsigned w, unsigned h, int depth, int stencil) {
+	if (!vid.gl_context)
+		return 0;
+	PLAT_HWR_makeCurrent();
+	glGenTextures(1, &hwr.color_tex);
+	glBindTexture(GL_TEXTURE_2D, hwr.color_tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glGenFramebuffers(1, &hwr.fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, hwr.fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hwr.color_tex, 0);
+	if (depth || stencil) {
+		glGenRenderbuffers(1, &hwr.depth_rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, hwr.depth_rb);
+		glRenderbufferStorage(GL_RENDERBUFFER, stencil ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT24, w, h);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, stencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT,
+								  GL_RENDERBUFFER, hwr.depth_rb);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	}
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		LOG_error("HWR: FBO %ux%u incomplete: 0x%X\n", w, h, status);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		PLAT_HWR_destroy();
+		return 0;
+	}
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	hwr.w = w;
+	hwr.h = h;
+	return hwr.fbo;
+}
+
+int PLAT_HWR_resize(unsigned w, unsigned h) {
+	if (!hwr.fbo)
+		return 0;
+	// Called from the core's environment callback inside retro_run: leave the
+	// core's texture, renderbuffer and framebuffer bindings as they were.
+	GLint prev_tex = 0, prev_rb = 0, prev_fb = 0;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &prev_tex);
+	glGetIntegerv(GL_RENDERBUFFER_BINDING, &prev_rb);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prev_fb);
+	glBindTexture(GL_TEXTURE_2D, hwr.color_tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	GLint depth_format = 0;
+	if (hwr.depth_rb) {
+		glBindRenderbuffer(GL_RENDERBUFFER, hwr.depth_rb);
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_INTERNAL_FORMAT, &depth_format);
+		glRenderbufferStorage(GL_RENDERBUFFER, depth_format, w, h);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, hwr.fbo);
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	glBindTexture(GL_TEXTURE_2D, prev_tex);
+	glBindRenderbuffer(GL_RENDERBUFFER, prev_rb);
+	glBindFramebuffer(GL_FRAMEBUFFER, prev_fb);
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		LOG_error("HWR: FBO resize to %ux%u incomplete: 0x%X\n", w, h, status);
+		return 0;
+	}
+	hwr.w = w;
+	hwr.h = h;
+	return 1;
+}
+
+void PLAT_HWR_setFrame(unsigned w, unsigned h, int flip) {
+	if (!hwr.fbo)
+		return;
+	// No GL work here: PLAT_GL_Swap samples the FBO itself, or copies it only
+	// when shader passes need a frame-sized, upright texture.
+	hwr.frame_w = w;
+	hwr.frame_h = h;
+	hwr.frame_flip = flip;
+	hwr.frame_ready = 1;
+	hwr.copy_valid = 0;
+}
+
+// Blit the frame into copy_tex (upright, opaque) for the shader passes.
+static void hwr_update_copy(void) {
+	unsigned w = hwr.frame_w, h = hwr.frame_h;
+	if (hwr.copy_valid)
+		return;
+	if (hwr.copy_w != w || hwr.copy_h != h) {
+		hwr_delete_copy();
+		glGenTextures(1, &hwr.copy_tex);
+		glBindTexture(GL_TEXTURE_2D, hwr.copy_tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glGenFramebuffers(1, &hwr.copy_fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, hwr.copy_fbo);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hwr.copy_tex, 0);
+		hwr.copy_w = w;
+		hwr.copy_h = h;
+	}
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, hwr.fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, hwr.copy_fbo);
+	glDisable(GL_SCISSOR_TEST);
+	// The pipeline expects texture row 0 = image top (the CPU-upload layout);
+	// a bottom-left-origin GL frame is flipped here, exactly once.
+	if (hwr.frame_flip)
+		glBlitFramebuffer(0, 0, w, h, 0, h, w, 0, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	else
+		glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	// Opaque, like CPU frames: the core's alpha channel is not coverage (PPSSPP
+	// leaves 0 on 2D screens) and the Brick's display layer composites the window
+	// with per-pixel alpha, so alpha-0 pixels would come out black.
+	glBindFramebuffer(GL_FRAMEBUFFER, hwr.copy_fbo);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // restoreFrontendState's value
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	hwr.copy_valid = 1;
+}
+
+// Direct present: the vertex stage maps the quad's 0..1 TexCoord onto the
+// frame's corner of the FBO texture (and flips a GL frame upright); the
+// fragment stage keeps linear filtering off the texels outside the frame and
+// forces alpha to 1 for the same reason as hwr_update_copy.
+static const char* hwr_present_vs =
+	"#version 100\n"
+	"attribute vec2 VertexCoord;\n"
+	"attribute vec2 TexCoord;\n"
+	"uniform highp vec4 UVMap;\n"
+	"varying highp vec2 vTexCoord;\n"
+	"void main() {\n"
+	"	vTexCoord = UVMap.xy + TexCoord * UVMap.zw;\n"
+	"	gl_Position = vec4(VertexCoord, 0.0, 1.0);\n"
+	"}\n";
+static const char* hwr_present_fs =
+	"#version 100\n"
+	"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+	"precision highp float;\n"
+	"#else\n"
+	"precision mediump float;\n"
+	"#endif\n"
+	"uniform sampler2D Texture;\n"
+	"uniform vec4 UVClamp;\n"
+	"varying vec2 vTexCoord;\n"
+	"void main() {\n"
+	"	gl_FragColor = vec4(texture2D(Texture, clamp(vTexCoord, UVClamp.xy, UVClamp.zw)).rgb, 1.0);\n"
+	"}\n";
+
+static GLuint hwr_compile(GLenum type, const char* src) {
+	GLuint sh = glCreateShader(type);
+	glShaderSource(sh, 1, &src, NULL);
+	glCompileShader(sh);
+	GLint ok = 0;
+	glGetShaderiv(sh, GL_COMPILE_STATUS, &ok);
+	if (!ok) {
+		char log[512];
+		glGetShaderInfoLog(sh, sizeof(log), NULL, log);
+		LOG_error("HWR: present shader compile failed: %s\n", log);
+		glDeleteShader(sh);
+		return 0;
+	}
+	return sh;
+}
+
+// 1 when the direct-present program is ready; on failure the copy path stays.
+static int hwr_present_ready(void) {
+	static int failed = 0;
+	if (hwr.present_program)
+		return 1;
+	if (failed)
+		return 0;
+	failed = 1;
+	GLuint vs = hwr_compile(GL_VERTEX_SHADER, hwr_present_vs);
+	GLuint fs = hwr_compile(GL_FRAGMENT_SHADER, hwr_present_fs);
+	if (!vs || !fs) {
+		if (vs)
+			glDeleteShader(vs);
+		if (fs)
+			glDeleteShader(fs);
+		return 0;
+	}
+	GLuint prog = glCreateProgram();
+	glAttachShader(prog, vs);
+	glAttachShader(prog, fs);
+	glLinkProgram(prog);
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+	GLint ok = 0;
+	glGetProgramiv(prog, GL_LINK_STATUS, &ok);
+	if (!ok) {
+		char log[512];
+		glGetProgramInfoLog(prog, sizeof(log), NULL, log);
+		LOG_error("HWR: present shader link failed: %s\n", log);
+		glDeleteProgram(prog);
+		return 0;
+	}
+	hwr.present_program = prog;
+	hwr.present_uvmap = glGetUniformLocation(prog, "UVMap");
+	hwr.present_uvclamp = glGetUniformLocation(prog, "UVClamp");
+	failed = 0;
+	return 1;
+}
+
+void PLAT_HWR_restoreFrontendState(void) {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_STENCIL_TEST);
+	glDisable(GL_SCISSOR_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glBindSampler(0, 0);
+	glBindSampler(1, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	hwr.state_dirty = 1;
+}
+
+void PLAT_HWR_prepareCoreFrame(void) {
+	// Our present leaves its own VAO and VBO bound. mupen64plus-next's GL
+	// state wrapper (glsm) assumes the default VAO and re-applies the core's
+	// attribute pointers to whatever is bound, so GLideN64 drew from our VAO
+	// and every frame came out black.
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// The present samples the core's own FBO texture; left bound, the core's
+	// cached state can draw with it while rendering into it (garbage in the
+	// parts of the frame it does not redraw, like N64's overscan border).
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	hwr.state_dirty = 1;
+}
+
+void PLAT_HWR_setHud(const void* rgba, int w, int h) {
+	if (!rgba || w <= 0 || h <= 0) {
+		if (hwr.hud_tex)
+			glDeleteTextures(1, &hwr.hud_tex);
+		hwr.hud_tex = 0;
+		hwr.hud_w = hwr.hud_h = 0;
+		return;
+	}
+	if (!hwr.hud_tex || hwr.hud_w != w || hwr.hud_h != h) {
+		if (!hwr.hud_tex)
+			glGenTextures(1, &hwr.hud_tex);
+		glBindTexture(GL_TEXTURE_2D, hwr.hud_tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+		hwr.hud_w = w;
+		hwr.hud_h = h;
+	} else {
+		glBindTexture(GL_TEXTURE_2D, hwr.hud_tex);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0); // leave unit 0 as restoreFrontendState did
+	hwr.state_dirty = 1;
+}
+
+// The frame is blitted to HWR_AVG_BASE^2, mipmapped (each level texel is a true
+// box average), and the level that is w x h is read back: a smooth average of
+// the whole frame for only w*h*4 bytes. w and h must be HWR_AVG_BASE >> n.
+#define HWR_AVG_BASE 256
+int PLAT_HWR_readAverage(void* rgba, int w, int h) {
+	if (!hwr.fbo || !hwr.frame_ready || w <= 0 || h <= 0 || w != h || w > HWR_AVG_BASE)
+		return 0;
+	int level = 0;
+	while ((HWR_AVG_BASE >> level) > w)
+		level++;
+	if ((HWR_AVG_BASE >> level) != w)
+		return 0;
+	if (!hwr.avg_fbo) {
+		glGenTextures(1, &hwr.avg_tex);
+		glBindTexture(GL_TEXTURE_2D, hwr.avg_tex);
+		// levels 0..level, allocated one glTexImage2D per mip
+		for (int l = 0; l <= level; l++)
+			glTexImage2D(GL_TEXTURE_2D, l, GL_RGBA, HWR_AVG_BASE >> l, HWR_AVG_BASE >> l, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level);
+		glGenFramebuffers(1, &hwr.avg_fbo);
+		hwr.avg_w = w;
+		hwr.avg_h = h;
+	}
+	if (hwr.avg_w != w)
+		return 0; // texture storage is fixed at first use
+	// blit the frame (upright: row 0 = image top) into level 0, then let the
+	// GPU average it down
+	glBindFramebuffer(GL_FRAMEBUFFER, hwr.avg_fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hwr.avg_tex, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, hwr.fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, hwr.avg_fbo);
+	glDisable(GL_SCISSOR_TEST);
+	if (hwr.frame_flip)
+		glBlitFramebuffer(0, 0, hwr.frame_w, hwr.frame_h, 0, HWR_AVG_BASE, HWR_AVG_BASE, 0, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	else
+		glBlitFramebuffer(0, 0, hwr.frame_w, hwr.frame_h, 0, 0, HWR_AVG_BASE, HWR_AVG_BASE, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, hwr.avg_tex);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, hwr.avg_fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hwr.avg_tex, level);
+	glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	hwr.state_dirty = 1;
+	return 1;
+}
+
+static int device_width;
+static int device_height;
+static int device_pitch;
+static uint32_t SDL_transparentBlack = 0;
+
+// Screen capture for tg5050 (GPU doesn't write to legacy framebuffer)
+// GPU readback via glReadPixels on render thread; file write offloaded to worker.
+// Data is raw bottom-to-top RGBA; ffmpeg handles vflip + format at encode time.
+#define CAPTURE_REC_TMPDIR SDCARD_PATH "/Videos/Recordings/.rec_tmp"
+#define CAPTURE_REC_FRAMES_PATH CAPTURE_REC_TMPDIR "/frames.raw"
+#define CAPTURE_REC_TS_PATH CAPTURE_REC_TMPDIR "/timestamps.txt"
+
+static int capture_rec_fd = -1;		 // fd for recording frames file
+static FILE* capture_ts_file = NULL; // timestamp file for recording
+static int capture_shm_fd = -1;
+static uint8_t* capture_shm_ptr = NULL;
+static uint8_t* capture_buf_a = NULL; // double-buffer A (render thread fills)
+static uint8_t* capture_buf_b = NULL; // double-buffer B (worker processes)
+static size_t capture_frame_size = 0;
+static uint32_t capture_check_ms = 0;
+static uint32_t capture_flip_ms = 0;
+static uint32_t capture_last_ms = 0;
+static bool capture_active = false;
+static bool capture_lock_held = false;
+
+// Worker thread state (all fields protected by capture_worker_mutex)
+static pthread_t capture_worker_thread;
+static pthread_mutex_t capture_worker_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t capture_worker_cond = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t capture_rec_closed_cond = PTHREAD_COND_INITIALIZER;
+static bool capture_worker_running = false;
+static bool capture_worker_has_frame = false;
+static bool capture_worker_quit = false;
+static uint32_t capture_worker_frame_ts = 0;
+static bool capture_rec_close_requested = false;
+
+static void capture_write(void);
+static void capture_check(void);
+static void* capture_worker_func(void* arg);
+static uint32_t capture_mono_ms(void);
+
+#define OVERLAYS_FOLDER SDCARD_PATH "/Overlays"
+
+static char* overlay_path = NULL;
+
+// Notification overlay state for RA achievements
+typedef struct {
+	SDL_Surface* surface;
+	int x;
+	int y;
+	int dirty;
+	GLuint tex;
+	int tex_w, tex_h;
+	int clear_frames; // Frames to clear framebuffer after notification ends
+} NotificationOverlay;
+
+static NotificationOverlay notif = {0};
+
+void PLAT_setNotificationSurface(SDL_Surface* surface, int x, int y) {
+	notif.surface = surface;
+	notif.x = x;
+	notif.y = y;
+	notif.dirty = 1;
+}
+
+void PLAT_clearNotificationSurface(void) {
+	notif.surface = NULL;
+	notif.dirty = 0;		// Nothing to update since surface is NULL
+	notif.clear_frames = 3; // Clear for 3 frames (triple buffering safety)
+}
+
+
+#define MAX_SHADERLINE_LENGTH 512
+int extractPragmaParameters(const char* shaderSource, ShaderParam* params, int maxParams) {
+	const char* pragmaPrefix = "#pragma parameter";
+	char line[MAX_SHADERLINE_LENGTH];
+	int paramCount = 0;
+
+	const char* currentPos = shaderSource;
+
+	while (*currentPos && paramCount < maxParams) {
+		int i = 0;
+
+		// Read a line
+		while (*currentPos && *currentPos != '\n' && i < MAX_SHADERLINE_LENGTH - 1) {
+			line[i++] = *currentPos++;
+		}
+		line[i] = '\0';
+		if (*currentPos == '\n')
+			currentPos++;
+
+		// Check if it's a #pragma parameter line
+		if (strncmp(line, pragmaPrefix, strlen(pragmaPrefix)) == 0) {
+			const char* start = line + strlen(pragmaPrefix);
+			while (*start == ' ')
+				start++;
+
+			ShaderParam* p = &params[paramCount];
+
+			// Try to parse
+			if (sscanf(start, "%127s \"%127[^\"]\" %f %f %f %f",
+					   p->name, p->label, &p->def, &p->min, &p->max, &p->step) == 6) {
+				paramCount++;
+			} else {
+				fprintf(stderr, "Failed to parse line:\n%s\n", line);
+			}
+		}
+	}
+
+	return paramCount; // number of parameters found
+}
+
+GLuint link_program(GLuint vertex_shader, GLuint fragment_shader, const char* cache_key) {
+	char cache_path[512];
+	snprintf(cache_path, sizeof(cache_path), "%s/.shadercache/%s.bin", SDCARD_PATH, cache_key);
+
+	GLuint program = glCreateProgram();
+	GLint success;
+
+	// Try to load cached binary first
+	FILE* f = fopen(cache_path, "rb");
+	if (f) {
+		GLint binaryFormat = 0;
+		long file_size = -1;
+		size_t length = 0;
+		void* binary = NULL;
+
+		// A corrupt or truncated cache must never crash — validate every step
+		// (format read, seekable size, allocation, full read) and fall back to
+		// the normal compile path on any failure.
+		if (fread(&binaryFormat, sizeof(GLint), 1, f) == 1 &&
+			fseek(f, 0, SEEK_END) == 0 &&
+			(file_size = ftell(f)) > (long)sizeof(GLint)) {
+			length = (size_t)file_size - sizeof(GLint);
+			if (fseek(f, sizeof(GLint), SEEK_SET) == 0) {
+				binary = malloc(length);
+				if (binary && fread(binary, 1, length, f) != length) {
+					free(binary);
+					binary = NULL;
+				}
+			}
+		}
+		fclose(f);
+
+		if (binary) {
+			glProgramBinary(program, binaryFormat, binary, length);
+			free(binary);
+
+			glGetProgramiv(program, GL_LINK_STATUS, &success);
+			if (success) {
+				LOG_info("Loaded shader program from cache: %s\n", cache_key);
+				return program;
+			} else {
+				LOG_info("Cache load failed, falling back to compile.\n");
+				glDeleteProgram(program);
+				program = glCreateProgram();
+			}
+		}
+	}
+
+	// Compile and link if cache failed
+	glAttachShader(program, vertex_shader);
+	glAttachShader(program, fragment_shader);
+	glProgramParameteri(program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+	glLinkProgram(program);
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+
+	if (!success) {
+		GLint logLength;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+		char* log = (char*)malloc(logLength);
+		glGetProgramInfoLog(program, logLength, &logLength, log);
+		LOG_error("Program link error: %s\n", log);
+		free(log);
+		return program;
+	}
+
+	GLint binaryLength;
+	GLenum binaryFormat;
+	glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+	void* binary = malloc(binaryLength);
+	glGetProgramBinary(program, binaryLength, NULL, &binaryFormat, binary);
+
+	char shadercache_dir[MAX_PATH];
+	snprintf(shadercache_dir, sizeof(shadercache_dir), "%s/.shadercache", SDCARD_PATH);
+	mkdir(shadercache_dir, 0755);
+	f = fopen(cache_path, "wb");
+	if (f) {
+		fwrite(&binaryFormat, sizeof(GLenum), 1, f);
+		fwrite(binary, 1, binaryLength, f);
+		fclose(f);
+		LOG_info("Saved shader program to cache: %s\n", cache_key);
+	}
+	free(binary);
+
+	LOG_info("Program linked and cached\n");
+	return program;
+}
+
+char* load_shader_source(const char* filename) {
+	char filepath[256];
+	snprintf(filepath, sizeof(filepath), "%s", filename);
+	FILE* file = fopen(filepath, "rb");
+	if (!file) {
+		fprintf(stderr, "Failed to open shader file: %s\n", filepath);
+		return NULL;
+	}
+
+	fseek(file, 0, SEEK_END);
+	long length = ftell(file);
+	rewind(file);
+
+	char* source = (char*)malloc(length + 1);
+	if (!source) {
+		fprintf(stderr, "Memory allocation failed\n");
+		fclose(file);
+		return NULL;
+	}
+
+	fread(source, 1, length, file);
+	source[length] = '\0';
+	fclose(file);
+	return source;
+}
+
+GLuint load_shader_from_file(GLenum type, const char* filename, const char* path) {
+	char filepath[256];
+	snprintf(filepath, sizeof(filepath), "%s/%s", path, filename);
+	char* source = load_shader_source(filepath);
+	if (!source)
+		return 0;
+
+	LOG_info("load shader from file %s\n", filepath);
+
+	// Filter out lines starting with "#pragma parameter"
+	char* cleaned = malloc(strlen(source) + 1);
+	if (!cleaned) {
+		fprintf(stderr, "Out of memory\n");
+		free(source);
+		return 0;
+	}
+	cleaned[0] = '\0';
+
+	char* line = strtok(source, "\n");
+	while (line) {
+		if (strncmp(line, "#pragma parameter", 17) != 0) {
+			strcat(cleaned, line);
+			strcat(cleaned, "\n");
+		}
+		line = strtok(NULL, "\n");
+	}
+
+	const char* define = NULL;
+	const char* default_precision = NULL;
+	if (type == GL_VERTEX_SHADER) {
+		define = "#define VERTEX\n";
+	} else if (type == GL_FRAGMENT_SHADER) {
+		define = "#define FRAGMENT\n";
+		default_precision =
+			"#ifdef GL_ES\n"
+			// compat fix for fwidth, dFdx, dFdy
+			"#ifdef GL_OES_standard_derivatives\n"
+			"#extension GL_OES_standard_derivatives : enable\n"
+			"#endif\n"
+			"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+			"precision highp float;\n"
+			"#else\n"
+			"precision mediump float;\n"
+			"#endif\n"
+			"#endif\n"
+			"#define PARAMETER_UNIFORM\n";
+	} else {
+		fprintf(stderr, "Unsupported shader type\n");
+		free(source);
+		free(cleaned);
+		return 0;
+	}
+
+	const char* version_start = strstr(cleaned, "#version");
+	const char* version_end = version_start ? strchr(version_start, '\n') : NULL;
+
+	const char* replacement_version = "#version 300 es\n";
+	const char* fallback_version = "#version 100\n";
+
+	char* combined = NULL;
+	size_t define_len = strlen(define);
+	size_t precision_len = default_precision ? strlen(default_precision) : 0;
+	size_t source_len = strlen(cleaned);
+	size_t combined_len = 0;
+
+	int should_replace_with_300es = 0;
+	if (version_start && version_end) {
+		char version_str[32] = {0};
+		size_t len = version_end - version_start;
+		if (len < sizeof(version_str)) {
+			strncpy(version_str, version_start, len);
+			version_str[len] = '\0';
+
+			if (
+				strstr(version_str, "#version 110") ||
+				strstr(version_str, "#version 120") ||
+				strstr(version_str, "#version 130") ||
+				strstr(version_str, "#version 140") ||
+				strstr(version_str, "#version 150") ||
+				strstr(version_str, "#version 330") ||
+				strstr(version_str, "#version 400") ||
+				strstr(version_str, "#version 410") ||
+				strstr(version_str, "#version 420") ||
+				strstr(version_str, "#version 430") ||
+				strstr(version_str, "#version 440") ||
+				strstr(version_str, "#version 450")) {
+				should_replace_with_300es = 1;
+			}
+		}
+	}
+
+	if (version_start && version_end && should_replace_with_300es) {
+		size_t header_len = version_end - cleaned + 1;
+		size_t version_len = strlen(replacement_version);
+		combined_len = version_len + define_len + precision_len + (source_len - header_len) + 1;
+		combined = (char*)malloc(combined_len);
+		if (!combined) {
+			fprintf(stderr, "Out of memory\n");
+			free(source);
+			free(cleaned);
+			return 0;
+		}
+
+		strcpy(combined, replacement_version);
+		strcat(combined, define);
+		if (default_precision)
+			strcat(combined, default_precision);
+		strcat(combined, cleaned + header_len);
+	} else if (version_start && version_end) {
+		size_t header_len = version_end - cleaned + 1;
+		combined_len = header_len + define_len + precision_len + (source_len - header_len) + 1;
+		combined = (char*)malloc(combined_len);
+		if (!combined) {
+			fprintf(stderr, "Out of memory\n");
+			free(source);
+			free(cleaned);
+			return 0;
+		}
+
+		memcpy(combined, cleaned, header_len);
+		memcpy(combined + header_len, define, define_len);
+		if (default_precision)
+			memcpy(combined + header_len + define_len, default_precision, precision_len);
+		strcpy(combined + header_len + define_len + precision_len, cleaned + header_len);
+	} else {
+		size_t version_len = strlen(fallback_version);
+		combined_len = version_len + define_len + precision_len + source_len + 1;
+		combined = (char*)malloc(combined_len);
+		if (!combined) {
+			fprintf(stderr, "Out of memory\n");
+			free(source);
+			free(cleaned);
+			return 0;
+		}
+
+		strcpy(combined, fallback_version);
+		strcat(combined, define);
+		if (default_precision)
+			strcat(combined, default_precision);
+		strcat(combined, cleaned);
+	}
+
+	GLuint shader = glCreateShader(type);
+	const char* combined_ptr = combined;
+	glShaderSource(shader, 1, &combined_ptr, NULL);
+	glCompileShader(shader);
+
+	free(source);
+	free(cleaned);
+	free(combined);
+
+	GLint compiled;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	if (!compiled) {
+		char log[512];
+		glGetShaderInfoLog(shader, sizeof(log), NULL, log);
+		fprintf(stderr, "Shader compilation failed:\n%s\n", log);
+		glDeleteShader(shader);
+		return 0;
+	}
+
+	return shader;
+}
+
+void PLAT_initShaders() {
+	SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+	glViewport(0, 0, device_width, device_height);
+
+	GLuint vertex;
+	GLuint fragment;
+
+	char sysshaders_folder[MAX_PATH];
+	snprintf(sysshaders_folder, sizeof(sysshaders_folder), "%s/shaders", SYSTEM_PATH);
+
+	// Final  display shader (simple texture blit)
+	vertex = load_shader_from_file(GL_VERTEX_SHADER, "default.glsl", sysshaders_folder);
+	fragment = load_shader_from_file(GL_FRAGMENT_SHADER, "default.glsl", sysshaders_folder);
+	g_shader_default = link_program(vertex, fragment, "default.glsl");
+
+	// Overlay shader, for png overlays and static line/grid overlays
+	vertex = load_shader_from_file(GL_VERTEX_SHADER, "overlay.glsl", sysshaders_folder);
+	fragment = load_shader_from_file(GL_FRAGMENT_SHADER, "overlay.glsl", sysshaders_folder);
+	g_shader_overlay = link_program(vertex, fragment, "overlay.glsl");
+
+	// Stand-In if a shader is supposed to be applied, but wasnt compiled properly (shaper_p == NULL)
+	vertex = load_shader_from_file(GL_VERTEX_SHADER, "noshader.glsl", sysshaders_folder);
+	fragment = load_shader_from_file(GL_FRAGMENT_SHADER, "noshader.glsl", sysshaders_folder);
+	g_noshader = link_program(vertex, fragment, "noshader.glsl");
+
+	LOG_info("default shaders loaded, %i\n\n", g_shader_default);
+}
+
+void PLAT_initNotificationTexture(void) {
+	// Pre-allocate notification texture to avoid frame skip on first notification
+	glGenTextures(1, &notif.tex);
+	glBindTexture(GL_TEXTURE_2D, notif.tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// Allocate full-screen texture with transparent pixels
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, device_width, device_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	notif.tex_w = device_width;
+	notif.tex_h = device_height;
+}
+
+static void sdl_log_stdout(
+	void* userdata,
+	int category,
+	SDL_LogPriority priority,
+	const char* message) {
+	(void)userdata;
+	(void)category;
+	(void)priority;
+
+	LOG_info("[SDL] %s\n", message);
+}
+
+void PLAT_resetShaders() {
+	reloadShaderTextures = 1;
+	shaderResetRequested = 1;
+}
+
+SDL_Surface* PLAT_initVideo(void) {
+#if NEXTUI_TSAN
+	/*
+	 * Mesa's llvmpipe spawns worker threads that race during teardown under TSAN.
+	 * Softpipe keeps rendering single-threaded, avoiding the contested mutex/cond
+	 * destruction without affecting release builds.
+	 */
+	setenv("GALLIUM_DRIVER", "softpipe", 0);
+	setenv("LP_NUM_THREADS", "1", 1);
+#endif
+	SDL_LogSetOutputFunction(sdl_log_stdout, NULL);
+	//SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	SDL_ShowCursor(0);
+
+	//	SDL_version compiled;
+	//	SDL_version linked;
+	//	SDL_VERSION(&compiled);
+	//	SDL_GetVersion(&linked);
+	//	LOG_info("Compiled SDL version %d.%d.%d ...\n", compiled.major, compiled.minor, compiled.patch);
+	//	LOG_info("Linked SDL version %d.%d.%d.\n", linked.major, linked.minor, linked.patch);
+	//		LOG_info("Available video drivers:\n");
+	//	for (int i=0; i<SDL_GetNumVideoDrivers(); i++) {
+	//		LOG_info("- %s\n", SDL_GetVideoDriver(i));
+	//	}
+	//	LOG_info("Current video driver: %s\n", SDL_GetCurrentVideoDriver());
+	//	LOG_info("Available render drivers:\n");
+	//	for (int i=0; i<SDL_GetNumRenderDrivers(); i++) {
+	//		SDL_RendererInfo info;
+	//		SDL_GetRenderDriverInfo(i,&info);
+	//		LOG_info("- %s\n", info.name);
+	//	}
+	//	LOG_info("Available video displays: %d\n", SDL_GetNumVideoDisplays());
+	//	LOG_info("Available display modes:\n");
+	//	SDL_DisplayMode mode;
+	//	for (int i=0; i<SDL_GetNumDisplayModes(0); i++) {
+	//		SDL_GetDisplayMode(0, i, &mode);
+	//		LOG_info("- %ix%i (%s)\n", mode.w,mode.h, SDL_GetPixelFormatName(mode.format));
+	//	}
+	//	SDL_GetCurrentDisplayMode(0, &mode);
+	//	LOG_info("Current display mode: %ix%i (%s)\n", mode.w,mode.h, SDL_GetPixelFormatName(mode.format));
+
+	int w = FIXED_WIDTH;
+	int h = FIXED_HEIGHT;
+	int p = FIXED_PITCH;
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, "1");
+
+	vid.window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	if (vid.window) {
+		vid.renderer = SDL_CreateRenderer(vid.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	}
+	if (!vid.renderer) {
+		// A broken GL stack used to leave a NULL window/renderer that got used
+		// regardless (issue #86). Say why, then bring the UI up on a plain
+		// window + software renderer, so a broken GL stack is a logged fact
+		// rather than a silent crash: the menu and the non-shader game path
+		// still work.
+		LOG_error("%s failed: %s -- falling back to software rendering\n", vid.window ? "SDL_CreateRenderer" : "SDL_CreateWindow", SDL_GetError());
+		if (vid.window) {
+			SDL_DestroyWindow(vid.window);
+		}
+		// OVERRIDE priority so this beats a stray SDL_RENDER_DRIVER in the
+		// environment; FRAMEBUFFER_ACCELERATION off keeps SDL from retrying the
+		// (already failed) GL renderers for the software renderer's surface.
+		SDL_SetHintWithPriority(SDL_HINT_RENDER_DRIVER, "software", SDL_HINT_OVERRIDE);
+		SDL_SetHintWithPriority(SDL_HINT_FRAMEBUFFER_ACCELERATION, "0", SDL_HINT_OVERRIDE);
+		vid.window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
+		vid.renderer = vid.window ? SDL_CreateRenderer(vid.window, -1, SDL_RENDERER_SOFTWARE) : NULL;
+		if (!vid.renderer) {
+			LOG_error("software fallback failed too: %s\n", SDL_GetError());
+			exit(EXIT_FAILURE);
+		}
+	}
+	SDL_SetRenderDrawBlendMode(vid.renderer, SDL_BLENDMODE_BLEND);
+	SDL_RendererInfo info;
+	SDL_GetRendererInfo(vid.renderer, &info);
+	LOG_info("Current render driver: %s\n", info.name);
+	// print texture formats
+	LOG_info("Supported texture formats:\n");
+	for (Uint32 i = 0; i < info.num_texture_formats; i++) {
+		LOG_info("- %s\n", SDL_GetPixelFormatName(info.texture_formats[i]));
+	}
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+
+	vid.gl_context = SDL_GL_CreateContext(vid.window);
+	if (!vid.gl_context) {
+		// Same failure mode as above, one layer down: the menu renders fine on
+		// the software renderer, only the shader (game) path needs this.
+		LOG_error("SDL_GL_CreateContext failed: %s (shaders unavailable)\n", SDL_GetError());
+	} else {
+		SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+		glViewport(0, 0, w, h);
+	}
+
+	vid.stream_layer1 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+	bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+	vid.target_layer1 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	vid.target_layer2 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	vid.target_layer3 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	vid.target_layer4 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	vid.target_layer5 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+
+	vid.target = NULL; // only needed for non-native sizes
+
+	vid.screen = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_ARGB8888);
+
+	SDL_SetSurfaceBlendMode(vid.screen, SDL_BLENDMODE_BLEND);
+	// The UI surface is cleared to transparent black, and SDL's surface blend
+	// leaves premultiplied colour in it (rgb*a, alpha a). Composite it with a
+	// premultiplied blend so translucent pills and anti-aliased edges are not
+	// multiplied by alpha a second time on the GPU. Falls back to the plain
+	// blend on renderers without custom blend modes (e.g. the software one).
+	SDL_BlendMode premultiplied = SDL_ComposeCustomBlendMode(
+		SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA, SDL_BLENDOPERATION_ADD,
+		SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA, SDL_BLENDOPERATION_ADD);
+	screen_premult = SDL_SetTextureBlendMode(vid.stream_layer1, premultiplied) == 0;
+	if (!screen_premult) {
+		LOG_info("premultiplied UI blend unsupported (%s), using SDL_BLENDMODE_BLEND\n", SDL_GetError());
+		SDL_SetTextureBlendMode(vid.stream_layer1, SDL_BLENDMODE_BLEND);
+	}
+	SDL_SetTextureBlendMode(vid.target_layer2, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(vid.target_layer3, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(vid.target_layer4, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(vid.target_layer5, SDL_BLENDMODE_BLEND);
+
+	vid.width = w;
+	vid.height = h;
+	vid.pitch = p;
+
+	SDL_transparentBlack = SDL_MapRGBA(vid.screen->format, 0, 0, 0, 0);
+
+	device_width = w;
+	device_height = h;
+	device_pitch = p;
+
+	vid.sharpness = SHARPNESS_SOFT;
+
+	return vid.screen;
+}
+
+#define MAX_SHADER_PRAGMAS 32
+void loadShaderPragmas(Shader* shader, const char* shaderSource) {
+	shader->pragmas = calloc(MAX_SHADER_PRAGMAS, sizeof(ShaderParam));
+	if (!shader->pragmas) {
+		fprintf(stderr, "Out of memory allocating pragmas for %s\n", shader->filename);
+		return;
+	}
+	shader->num_pragmas = extractPragmaParameters(shaderSource, shader->pragmas, MAX_SHADER_PRAGMAS);
+}
+
+ShaderParam* PLAT_getShaderPragmas(int i) {
+	return shaders[i]->pragmas;
+}
+
+void PLAT_updateShader(int i, const char* filename, int* scale, int* filter, int* scaletype, int* srctype) {
+	if (i < 0 || i >= nrofshaders) {
+		return;
+	}
+	Shader* shader = shaders[i];
+
+	if (filename != NULL) {
+		SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+		LOG_info("loading shader \n");
+
+		char filepath[512];
+		snprintf(filepath, sizeof(filepath), "%s/Shaders/glsl/%s", SDCARD_PATH, filename);
+		// load_shader_source returns a malloc'd buffer or NULL (open/OOM failure).
+		// Pass "" instead of NULL so extractPragmaParameters doesn't deref NULL,
+		// and free the buffer afterwards — it was previously leaked on every load.
+		char* shaderSource = load_shader_source(filepath);
+		loadShaderPragmas(shader, shaderSource ? shaderSource : "");
+		free(shaderSource);
+
+		char shaders_glsl_dir[MAX_PATH];
+		snprintf(shaders_glsl_dir, sizeof(shaders_glsl_dir), "%s/Shaders/glsl", SDCARD_PATH);
+		GLuint vertex_shader1 = load_shader_from_file(GL_VERTEX_SHADER, filename, shaders_glsl_dir);
+		GLuint fragment_shader1 = load_shader_from_file(GL_FRAGMENT_SHADER, filename, shaders_glsl_dir);
+
+		// Link the shader program
+		if (shader->shader_p != 0) {
+			LOG_info("Deleting previous shader %i\n", shader->shader_p);
+			glDeleteProgram(shader->shader_p);
+		}
+		shader->shader_p = link_program(vertex_shader1, fragment_shader1, filename);
+
+		shader->u_FrameDirection = glGetUniformLocation(shader->shader_p, "FrameDirection");
+		shader->u_FrameCount = glGetUniformLocation(shader->shader_p, "FrameCount");
+		shader->u_OutputSize = glGetUniformLocation(shader->shader_p, "OutputSize");
+		shader->u_TextureSize = glGetUniformLocation(shader->shader_p, "TextureSize");
+		shader->u_InputSize = glGetUniformLocation(shader->shader_p, "InputSize");
+		shader->OrigInputSize = glGetUniformLocation(shader->shader_p, "OrigInputSize");
+		shader->u_OrigTextureSize = glGetUniformLocation(shader->shader_p, "OrigTextureSize");
+		shader->u_OrigTexture = glGetUniformLocation(shader->shader_p, "OrigTexture");
+		shader->texLocation = glGetUniformLocation(shader->shader_p, "Texture");
+		shader->texelSizeLocation = glGetUniformLocation(shader->shader_p, "texelSize");
+		for (int i = 0; i < shader->num_pragmas; ++i) {
+			shader->pragmas[i].uniformLocation = glGetUniformLocation(shader->shader_p, shader->pragmas[i].name);
+			shader->pragmas[i].value = shader->pragmas[i].def;
+
+			LOG_info("Param: %s = %f (min: %f, max: %f, step: %f)\n",
+					 shader->pragmas[i].name,
+					 shader->pragmas[i].def,
+					 shader->pragmas[i].min,
+					 shader->pragmas[i].max,
+					 shader->pragmas[i].step);
+		}
+
+		if (shader->shader_p == 0) {
+			LOG_info("Shader linking failed for %s\n", filename);
+		}
+
+		GLint success = 0;
+		glGetProgramiv(shader->shader_p, GL_LINK_STATUS, &success);
+		if (!success) {
+			char infoLog[512];
+			glGetProgramInfoLog(shader->shader_p, 512, NULL, infoLog);
+			LOG_info("Shader Program Linking Failed: %s\n", infoLog);
+		} else {
+			LOG_info("Shader Program Linking Success %s shader ID is %i\n", filename, shader->shader_p);
+		}
+		shader->filename = strdup(filename);
+	}
+	if (scale != NULL) {
+		shader->scale = *scale + 1;
+		reloadShaderTextures = 1;
+	}
+	if (scaletype != NULL) {
+		shader->scaletype = *scaletype;
+	}
+	if (srctype != NULL) {
+		shader->srctype = *srctype;
+	}
+	if (filter != NULL) {
+		shader->filter = (*filter == 1) ? GL_LINEAR : GL_NEAREST;
+		reloadShaderTextures = 1;
+	}
+	shader->updated = 1;
+}
+
+
+void PLAT_setShaders(int nr) {
+	LOG_info("set nr of shaders to %i\n", nr);
+	nrofshaders = nr;
+	reloadShaderTextures = 1;
+}
+
+static void clearVideo(void) {
+	SDL_FillRect(vid.screen, NULL, SDL_transparentBlack);
+	SDL_UpdateTexture(vid.stream_layer1, NULL, vid.screen->pixels, vid.screen->pitch);
+	bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+	SDL_SetRenderTarget(vid.renderer, NULL);
+	SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 255);
+	for (int i = 0; i < 3; i++) {
+		SDL_RenderClear(vid.renderer);
+		SDL_RenderCopy(vid.renderer, vid.stream_layer1, NULL, NULL);
+		SDL_RenderPresent(vid.renderer);
+	}
+}
+
+void PLAT_quitVideo(void) {
+	// Stop worker thread before freeing buffers
+	if (capture_worker_running) {
+		pthread_mutex_lock(&capture_worker_mutex);
+		capture_worker_quit = true;
+		pthread_cond_signal(&capture_worker_cond);
+		pthread_mutex_unlock(&capture_worker_mutex);
+		pthread_join(capture_worker_thread, NULL);
+		capture_worker_running = false;
+		capture_worker_quit = false;
+		capture_worker_has_frame = false;
+	}
+	if (capture_buf_a) {
+		free(capture_buf_a);
+		capture_buf_a = NULL;
+	}
+	if (capture_buf_b) {
+		free(capture_buf_b);
+		capture_buf_b = NULL;
+	}
+	if (capture_shm_ptr) {
+		munmap(capture_shm_ptr, capture_frame_size);
+		capture_shm_ptr = NULL;
+	}
+	if (capture_shm_fd >= 0) {
+		// This process owned the mirror: remove it so the screenshot daemon
+		// can't capture a stale frame after we're gone (e.g. inside a
+		// third-party pak launched from here).
+		close(capture_shm_fd);
+		capture_shm_fd = -1;
+		capture_lock_held = false;
+		unlink("/tmp/fb_mirror.raw");
+		unlink("/tmp/fb_mirror.info");
+	}
+	if (capture_rec_fd >= 0) {
+		close(capture_rec_fd);
+		capture_rec_fd = -1;
+	}
+	if (capture_ts_file) {
+		fclose(capture_ts_file);
+		capture_ts_file = NULL;
+	}
+	capture_active = false;
+
+	clearVideo();
+
+	// Make sure the GL context is current before tearing down textures/renderer
+	SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+
+	// Destroy textures while renderer is valid
+	if (vid.target)
+		SDL_DestroyTexture(vid.target);
+	if (vid.effect)
+		SDL_DestroyTexture(vid.effect);
+	if (vid.overlay)
+		SDL_DestroyTexture(vid.overlay);
+	if (vid.target_layer3)
+		SDL_DestroyTexture(vid.target_layer3);
+	if (vid.target_layer1)
+		SDL_DestroyTexture(vid.target_layer1);
+	if (vid.target_layer2)
+		SDL_DestroyTexture(vid.target_layer2);
+	if (vid.target_layer4)
+		SDL_DestroyTexture(vid.target_layer4);
+	if (vid.target_layer5)
+		SDL_DestroyTexture(vid.target_layer5);
+	if (vid.stream_layer1)
+		SDL_DestroyTexture(vid.stream_layer1);
+
+	// Ensure all pending GL operations complete before destroying renderer/context
+	SDL_RenderFlush(vid.renderer);
+	glFinish();
+
+	// Destroy renderer BEFORE GL context - this stops rendering threads
+	SDL_DestroyRenderer(vid.renderer);
+	vid.renderer = NULL;
+
+	// Drop current context and delete
+	SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+	SDL_GL_MakeCurrent(NULL, NULL);
+	SDL_GL_DeleteContext(vid.gl_context);
+	vid.gl_context = NULL;
+	SDL_FreeSurface(vid.screen);
+
+	// Cleanup and shutdown
+	SDL_DestroyWindow(vid.window);
+	if (overlay_path)
+		free(overlay_path);
+
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+
+void PLAT_clearVideo(SDL_Surface* screen) {
+	// SDL_FillRect(screen, NULL, 0); // TODO: revisit
+	SDL_FillRect(screen, NULL, SDL_transparentBlack);
+}
+void PLAT_clearAll(void) {
+	// ok honestely mixing SDL and OpenGL is really bad, but hey it works just got to sometimes clear gpu stuff and pull context back to SDL
+	// so yeah clear all layers and pull a flip() to make it switch back to SDL before clearing
+	PLAT_clearLayers(0);
+	PLAT_flip(vid.screen, 0);
+	PLAT_clearLayers(0);
+	PLAT_flip(vid.screen, 0);
+
+	// then do normal SDL clearing stuff
+	PLAT_clearVideo(vid.screen);
+	SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 0);
+	SDL_RenderClear(vid.renderer);
+}
+
+void PLAT_setVsync(int vsync) {
+	// No effect on Ge8300
+	//int interval = 1;
+	//if (vsync == VSYNC_OFF) interval = 0;
+	//else if (vsync == VSYNC_LENIENT) interval = -1; // Adaptive, fallback to 1 usually happens internally if not supported
+	//
+	//// Try to set swap interval
+	//if (SDL_GL_SetSwapInterval(interval) < 0) {
+	//	// If -1 (adaptive) failed, try 1 (strict)
+	//	if (interval == -1) {
+	//		LOG_info("Adaptive VSync not supported, falling back to Strict\n");
+	//		SDL_GL_SetSwapInterval(1);
+	//	} else {
+	//		LOG_error("Failed to set swap interval: %s\n", SDL_GetError());
+	//	}
+	//} else {
+	//	LOG_info("VSync set to %d (requested %d)\n", interval, vsync);
+	//}
+}
+
+static int hard_scale = 4; // TODO: base src size, eg. 160x144 can be 4
+
+
+static void resizeVideo(int w, int h, int p) {
+	if (w == vid.width && h == vid.height && p == vid.pitch)
+		return;
+
+	// TODO: minarch disables crisp (and nn upscale before linear downscale) when native, is this true?
+
+	if (w >= device_width && h >= device_height)
+		hard_scale = 1;
+	// else if (h>=160) hard_scale = 2; // limits gba and up to 2x (seems sufficient for 640x480)
+	else
+		hard_scale = 4;
+
+	// LOG_info("resizeVideo(%i,%i,%i) hard_scale: %i crisp: %i\n",w,h,p, hard_scale,vid.sharpness==SHARPNESS_CRISP);
+
+	SDL_DestroyTexture(vid.stream_layer1);
+	if (vid.target)
+		SDL_DestroyTexture(vid.target);
+
+	// SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, vid.sharpness==SHARPNESS_SOFT?"1":"0", SDL_HINT_OVERRIDE);
+	vid.stream_layer1 = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+	bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+	SDL_SetTextureBlendMode(vid.stream_layer1, SDL_BLENDMODE_BLEND);
+	screen_premult = false;
+
+	if (vid.sharpness == SHARPNESS_CRISP) {
+		// SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "1", SDL_HINT_OVERRIDE);
+		vid.target = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w * hard_scale, h * hard_scale);
+	} else {
+		vid.target = NULL;
+	}
+
+
+	vid.width = w;
+	vid.height = h;
+	vid.pitch = p;
+
+	reloadShaderTextures = 1;
+}
+
+SDL_Surface* PLAT_resizeVideo(int w, int h, int p) {
+	resizeVideo(w, h, p);
+	return vid.screen;
+}
+
+void PLAT_setSharpness(int sharpness) {
+	if (sharpness == 1) {
+		finalScaleFilter = GL_LINEAR;
+	} else {
+		finalScaleFilter = GL_NEAREST;
+	}
+	reloadShaderTextures = 1;
+}
+
+static struct FX_Context {
+	int scale;
+	int type;
+	int color;
+	int next_scale;
+	int next_type;
+	int next_color;
+	int live_type;
+} effect = {
+	.scale = 1,
+	.next_scale = 1,
+	.type = EFFECT_NONE,
+	.next_type = EFFECT_NONE,
+	.live_type = EFFECT_NONE,
+	.color = 0,
+	.next_color = 0,
+};
+static char* effect_path;
+static char effect_path_buf[MAX_PATH];
+static int effectUpdated = 0;
+static pthread_mutex_t video_prep_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static void updateEffect(void) {
+	// Read effect state with mutex protection
+	pthread_mutex_lock(&video_prep_mutex);
+	int next_scale = effect.next_scale;
+	int next_type = effect.next_type;
+	int next_color = effect.next_color;
+	int curr_scale = effect.scale;
+	int curr_type = effect.type;
+	int curr_color = effect.color;
+	pthread_mutex_unlock(&video_prep_mutex);
+
+	if (next_scale == curr_scale && next_type == curr_type && next_color == curr_color)
+		return; // unchanged
+
+	// Update effect state with mutex protection
+	pthread_mutex_lock(&video_prep_mutex);
+	int live_scale = effect.scale;
+	int live_color = effect.color;
+	effect.scale = effect.next_scale;
+	effect.type = effect.next_type;
+	effect.color = effect.next_color;
+	int effect_type = effect.type;
+	int effect_scale = effect.scale;
+	int effect_color = effect.color;
+	int live_type = effect.live_type;
+	pthread_mutex_unlock(&video_prep_mutex);
+
+	if (effect_type == EFFECT_NONE)
+		return; // disabled
+	if (effect_type == live_type && effect_scale == live_scale && effect_color == live_color)
+		return; // already loaded
+
+	int opacity = 128; // 1 - 1/2 = 50%
+	if (effect_type == EFFECT_LINE) {
+		if (effect_scale < 3) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-2.png", RES_PATH);
+			effect_path = effect_path_buf;
+		} else if (effect_scale < 4) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-3.png", RES_PATH);
+			effect_path = effect_path_buf;
+		} else if (effect_scale < 5) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-4.png", RES_PATH);
+			effect_path = effect_path_buf;
+		} else if (effect_scale < 6) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-5.png", RES_PATH);
+			effect_path = effect_path_buf;
+		} else if (effect_scale < 8) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-6.png", RES_PATH);
+			effect_path = effect_path_buf;
+		} else {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/line-8.png", RES_PATH);
+			effect_path = effect_path_buf;
+		}
+	} else if (effect_type == EFFECT_GRID) {
+		if (effect_scale < 3) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-2.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 64; // 1 - 3/4 = 25%
+		} else if (effect_scale < 4) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-3.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 112; // 1 - 5/9 = ~44%
+		} else if (effect_scale < 5) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-4.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 144; // 1 - 7/16 = ~56%
+		} else if (effect_scale < 6) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-5.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 160; // 1 - 9/25 = ~64%
+						   // opacity = 96; // TODO: tmp, for white grid
+		} else if (effect_scale < 8) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-6.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 112; // 1 - 5/9 = ~44%
+		} else if (effect_scale < 11) {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-8.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 144; // 1 - 7/16 = ~56%
+		} else {
+			snprintf(effect_path_buf, sizeof(effect_path_buf), "%s/grid-11.png", RES_PATH);
+			effect_path = effect_path_buf;
+			opacity = 136; // 1 - 57/121 = ~52%
+		}
+	}
+	effectUpdated = 1;
+}
+int screenx = 0;
+int screeny = 0;
+void PLAT_setOffsetX(int x) {
+	if (x < 0 || x > 128)
+		return;
+	screenx = x - 64;
+	LOG_info("screenx: %i %i\n", screenx, x);
+}
+void PLAT_setOffsetY(int y) {
+	if (y < 0 || y > 128)
+		return;
+	screeny = y - 64;
+	LOG_info("screeny: %i %i\n", screeny, y);
+}
+static int overlayUpdated = 0;
+void PLAT_setOverlay(const char* filename, const char* tag) {
+	if (vid.overlay) {
+		SDL_DestroyTexture(vid.overlay);
+		vid.overlay = NULL;
+	}
+	if (overlay_path) {
+		free(overlay_path);
+		overlay_path = NULL;
+	}
+
+	pthread_mutex_lock(&video_prep_mutex);
+	overlayUpdated = 1;
+	pthread_mutex_unlock(&video_prep_mutex);
+
+	if (!filename || strcmp(filename, "") == 0 || strcmp(filename, "None") == 0) {
+		overlay_path = strdup("");
+		LOG_info("Skipping overlay update.\n");
+		return;
+	}
+
+	char overlays_folder[MAX_PATH];
+	snprintf(overlays_folder, sizeof(overlays_folder), "%s/Overlays", SDCARD_PATH);
+
+	size_t path_len = strlen(overlays_folder) + strlen(tag) + strlen(filename) + 4; // +3 for slashes and null-terminator
+	overlay_path = malloc(path_len);
+
+	if (!overlay_path) {
+		perror("malloc failed");
+		return;
+	}
+
+	snprintf(overlay_path, path_len, "%s/%s/%s", overlays_folder, tag, filename);
+	LOG_info("Overlay path set to: %s\n", overlay_path);
+}
+
+
+// Per-layer content tracking: layer_has_content[n] is false while
+// target_layer<n> is known to be fully transparent (cleared and not drawn on
+// since), letting the flip paths skip compositing it. During list browsing 3
+// of the 5 layers are typically empty — real GPU fill-rate savings at 60fps.
+// Every site that renders INTO a layer texture must mark it below; start true
+// (textures begin with undefined content until the first clear).
+static bool layer_has_content[6] = {true, true, true, true, true, true};
+// Per-layer write count: bumped by every clear of a layer with content and every draw onto it, so a caller that
+// uploads a layer can tell whether anything else has touched it since (PLAT_layerSerial).
+static unsigned layer_serial[6];
+
+unsigned PLAT_layerSerial(int layer) {
+	return layer >= 1 && layer <= 5 ? layer_serial[layer] : 0;
+}
+
+// The background layer's art (PLAT_setLayerArt): a caller-owned texture blended over layer 1 as part of it, so anything
+// that clears or draws on layer 1 drops it too (the caller sets it again with the layer it rebuilds).
+static SDL_Texture* layer1_art = NULL;
+static SDL_Rect layer1_art_dst;
+
+static void layerTouched(int layer) {
+	if (layer < 1 || layer > 5)
+		return;
+	layer_serial[layer]++;
+	if (layer == 1)
+		layer1_art = NULL;
+}
+
+void PLAT_setLayerArt(SDL_Texture* tex, const SDL_Rect* dst) {
+	layer1_art = tex && dst ? tex : NULL;
+	if (layer1_art)
+		layer1_art_dst = *dst;
+}
+
+// Composite the UI layers into the backbuffer, skipping layers known to be
+// empty. The stream layer (the app's software screen) is always copied.
+// ---- GPU sprites (api.h) ----
+// Two lists: the sprites over the screen layer, and the few under it (a Backdrop game list's full-screen picture,
+// which then shows through the screen's transparent body). Both are cleared together by PLAT_spritesClear.
+#define MAX_SPRITES 128
+#define MAX_UNDER_SPRITES 8
+typedef struct {
+	SDL_Texture* tex;
+	SDL_Rect src, dst, clip;
+	bool has_src, has_clip;
+	bool opaque; // PLAT_spriteAddUnderOpaque: drawn without blending, covering what is under it
+	Uint8 alpha;
+	Uint8 shade; // a grey colour mod (PLAT_spriteAddShaded): 255 = the texture's own colours
+} Sprite;
+static Sprite sprites[MAX_SPRITES];
+static int sprite_count = 0;
+static Sprite under_sprites[MAX_UNDER_SPRITES];
+static int under_count = 0;
+
+void PLAT_spritesClear(void) {
+	sprite_count = 0;
+	under_count = 0;
+}
+
+static void spriteAddTo(Sprite* list, int* count, int max, SDL_Texture* tex, const SDL_Rect* src, const SDL_Rect* dst,
+						Uint8 alpha, const SDL_Rect* clip) {
+	if (!tex || !dst || alpha == 0 || *count >= max)
+		return;
+	Sprite* s = &list[(*count)++];
+	s->tex = tex;
+	s->has_src = src != NULL;
+	if (src)
+		s->src = *src;
+	s->dst = *dst;
+	s->has_clip = clip != NULL;
+	if (clip)
+		s->clip = *clip;
+	s->opaque = false;
+	s->alpha = alpha;
+	s->shade = 255;
+}
+
+void PLAT_spriteAdd(SDL_Texture* tex, const SDL_Rect* src, const SDL_Rect* dst, Uint8 alpha, const SDL_Rect* clip) {
+	spriteAddTo(sprites, &sprite_count, MAX_SPRITES, tex, src, dst, alpha, clip);
+}
+
+void PLAT_spriteAddShaded(SDL_Texture* tex, const SDL_Rect* src, const SDL_Rect* dst, Uint8 alpha, Uint8 shade,
+						  const SDL_Rect* clip) {
+	int n = sprite_count;
+	spriteAddTo(sprites, &sprite_count, MAX_SPRITES, tex, src, dst, alpha, clip);
+	if (sprite_count > n)
+		sprites[n].shade = shade;
+}
+
+void PLAT_spriteAddUnder(SDL_Texture* tex, const SDL_Rect* src, const SDL_Rect* dst, Uint8 alpha,
+						 const SDL_Rect* clip) {
+	spriteAddTo(under_sprites, &under_count, MAX_UNDER_SPRITES, tex, src, dst, alpha, clip);
+}
+
+void PLAT_spriteAddUnderOpaque(SDL_Texture* tex, const SDL_Rect* dst) {
+	int n = under_count;
+	spriteAddTo(under_sprites, &under_count, MAX_UNDER_SPRITES, tex, NULL, dst, 255, NULL);
+	if (under_count > n)
+		under_sprites[n].opaque = true;
+}
+
+// A texture about to be destroyed leaves both lists: they are drawn again by every composite until the next clear
+// (an idle flip between frames included), and a cache may evict a surface after its sprite was added.
+static void spritesForget(SDL_Texture* t) {
+	int n = 0;
+	for (int i = 0; i < sprite_count; i++)
+		if (sprites[i].tex != t)
+			sprites[n++] = sprites[i];
+	sprite_count = n;
+	n = 0;
+	for (int i = 0; i < under_count; i++)
+		if (under_sprites[i].tex != t)
+			under_sprites[n++] = under_sprites[i];
+	under_count = n;
+}
+
+void PLAT_spriteRemove(SDL_Texture* tex) {
+	if (tex)
+		spritesForget(tex);
+}
+
+SDL_Texture* PLAT_textureForSurface(SDL_Surface* s) {
+	if (!s || !vid.renderer)
+		return NULL;
+	if (s->userdata)
+		return (SDL_Texture*)s->userdata;
+	SDL_Texture* t = SDL_CreateTextureFromSurface(vid.renderer, s);
+	if (!t)
+		return NULL;
+	SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+	s->userdata = t;
+	return t;
+}
+
+void PLAT_freeSurfaceTexture(SDL_Surface* s) {
+	if (s && s->userdata) {
+		spritesForget((SDL_Texture*)s->userdata);
+		SDL_DestroyTexture((SDL_Texture*)s->userdata);
+		s->userdata = NULL;
+	}
+}
+
+SDL_Texture* PLAT_textureFromSurface(SDL_Surface* s) {
+	if (!s || !vid.renderer)
+		return NULL;
+	SDL_Texture* t = SDL_CreateTextureFromSurface(vid.renderer, s);
+	if (t)
+		SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+	return t;
+}
+
+SDL_Texture* PLAT_textureCreate(int w, int h) {
+	if (w <= 0 || h <= 0 || !vid.renderer)
+		return NULL;
+	SDL_Texture* t = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, w, h);
+	if (t)
+		SDL_SetTextureBlendMode(t, SDL_BLENDMODE_BLEND);
+	return t;
+}
+
+void PLAT_textureUpdateRows(SDL_Texture* t, SDL_Surface* s, int y, int h) {
+	if (!t || !s || s->format->format != SDL_PIXELFORMAT_ARGB8888)
+		return;
+	if (y < 0)
+		h += y, y = 0;
+	if (y + h > s->h)
+		h = s->h - y;
+	if (h <= 0)
+		return;
+	SDL_UpdateTexture(t, &(SDL_Rect){0, y, s->w, h}, (const Uint8*)s->pixels + y * s->pitch, s->pitch);
+}
+
+SDL_Texture* PLAT_targetCreate(int w, int h) {
+	if (w <= 0 || h <= 0 || !vid.renderer)
+		return NULL;
+	SDL_Texture* t = SDL_CreateTexture(vid.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
+	if (t)
+		SDL_SetTextureBlendMode(t, SDL_BLENDMODE_NONE); // opaque: begun as black, drawn into with blending
+	return t;
+}
+
+void PLAT_targetBegin(SDL_Texture* t) {
+	if (!t || !vid.renderer)
+		return;
+	SDL_SetRenderTarget(vid.renderer, t);
+	SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 255);
+	SDL_RenderClear(vid.renderer);
+}
+
+void PLAT_targetDraw(SDL_Texture* tex, const SDL_Rect* dst, Uint8 alpha) {
+	if (!tex || !vid.renderer || alpha == 0)
+		return;
+	SDL_BlendMode bm;
+	SDL_GetTextureBlendMode(tex, &bm);
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureAlphaMod(tex, alpha);
+	SDL_RenderCopy(vid.renderer, tex, NULL, dst);
+	SDL_SetTextureBlendMode(tex, bm);
+}
+
+void PLAT_targetEnd(void) {
+	if (vid.renderer)
+		SDL_SetRenderTarget(vid.renderer, NULL);
+}
+
+void PLAT_freeTexture(SDL_Texture* t) {
+	if (!t)
+		return;
+	spritesForget(t);
+	if (t == layer1_art)
+		layer1_art = NULL;
+	SDL_DestroyTexture(t);
+}
+
+void PLAT_textureRefresh(SDL_Surface* s) {
+	if (s && s->userdata)
+		SDL_UpdateTexture((SDL_Texture*)s->userdata, NULL, s->pixels, s->pitch);
+}
+
+// screen px to output px (the window is the screen's size on our devices: 1, but kept exact if it is not)
+static void drawSpriteList(const Sprite* list, int count) {
+	if (count == 0 || !vid.screen)
+		return;
+	int ow = 0, oh = 0;
+	SDL_GetRendererOutputSize(vid.renderer, &ow, &oh);
+	float sx = vid.screen->w > 0 ? (float)ow / vid.screen->w : 1.0f;
+	float sy = vid.screen->h > 0 ? (float)oh / vid.screen->h : 1.0f;
+	bool unit = ow == vid.screen->w && oh == vid.screen->h;
+	for (int i = 0; i < count; i++) {
+		const Sprite* s = &list[i];
+		SDL_Rect d = s->dst, c = s->clip;
+		if (!unit) {
+			d = (SDL_Rect){(int)(d.x * sx), (int)(d.y * sy), (int)(d.w * sx + 0.5f), (int)(d.h * sy + 0.5f)};
+			c = (SDL_Rect){(int)(c.x * sx), (int)(c.y * sy), (int)(c.w * sx + 0.5f), (int)(c.h * sy + 0.5f)};
+		}
+		SDL_RenderSetClipRect(vid.renderer, s->has_clip ? &c : NULL);
+		SDL_SetTextureAlphaMod(s->tex, s->alpha);
+		SDL_BlendMode bm = SDL_BLENDMODE_BLEND;
+		if (s->opaque) {
+			SDL_GetTextureBlendMode(s->tex, &bm);
+			SDL_SetTextureBlendMode(s->tex, SDL_BLENDMODE_NONE);
+		}
+		if (s->shade != 255)
+			SDL_SetTextureColorMod(s->tex, s->shade, s->shade, s->shade);
+		SDL_RenderCopy(vid.renderer, s->tex, s->has_src ? &s->src : NULL, &d);
+		if (s->shade != 255)
+			SDL_SetTextureColorMod(s->tex, 255, 255, 255);
+		if (s->opaque)
+			SDL_SetTextureBlendMode(s->tex, bm);
+	}
+	SDL_RenderSetClipRect(vid.renderer, NULL);
+}
+
+#define UPLOAD_BANDS 4
+static int upload_band_y[UPLOAD_BANDS], upload_band_h[UPLOAD_BANDS];
+static int upload_band_n = 0;
+
+void PLAT_setUploadBands(const int* y, const int* h, int n) {
+	if (n > UPLOAD_BANDS)
+		n = UPLOAD_BANDS;
+	upload_band_n = n > 0 && y && h ? n : 0;
+	for (int i = 0; i < upload_band_n; i++)
+		upload_band_y[i] = y[i], upload_band_h[i] = h[i];
+}
+
+// The band rows as last uploaded (a copy per band), so a band whose pixels didn't change since (the bars, through a
+// slide) isn't uploaded again. Invalid after a whole-screen upload, which doesn't keep a copy.
+static Uint8* band_shadow[UPLOAD_BANDS];
+static size_t band_shadow_size[UPLOAD_BANDS];
+static int band_shadow_y[UPLOAD_BANDS] = {-1, -1, -1, -1}, band_shadow_h[UPLOAD_BANDS];
+
+// A hash per screen row as the texture last got it, so a whole-screen flip uploads only the rows that changed since (a
+// List step: the pill's rows and the text it moves over, not the 3 MB screen, ~10 ms on the Brick). A hash, not a
+// copy: the screen is read once (no second 3 MB read, no copy back), which is what keeps the check cheaper than the
+// upload it saves. Invalid after anything else writes the texture (the bands, a core's frame, a resize).
+static Uint64* row_hash = NULL;
+static int row_hash_n = 0;
+static bool screen_shadow_valid = false;
+
+static void bandShadowInvalidate(void) {
+	for (int b = 0; b < UPLOAD_BANDS; b++)
+		band_shadow_y[b] = -1;
+	screen_shadow_valid = false;
+}
+
+// 64-bit FNV-1a over a row's 8-byte words in four interleaved lanes (independent multiply chains the core overlaps, so
+// the hash keeps up with the memory reads), folded at the end: a changed pixel changes it, except with odds of about
+// 2^-64.
+static inline Uint64 rowHash(const Uint8* row, int bytes) {
+	const Uint64 P = 0x100000001b3ULL;
+	Uint64 a = 0xcbf29ce484222325ULL, b = a ^ 1, c = a ^ 2, d = a ^ 3;
+	int n = bytes / 32;
+	for (int i = 0; i < n; i++) {
+		Uint64 w[4];
+		memcpy(w, row + i * 32, 32); // aligned loads, no aliasing through the pixel type
+		a = (a ^ w[0]) * P;
+		b = (b ^ w[1]) * P;
+		c = (c ^ w[2]) * P;
+		d = (d ^ w[3]) * P;
+	}
+	for (int i = n * 32; i + 8 <= bytes; i += 8) { // a width not a multiple of 8 px
+		Uint64 w;
+		memcpy(&w, row + i, 8);
+		a = (a ^ w) * P;
+	}
+	return (((a * P) ^ b) * P ^ c) * P ^ d;
+}
+
+// A whole-screen upload of only the rows whose hash changed (runs of them, a few rows of gap merged in so a pill's two
+// edges go as one update). Falls back to one whole upload when the hashes aren't valid.
+// Every DIFF_SAMPLE_STEP-th row is hashed first: when most of those changed (a Home or Grid scroll, a transition, the
+// Game Switcher, minarch's menus), so did most of the screen, and the rest isn't read: one whole upload, with only the
+// sampled rows' hashes kept current (row_hash_partial). Such frames then cost an eighth of the hashing, and the first
+// frame after them that changes little uploads the whole screen once more and hashes the rows left stale.
+#define DIFF_MERGE_ROWS 8
+#define DIFF_SAMPLE_STEP 8
+static bool row_hash_partial = false; // only the sampled rows' hashes are current
+static void uploadChangedRows(void) {
+	SDL_Surface* s = vid.screen;
+	int row_bytes = s->w * 4;
+	if (row_hash_n != s->h) {
+		free(row_hash);
+		row_hash = malloc(sizeof(Uint64) * s->h);
+		row_hash_n = row_hash ? s->h : 0;
+		screen_shadow_valid = false;
+	}
+	if (!screen_shadow_valid || !row_hash) {
+		SDL_UpdateTexture(vid.stream_layer1, NULL, s->pixels, s->pitch);
+		for (int b = 0; b < UPLOAD_BANDS; b++)
+			band_shadow_y[b] = -1;
+		if (row_hash) {
+			for (int y = 0; y < s->h; y++)
+				row_hash[y] = rowHash((const Uint8*)s->pixels + y * s->pitch, row_bytes);
+			screen_shadow_valid = true;
+			row_hash_partial = false;
+		}
+		return;
+	}
+	// the sampled rows' hashes (stored below, reused by the diff so no row is hashed twice)
+	int samples = (s->h + DIFF_SAMPLE_STEP - 1) / DIFF_SAMPLE_STEP, sampled_changed = 0;
+	Uint64 sample[samples];
+	for (int i = 0; i < samples; i++) {
+		int y = i * DIFF_SAMPLE_STEP;
+		sample[i] = rowHash((const Uint8*)s->pixels + y * s->pitch, row_bytes);
+		sampled_changed += sample[i] != row_hash[y];
+	}
+	if (sampled_changed * 2 > samples || row_hash_partial) {
+		// most of the screen changed (or the rows between the samples are stale): all of it goes up
+		SDL_UpdateTexture(vid.stream_layer1, NULL, s->pixels, s->pitch);
+		for (int b = 0; b < UPLOAD_BANDS; b++)
+			band_shadow_y[b] = -1;
+		for (int i = 0; i < samples; i++)
+			row_hash[i * DIFF_SAMPLE_STEP] = sample[i];
+		row_hash_partial = sampled_changed * 2 > samples;
+		if (!row_hash_partial) // little changed: the stale rows hashed now, so the next frame diffs again
+			for (int y = 0; y < s->h; y++)
+				if (y % DIFF_SAMPLE_STEP)
+					row_hash[y] = rowHash((const Uint8*)s->pixels + y * s->pitch, row_bytes);
+		return;
+	}
+	int run_start = -1, last_changed = -1;
+	for (int y = 0; y <= s->h; y++) {
+		bool changed = false;
+		if (y < s->h) {
+			Uint64 h = y % DIFF_SAMPLE_STEP ? rowHash((const Uint8*)s->pixels + y * s->pitch, row_bytes)
+											: sample[y / DIFF_SAMPLE_STEP];
+			changed = h != row_hash[y];
+			row_hash[y] = h;
+		}
+		if (changed) {
+			if (run_start < 0)
+				run_start = y;
+			last_changed = y;
+			continue;
+		}
+		// a run ends once the gap since its last changed row is too wide to merge (or at the bottom)
+		if (run_start >= 0 && (y == s->h || y - last_changed > DIFF_MERGE_ROWS)) {
+			int h = last_changed + 1 - run_start;
+			const Uint8* rows = (const Uint8*)s->pixels + run_start * s->pitch;
+			SDL_UpdateTexture(vid.stream_layer1, &(SDL_Rect){0, run_start, s->w, h}, rows, s->pitch);
+			run_start = -1;
+		}
+	}
+	for (int b = 0; b < UPLOAD_BANDS; b++)
+		band_shadow_y[b] = -1; // the bands' copies may be stale now
+}
+
+// The screen into its texture: all of it, or just the bands set for this flip that changed (the screen's size kept).
+static void uploadScreen(bool size_kept) {
+	int n = upload_band_n;
+	upload_band_n = 0;
+	if (!size_kept) {
+		SDL_UpdateTexture(vid.stream_layer1, NULL, vid.screen->pixels, vid.screen->pitch);
+		bandShadowInvalidate();
+		return;
+	}
+	if (n <= 0) {
+		uploadChangedRows();
+		return;
+	}
+	screen_shadow_valid = false; // the bands go up from their own copies below
+	for (int i = 0; i < n; i++) {
+		int y = upload_band_y[i], h = upload_band_h[i];
+		if (y < 0)
+			h += y, y = 0;
+		if (y + h > vid.screen->h)
+			h = vid.screen->h - y;
+		if (h <= 0)
+			continue;
+		const Uint8* rows = (const Uint8*)vid.screen->pixels + y * vid.screen->pitch;
+		size_t bytes = (size_t)h * vid.screen->pitch;
+		if (band_shadow_y[i] == y && band_shadow_h[i] == h && band_shadow[i] && memcmp(band_shadow[i], rows, bytes) == 0)
+			continue; // what the texture already holds
+		SDL_Rect r = {0, y, vid.screen->w, h};
+		SDL_UpdateTexture(vid.stream_layer1, &r, rows, vid.screen->pitch);
+		if (band_shadow_size[i] < bytes) {
+			free(band_shadow[i]);
+			band_shadow[i] = malloc(bytes);
+			band_shadow_size[i] = band_shadow[i] ? bytes : 0;
+		}
+		if (band_shadow[i]) {
+			memcpy(band_shadow[i], rows, bytes);
+			band_shadow_y[i] = y, band_shadow_h[i] = h;
+		} else {
+			band_shadow_y[i] = -1;
+		}
+	}
+}
+
+// A band of the screen texture's rows drawn at opacity dim_a (PLAT_setScreenDim): kept for every composite until set
+// again. Only with the premultiplied screen blend, where a colour and alpha mod of a is the layer at true opacity.
+static int dim_y = 0, dim_h = 0;
+static Uint8 dim_a = 255;
+
+bool PLAT_setScreenDim(int y, int h, Uint8 a) {
+	if (a >= 255 || h <= 0 || !screen_premult) {
+		dim_a = 255, dim_h = 0;
+		return a >= 255 || h <= 0;
+	}
+	dim_y = y, dim_h = h, dim_a = a;
+	return true;
+}
+
+// Rows [y, y + h) of the screen texture, the dim band's at its opacity
+static void drawScreenRows(int y, int h, int ow, float sy) {
+	if (y < 0)
+		h += y, y = 0;
+	if (vid.screen && y + h > vid.screen->h)
+		h = vid.screen->h - y;
+	if (h <= 0 || !vid.screen)
+		return;
+	int cut[4] = {y, y + h, y + h, y + h}; // before the band, the band, after it
+	if (dim_a < 255 && dim_h > 0) {
+		int b0 = dim_y < y ? y : (dim_y > y + h ? y + h : dim_y);
+		int b1 = dim_y + dim_h < b0 ? b0 : (dim_y + dim_h > y + h ? y + h : dim_y + dim_h);
+		cut[1] = b0, cut[2] = b1;
+	}
+	for (int k = 0; k < 3; k++) {
+		int py = cut[k], ph = cut[k + 1] - cut[k];
+		if (ph <= 0)
+			continue;
+		bool dimmed = k == 1 && dim_a < 255;
+		if (dimmed) {
+			SDL_SetTextureColorMod(vid.stream_layer1, dim_a, dim_a, dim_a);
+			SDL_SetTextureAlphaMod(vid.stream_layer1, dim_a);
+		}
+		SDL_Rect src = {0, py, vid.screen->w, ph};
+		SDL_Rect dst = {0, (int)(py * sy), ow, (int)(ph * sy + 0.5f)};
+		SDL_RenderCopy(vid.renderer, vid.stream_layer1, &src, &dst);
+		if (dimmed) {
+			SDL_SetTextureColorMod(vid.stream_layer1, 255, 255, 255);
+			SDL_SetTextureAlphaMod(vid.stream_layer1, 255);
+		}
+	}
+}
+
+// The rows of the screen texture the next composite draws (PLAT_setScreenDrawBands): consumed by it, 0 = all of it.
+static int draw_band_y[2], draw_band_h[2];
+static int draw_band_n = 0;
+
+void PLAT_setScreenDrawBands(const int* y, const int* h, int n) {
+	if (n > 2)
+		n = 2;
+	draw_band_n = n > 0 && y && h ? n : 0;
+	for (int i = 0; i < draw_band_n; i++)
+		draw_band_y[i] = y[i], draw_band_h[i] = h[i];
+}
+
+// The last opaque under-sprite covering the whole screen (PLAT_spriteAddUnderOpaque), or -1: it and what is over it
+// are all that shows of the bottom of the stack.
+static int coveringUnder(void) {
+	if (!vid.screen)
+		return -1;
+	for (int i = under_count - 1; i >= 0; i--) {
+		const Sprite* s = &under_sprites[i];
+		if (s->opaque && !s->has_clip && s->dst.x <= 0 && s->dst.y <= 0 && s->dst.x + s->dst.w >= vid.screen->w &&
+			s->dst.y + s->dst.h >= vid.screen->h)
+			return i;
+	}
+	return -1;
+}
+
+static void compositeLayers(void) {
+	int bands = draw_band_n;
+	draw_band_n = 0;
+	int cover = coveringUnder();
+	if (cover < 0) {
+		if (layer_has_content[1])
+			SDL_RenderCopy(vid.renderer, vid.target_layer1, NULL, NULL);
+		if (layer1_art) // part of layer 1 (PLAT_setLayerArt)
+			SDL_RenderCopy(vid.renderer, layer1_art, NULL, &layer1_art_dst);
+		if (layer_has_content[2])
+			SDL_RenderCopy(vid.renderer, vid.target_layer2, NULL, NULL);
+	}
+	// under the screen: seen through its transparent body (from the covering one up, when there is one)
+	drawSpriteList(under_sprites + (cover > 0 ? cover : 0), under_count - (cover > 0 ? cover : 0));
+	if ((bands > 0 || (dim_a < 255 && dim_h > 0)) && vid.screen) {
+		int ow = 0, oh = 0;
+		SDL_GetRendererOutputSize(vid.renderer, &ow, &oh);
+		float sy = vid.screen->h > 0 ? (float)oh / vid.screen->h : 1.0f;
+		if (bands > 0)
+			for (int i = 0; i < bands; i++)
+				drawScreenRows(draw_band_y[i], draw_band_h[i], ow, sy);
+		else
+			drawScreenRows(0, vid.screen->h, ow, sy);
+	} else {
+		SDL_RenderCopy(vid.renderer, vid.stream_layer1, NULL, NULL);
+	}
+	drawSpriteList(sprites, sprite_count);
+	if (layer_has_content[3])
+		SDL_RenderCopy(vid.renderer, vid.target_layer3, NULL, NULL);
+	if (layer_has_content[4])
+		SDL_RenderCopy(vid.renderer, vid.target_layer4, NULL, NULL);
+	if (layer_has_content[5])
+		SDL_RenderCopy(vid.renderer, vid.target_layer5, NULL, NULL);
+}
+
+void PLAT_clearLayers(int layer) {
+	// Layers composite with per-pixel alpha ABOVE the UI stream (layers 3-5),
+	// so they must be cleared to TRANSPARENT black. RenderClear uses the
+	// renderer's current draw color, which may have been left opaque by an
+	// earlier draw — inheriting that here would turn a cleared
+	// thumbnail/transition layer into an opaque black sheet.
+	SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 0);
+	// LAYER_ALL is a clean slate for what comes next (the keyboard, a modal, a game launch): the GPU sprites and the
+	// screen dim band are the outgoing frame's too, and would keep compositing over it (Search's keyboard showed the
+	// Home rows on top of it)
+	if (layer == 0) {
+		PLAT_spritesClear();
+		PLAT_setScreenDim(0, 0, 255);
+	}
+	if ((layer == 0 || layer == 1) && layer_has_content[1]) { // an empty layer has nothing to clear
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer1);
+		SDL_RenderClear(vid.renderer);
+		layer_has_content[1] = false;
+		layerTouched(1);
+	}
+	if ((layer == 0 || layer == 2) && layer_has_content[2]) { // an empty layer has nothing to clear
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer2);
+		SDL_RenderClear(vid.renderer);
+		layer_has_content[2] = false;
+		layerTouched(2);
+	}
+	if ((layer == 0 || layer == 3) && layer_has_content[3]) { // an empty layer has nothing to clear
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer3);
+		SDL_RenderClear(vid.renderer);
+		layer_has_content[3] = false;
+		layerTouched(3);
+	}
+	if ((layer == 0 || layer == 4) && layer_has_content[4]) { // an empty layer has nothing to clear
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer4);
+		SDL_RenderClear(vid.renderer);
+		layer_has_content[4] = false;
+		layerTouched(4);
+	}
+	if ((layer == 0 || layer == 5) && layer_has_content[5]) { // an empty layer has nothing to clear
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer5);
+		SDL_RenderClear(vid.renderer);
+		layer_has_content[5] = false;
+		layerTouched(5);
+	}
+
+	SDL_SetRenderTarget(vid.renderer, NULL);
+}
+
+void PLAT_drawTextureOnLayer(SDL_Texture* tex, const SDL_Rect* dst, int layer) {
+	if (!tex || !dst || !vid.renderer)
+		return;
+	SDL_Texture* targets[6] = {NULL, vid.target_layer1, vid.target_layer2, vid.target_layer3, vid.target_layer4,
+							   vid.target_layer5};
+	int l = layer >= 1 && layer <= 5 ? layer : 1;
+	if (!targets[l])
+		return;
+	SDL_SetRenderTarget(vid.renderer, targets[l]);
+	layer_has_content[l] = true;
+	layerTouched(l);
+	SDL_RenderCopy(vid.renderer, tex, NULL, dst);
+	SDL_SetRenderTarget(vid.renderer, NULL);
+}
+
+void PLAT_drawOnLayer(SDL_Surface* inputSurface, int x, int y, int w, int h, float brightness, bool maintainAspectRatio, int layer) {
+	if (!inputSurface || !vid.target_layer1 || !vid.renderer)
+		return;
+
+	SDL_Texture* tempTexture = SDL_CreateTexture(vid.renderer,
+												 SDL_PIXELFORMAT_ARGB8888,
+												 SDL_TEXTUREACCESS_TARGET,
+												 inputSurface->w, inputSurface->h);
+
+	if (!tempTexture) {
+		LOG_error("Failed to create temporary texture: %s\n", SDL_GetError());
+		return;
+	}
+
+	SDL_UpdateTexture(tempTexture, NULL, inputSurface->pixels, inputSurface->pitch);
+	switch (layer) {
+	case 1:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer1);
+		break;
+	case 2:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer2);
+		break;
+	case 3:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer3);
+		break;
+	case 4:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer4);
+		break;
+	case 5:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer5);
+		break;
+	default:
+		SDL_SetRenderTarget(vid.renderer, vid.target_layer1);
+		break;
+	}
+	layer_has_content[(layer >= 1 && layer <= 5) ? layer : 1] = true;
+	layerTouched((layer >= 1 && layer <= 5) ? layer : 1);
+
+	// Adjust brightness
+	Uint8 r = 255, g = 255, b = 255;
+	if (brightness < 1.0f) {
+		r = g = b = (Uint8)(255 * brightness);
+	} else if (brightness > 1.0f) {
+		r = g = b = 255;
+	}
+
+	SDL_SetTextureColorMod(tempTexture, r, g, b);
+
+	// Aspect ratio handling
+	SDL_Rect srcRect = {0, 0, inputSurface->w, inputSurface->h};
+	SDL_Rect dstRect = {x, y, w, h};
+
+	if (maintainAspectRatio) {
+		float aspectRatio = (float)inputSurface->w / (float)inputSurface->h;
+
+		if (w / (float)h > aspectRatio) {
+			dstRect.w = (int)(h * aspectRatio);
+		} else {
+			dstRect.h = (int)(w / aspectRatio);
+		}
+	}
+
+	SDL_RenderCopy(vid.renderer, tempTexture, &srcRect, &dstRect);
+	SDL_SetRenderTarget(vid.renderer, NULL);
+	SDL_DestroyTexture(tempTexture);
+}
+
+
+void PLAT_animateSurface(
+	SDL_Surface* inputSurface,
+	int x, int y,
+	int target_x, int target_y,
+	int w, int h,
+	int duration_ms,
+	int start_opacity,
+	int target_opacity,
+	int layer) {
+	if (!inputSurface || !vid.target_layer2 || !vid.renderer)
+		return;
+
+	SDL_Texture* tempTexture = SDL_CreateTexture(vid.renderer,
+												 SDL_PIXELFORMAT_ARGB8888,
+												 SDL_TEXTUREACCESS_TARGET,
+												 inputSurface->w, inputSurface->h);
+
+	if (!tempTexture) {
+		LOG_error("Failed to create temporary texture: %s\n", SDL_GetError());
+		return;
+	}
+
+	SDL_UpdateTexture(tempTexture, NULL, inputSurface->pixels, inputSurface->pitch);
+	SDL_SetTextureBlendMode(tempTexture, SDL_BLENDMODE_BLEND); // Enable blending for opacity
+
+	const int fps = 60;
+	const int frame_delay = 1000 / fps;
+	const int total_frames = duration_ms / frame_delay;
+
+	for (int frame = 0; frame <= total_frames; ++frame) {
+		float t = (float)frame / total_frames;
+
+		int current_x = x + (int)((target_x - x) * t);
+		int current_y = y + (int)((target_y - y) * t);
+
+		// Interpolate opacity
+		int current_opacity = start_opacity + (int)((target_opacity - start_opacity) * t);
+		if (current_opacity < 0)
+			current_opacity = 0;
+		if (current_opacity > 255)
+			current_opacity = 255;
+
+		SDL_SetTextureAlphaMod(tempTexture, current_opacity);
+
+		if (layer == 0)
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer2);
+		else
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer4);
+		layer_has_content[layer == 0 ? 2 : 4] = true;
+		layerTouched(layer == 0 ? 2 : 4);
+
+		SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 0);
+		SDL_RenderClear(vid.renderer);
+
+		SDL_Rect srcRect = {0, 0, inputSurface->w, inputSurface->h};
+		SDL_Rect dstRect = {current_x, current_y, w, h};
+		SDL_RenderCopy(vid.renderer, tempTexture, &srcRect, &dstRect);
+
+		SDL_SetRenderTarget(vid.renderer, NULL);
+		PLAT_GPU_Flip();
+	}
+
+	SDL_DestroyTexture(tempTexture);
+}
+
+int PLAT_textShouldScroll(TTF_Font* font, const char* in_name, int max_width, SDL_mutex* fontMutex) {
+	int text_width = 0;
+	if (fontMutex)
+		SDL_LockMutex(fontMutex);
+	GFX_measureText(font, in_name, &text_width, NULL);
+	if (fontMutex)
+		SDL_UnlockMutex(fontMutex);
+
+	if (text_width <= max_width) {
+		return 0;
+	} else {
+		return 1;
+	}
+}
+static int text_offset = 0;
+static int scroll_frame_counter = 0;
+static bool scroll_initial_pause = true;
+void PLAT_resetScrollText() {
+	text_offset = 0;
+	scroll_frame_counter = 0;
+	scroll_initial_pause = true;
+}
+void PLAT_scrollTextTexture(
+	TTF_Font* font,
+	const char* in_name,
+	int x, int y, // Position on target layer
+	int w, int h, // Clipping width and height
+	SDL_Color color,
+	float transparency,
+	bool rtl,			 // true: scroll right-to-left (Arabic), right-aligned start
+	SDL_mutex* fontMutex // Mutex for thread-safe font access (can be NULL)
+) {
+	int padding = 30;
+
+	if (transparency < 0.0f)
+		transparency = 0.0f;
+	if (transparency > 1.0f)
+		transparency = 1.0f;
+	color.a = (Uint8)(transparency * 255);
+
+	// Render the original text with mutex protection for thread safety
+	if (fontMutex)
+		SDL_LockMutex(fontMutex);
+	SDL_Surface* singleSur = GFX_renderText(font, in_name, color);
+	if (fontMutex)
+		SDL_UnlockMutex(fontMutex);
+	if (!singleSur)
+		return;
+
+	int single_width = singleSur->w;
+	int single_height = singleSur->h;
+
+	// Create a surface to hold two copies side by side with padding
+	SDL_Surface* text_surface = SDL_CreateRGBSurfaceWithFormat(0,
+															   single_width * 2 + padding, single_height, 32, SDL_PIXELFORMAT_ARGB8888);
+
+	SDL_FillRect(text_surface, NULL, THEME_COLOR1);
+	SDL_BlitSurface(singleSur, NULL, text_surface, NULL);
+
+	SDL_Rect second = {single_width + padding, 0, single_width, single_height};
+	SDL_BlitSurface(singleSur, NULL, text_surface, &second);
+	SDL_FreeSurface(singleSur);
+
+	SDL_Texture* full_text_texture = SDL_CreateTextureFromSurface(vid.renderer, text_surface);
+	int full_text_width = text_surface->w;
+	SDL_FreeSurface(text_surface);
+
+	if (!full_text_texture)
+		return;
+
+	SDL_SetTextureBlendMode(full_text_texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureAlphaMod(full_text_texture, color.a);
+
+	SDL_SetRenderTarget(vid.renderer, vid.target_layer4);
+	layer_has_content[4] = true;
+	layerTouched(4);
+
+	// RTL: start right-aligned (show the right edge = the beginning of the
+	// Arabic) instead of the left edge, so the first frame reads correctly.
+	if (rtl && scroll_initial_pause && text_offset == 0 && single_width > w)
+		text_offset = single_width - w;
+
+	SDL_Rect src_rect = {text_offset, 0, w, single_height};
+	SDL_Rect dst_rect = {x, y, w, single_height};
+
+	SDL_RenderCopy(vid.renderer, full_text_texture, &src_rect, &dst_rect);
+
+	SDL_SetRenderTarget(vid.renderer, NULL);
+	SDL_DestroyTexture(full_text_texture);
+
+	// Scroll only if text is wider than clip width
+	if (single_width > w) {
+		scroll_frame_counter++;
+		// Initial pause: wait 0.5s before first scroll
+		if (scroll_initial_pause && scroll_frame_counter < 30) {
+			// Hold at start
+		} else {
+			scroll_initial_pause = false;
+			if (rtl) {
+				// Move the window left -> the text scrolls right (RTL reading).
+				text_offset -= 1;
+				if (text_offset < 0)
+					text_offset += single_width + padding;
+			} else {
+				text_offset += 1;
+				if (text_offset >= single_width + padding)
+					text_offset = 0;
+			}
+			scroll_frame_counter = 0;
+		}
+	} else {
+		text_offset = 0;
+		scroll_frame_counter = 0;
+	}
+
+	PLAT_GPU_Flip();
+}
+
+
+// super fast without update_texture to draw screen
+void PLAT_GPU_Flip() {
+	capture_check();
+	SDL_RenderClear(vid.renderer);
+	compositeLayers();
+	capture_write();
+	SDL_RenderPresent(vid.renderer);
+}
+
+void PLAT_animateSurfaceOpacity(
+	SDL_Surface* inputSurface,
+	int x, int y, int w, int h,
+	int start_opacity, int target_opacity,
+	int duration_ms,
+	int layer) {
+	if (!inputSurface)
+		return;
+
+	SDL_Texture* tempTexture = SDL_CreateTexture(vid.renderer,
+												 SDL_PIXELFORMAT_ARGB8888,
+												 SDL_TEXTUREACCESS_TARGET,
+												 inputSurface->w, inputSurface->h);
+
+	if (!tempTexture) {
+		LOG_error("Failed to create temporary texture: %s\n", SDL_GetError());
+		return;
+	}
+
+	SDL_UpdateTexture(tempTexture, NULL, inputSurface->pixels, inputSurface->pitch);
+	SDL_SetTextureBlendMode(tempTexture, SDL_BLENDMODE_BLEND);
+
+	const int fps = 60;
+	const int frame_delay = 1000 / fps;
+	const int total_frames = duration_ms / frame_delay;
+
+	SDL_Texture* target_layer = (layer == 0) ? vid.target_layer2 : vid.target_layer4;
+	if (!target_layer) {
+		SDL_DestroyTexture(tempTexture);
+		return;
+	}
+	layer_has_content[layer == 0 ? 2 : 4] = true;
+	layerTouched(layer == 0 ? 2 : 4);
+
+	for (int frame = 0; frame <= total_frames; ++frame) {
+		float t = (float)frame / total_frames;
+		int current_opacity = start_opacity + (int)((target_opacity - start_opacity) * t);
+		if (current_opacity < 0)
+			current_opacity = 0;
+		if (current_opacity > 255)
+			current_opacity = 255;
+
+		SDL_SetTextureAlphaMod(tempTexture, current_opacity);
+		SDL_SetRenderTarget(vid.renderer, target_layer);
+		SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 0);
+		SDL_RenderClear(vid.renderer);
+
+		SDL_Rect dstRect = {x, y, w, h};
+		SDL_RenderCopy(vid.renderer, tempTexture, NULL, &dstRect);
+
+		SDL_SetRenderTarget(vid.renderer, NULL);
+		// blit to 0 for normal draw
+		vid.blit = 0;
+		PLAT_flip(vid.screen, 0);
+	}
+
+	SDL_DestroyTexture(tempTexture);
+}
+
+SDL_Surface* PLAT_captureRendererToSurface() {
+	if (!vid.renderer)
+		return NULL;
+
+	int width, height;
+	SDL_GetRendererOutputSize(vid.renderer, &width, &height);
+
+	SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_ARGB8888);
+	if (!surface) {
+		LOG_error("Failed to create surface: %s\n", SDL_GetError());
+		return NULL;
+	}
+
+	Uint32 black = SDL_MapRGBA(surface->format, 0, 0, 0, 255);
+	SDL_FillRect(surface, NULL, black);
+
+	if (SDL_RenderReadPixels(vid.renderer, NULL, SDL_PIXELFORMAT_ARGB8888, surface->pixels, surface->pitch) != 0) {
+		LOG_error("Failed to read pixels from renderer: %s\n", SDL_GetError());
+		SDL_FreeSurface(surface);
+		return NULL;
+	}
+
+	// remove transparancy
+	Uint32* pixels = (Uint32*)surface->pixels;
+	int total_pixels = (surface->pitch / 4) * surface->h;
+
+	for (int i = 0; i < total_pixels; i++) {
+		Uint8 r, g, b, a;
+		SDL_GetRGBA(pixels[i], surface->format, &r, &g, &b, &a);
+		pixels[i] = SDL_MapRGBA(surface->format, r, g, b, 255);
+	}
+
+	SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
+	return surface;
+}
+
+void PLAT_animateSlidePages(
+	SDL_Surface* outSurface,
+	int out_x, int out_y, int out_target_x, int out_target_y,
+	SDL_Surface* inSurface,
+	int in_x, int in_y, int in_target_x, int in_target_y,
+	int w, int h, int duration_ms, int layer) {
+	if (!outSurface || !inSurface || !vid.renderer)
+		return;
+
+	SDL_Texture* outTexture = SDL_CreateTexture(vid.renderer,
+												SDL_PIXELFORMAT_ARGB8888,
+												SDL_TEXTUREACCESS_TARGET,
+												outSurface->w, outSurface->h);
+	if (!outTexture) {
+		LOG_error("Failed to create out texture: %s\n", SDL_GetError());
+		return;
+	}
+	SDL_UpdateTexture(outTexture, NULL, outSurface->pixels, outSurface->pitch);
+
+	SDL_Texture* inTexture = SDL_CreateTexture(vid.renderer,
+											   SDL_PIXELFORMAT_ARGB8888,
+											   SDL_TEXTUREACCESS_TARGET,
+											   inSurface->w, inSurface->h);
+	if (!inTexture) {
+		LOG_error("Failed to create in texture: %s\n", SDL_GetError());
+		SDL_DestroyTexture(outTexture);
+		return;
+	}
+	SDL_UpdateTexture(inTexture, NULL, inSurface->pixels, inSurface->pitch);
+
+	const int fps = 60;
+	const int frame_delay = 1000 / fps;
+	const int total_frames = duration_ms / frame_delay;
+
+	for (int frame = 0; frame <= total_frames; ++frame) {
+		float t = (float)frame / total_frames;
+		// ease-out cubic: fast start, smooth deceleration
+		float eased = 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t);
+
+		int out_cx = out_x + (int)((out_target_x - out_x) * eased);
+		int out_cy = out_y + (int)((out_target_y - out_y) * eased);
+		int in_cx = in_x + (int)((in_target_x - in_x) * eased);
+		int in_cy = in_y + (int)((in_target_y - in_y) * eased);
+
+		switch (layer) {
+		case 1:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer1);
+			break;
+		case 2:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer2);
+			break;
+		case 3:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer3);
+			break;
+		case 4:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer4);
+			break;
+		case 5:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer5);
+			break;
+		default:
+			SDL_SetRenderTarget(vid.renderer, vid.target_layer1);
+			break;
+		}
+		layer_has_content[(layer >= 1 && layer <= 5) ? layer : 1] = true;
+		layerTouched((layer >= 1 && layer <= 5) ? layer : 1);
+		SDL_SetRenderDrawColor(vid.renderer, 0, 0, 0, 0);
+		SDL_RenderClear(vid.renderer);
+
+		SDL_Rect outSrc = {0, 0, outSurface->w, outSurface->h};
+		SDL_Rect outDst = {out_cx, out_cy, w, h};
+		SDL_RenderCopy(vid.renderer, outTexture, &outSrc, &outDst);
+
+		SDL_Rect inSrc = {0, 0, inSurface->w, inSurface->h};
+		SDL_Rect inDst = {in_cx, in_cy, w, h};
+		SDL_RenderCopy(vid.renderer, inTexture, &inSrc, &inDst);
+
+		SDL_SetRenderTarget(vid.renderer, NULL);
+		PLAT_GPU_Flip();
+	}
+
+	SDL_DestroyTexture(outTexture);
+	SDL_DestroyTexture(inTexture);
+}
+
+void PLAT_setEffect(int next_type) {
+	pthread_mutex_lock(&video_prep_mutex);
+	effect.next_type = next_type;
+	pthread_mutex_unlock(&video_prep_mutex);
+}
+void PLAT_setEffectColor(int next_color) {
+	pthread_mutex_lock(&video_prep_mutex);
+	effect.next_color = next_color;
+	pthread_mutex_unlock(&video_prep_mutex);
+}
+void PLAT_vsync(int remaining) {
+	if (remaining > 0)
+		SDL_Delay(remaining);
+}
+
+
+scaler_t PLAT_getScaler(GFX_Renderer* renderer) {
+	// LOG_info("getScaler for scale: %i\n", renderer->scale);
+	pthread_mutex_lock(&video_prep_mutex);
+	effect.next_scale = renderer->scale;
+	pthread_mutex_unlock(&video_prep_mutex);
+	return scale1x1_c16;
+}
+
+void setRectToAspectRatio(SDL_Rect* dst_rect) {
+	int x = vid.blit->src_x;
+	int y = vid.blit->src_y;
+	int w = vid.blit->src_w;
+	int h = vid.blit->src_h;
+
+	if (vid.blit->aspect == 0) {
+		w = vid.blit->src_w * vid.blit->scale;
+		h = vid.blit->src_h * vid.blit->scale;
+		dst_rect->x = (device_width - w) / 2 + screenx;
+		dst_rect->y = (device_height - h) / 2 + screeny;
+		dst_rect->w = w;
+		dst_rect->h = h;
+	} else if (vid.blit->aspect > 0) {
+		if (should_rotate) {
+			h = device_width;
+			w = h * vid.blit->aspect;
+			if (w > device_height) {
+				w = device_height;
+				h = w / vid.blit->aspect;
+			}
+		} else {
+			h = device_height;
+			w = h * vid.blit->aspect;
+			if (w > device_width) {
+				w = device_width;
+				h = w / vid.blit->aspect;
+			}
+		}
+		dst_rect->x = (device_width - w) / 2 + screenx;
+		dst_rect->y = (device_height - h) / 2 + screeny;
+		dst_rect->w = w;
+		dst_rect->h = h;
+	} else {
+		dst_rect->x = screenx;
+		dst_rect->y = screeny;
+		dst_rect->w = should_rotate ? device_height : device_width;
+		dst_rect->h = should_rotate ? device_width : device_height;
+	}
+}
+
+// Leave no GL context current on the calling thread, so another thread can
+// make vid.gl_context (or the SDL renderer's) current (minarch present thread).
+void PLAT_GL_releaseCurrent(void) {
+	SDL_GL_MakeCurrent(vid.window, NULL);
+}
+
+void PLAT_blitRenderer(GFX_Renderer* renderer) {
+	vid.blit = renderer;
+	SDL_RenderClear(vid.renderer);
+	resizeVideo(vid.blit->true_w, vid.blit->true_h, vid.blit->src_p);
+}
+
+void PLAT_clearShaders() {
+	// this funciton was empty so am abusing it for now for this, later need to make a seperate function for it
+	// set blit to 0 maybe should be seperate function later
+	vid.blit = NULL;
+}
+
+
+// Synchronously close recording files. Safe to call from any thread.
+// After this returns, capture_rec_fd and capture_ts_file are closed,
+// and all pending frame data has been flushed to disk.
+void PLAT_captureRecStop(void) {
+	if (capture_rec_fd < 0)
+		return;
+	if (capture_worker_running) {
+		pthread_mutex_lock(&capture_worker_mutex);
+		capture_rec_close_requested = true;
+		pthread_cond_signal(&capture_worker_cond);
+		while (capture_rec_fd >= 0)
+			pthread_cond_wait(&capture_rec_closed_cond, &capture_worker_mutex);
+		pthread_mutex_unlock(&capture_worker_mutex);
+	} else {
+		close(capture_rec_fd);
+		capture_rec_fd = -1;
+		if (capture_ts_file) {
+			fclose(capture_ts_file);
+			capture_ts_file = NULL;
+		}
+	}
+}
+
+// Worker thread: runs on efficiency core, handles memcpy/write
+static void* capture_worker_func(void* arg) {
+	(void)arg;
+	PLAT_pinToCores(CPU_CORE_EFFICIENCY);
+
+	pthread_mutex_lock(&capture_worker_mutex);
+	while (!capture_worker_quit) {
+		// Handle recording file close request under lock
+		if (capture_rec_close_requested) {
+			if (capture_rec_fd >= 0) {
+				close(capture_rec_fd);
+				capture_rec_fd = -1;
+			}
+			if (capture_ts_file) {
+				fclose(capture_ts_file);
+				capture_ts_file = NULL;
+			}
+			capture_rec_close_requested = false;
+			pthread_cond_signal(&capture_rec_closed_cond);
+		}
+
+		while (!capture_worker_has_frame && !capture_worker_quit && !capture_rec_close_requested)
+			pthread_cond_wait(&capture_worker_cond, &capture_worker_mutex);
+		if (capture_worker_quit)
+			break;
+		if (!capture_worker_has_frame)
+			continue; // was woken for close request
+
+		// Grab frame parameters and snapshot file descriptors under lock
+		size_t frame_size = capture_frame_size;
+		uint32_t ts = capture_worker_frame_ts;
+		int local_rec_fd = capture_rec_fd;
+		FILE* local_ts_file = capture_ts_file;
+		capture_worker_has_frame = false;
+		pthread_mutex_unlock(&capture_worker_mutex);
+
+		// Raw bottom-to-top RGBA from glReadPixels — write as-is,
+		// ffmpeg handles vflip + format conversion at encode time
+
+		if (capture_shm_ptr)
+			memcpy(capture_shm_ptr, capture_buf_b, frame_size);
+		if (local_rec_fd >= 0) {
+			size_t remaining = frame_size;
+			const uint8_t* ptr = capture_buf_b;
+			while (remaining > 0) {
+				ssize_t n = write(local_rec_fd, ptr, remaining);
+				if (n < 0)
+					break;
+				ptr += n;
+				remaining -= n;
+			}
+			if (local_ts_file) {
+				fprintf(local_ts_file, "%u\n", ts);
+				fflush(local_ts_file);
+			}
+		}
+
+		pthread_mutex_lock(&capture_worker_mutex);
+	}
+	// Handle any pending close request before exiting
+	if (capture_rec_close_requested) {
+		if (capture_rec_fd >= 0) {
+			close(capture_rec_fd);
+			capture_rec_fd = -1;
+		}
+		if (capture_ts_file) {
+			fclose(capture_ts_file);
+			capture_ts_file = NULL;
+		}
+		capture_rec_close_requested = false;
+		pthread_cond_signal(&capture_rec_closed_cond);
+	}
+	pthread_mutex_unlock(&capture_worker_mutex);
+	return NULL;
+}
+
+static void capture_check(void) {
+	if (strcmp(PLATFORM, "tg5050") != 0)
+		return;
+	// Time-gated (was: every 15 rendered frames): dirty-flag apps like nextui
+	// only flip on activity, so a frame-count gate could take many separate
+	// interactions to notice a PID file from the OSD toggles.
+	uint32_t check_now = capture_mono_ms();
+	capture_flip_ms = check_now; // PLAT_pokeCapture only steps in when flips stop
+	if (check_now - capture_check_ms < 250)
+		return;
+	capture_check_ms = check_now;
+
+	bool rec_active = (access("/tmp/screenrecorder.pid", F_OK) == 0);
+	bool needed = (access("/tmp/screenshot.pid", F_OK) == 0 || rec_active);
+
+	// Note: recording files are no longer opened here — screenrecorder.elf
+	// reads from shm directly and pipes to ffmpeg in real-time.
+
+	if (needed && !capture_active) {
+		capture_frame_size = device_width * device_height * 4;
+		if (!capture_buf_a)
+			capture_buf_a = malloc(capture_frame_size);
+		if (!capture_buf_b)
+			capture_buf_b = malloc(capture_frame_size);
+		// Open+mmap shared file for screenshots
+		if (capture_shm_fd < 0) {
+			capture_shm_fd = open("/tmp/fb_mirror.raw", O_CREAT | O_RDWR | O_TRUNC, 0666);
+			if (capture_shm_fd >= 0) {
+				// Advisory lock marks the mirror as live: the screenshot daemon
+				// treats an unlocked mirror as a leftover from a dead process.
+				// The kernel releases it on any exit, including SIGKILL.
+				capture_lock_held = (flock(capture_shm_fd, LOCK_EX | LOCK_NB) == 0);
+				if (ftruncate(capture_shm_fd, capture_frame_size) == 0) {
+					capture_shm_ptr = mmap(NULL, capture_frame_size,
+										   PROT_READ | PROT_WRITE, MAP_SHARED,
+										   capture_shm_fd, 0);
+					if (capture_shm_ptr == MAP_FAILED)
+						capture_shm_ptr = NULL;
+				}
+				if (capture_shm_ptr) {
+					FILE* inf = fopen("/tmp/fb_mirror.info", "w");
+					if (inf) {
+						fprintf(inf, "%dx%d\n", device_width, device_height);
+						fclose(inf);
+					}
+				}
+			}
+		}
+		// Start worker thread
+		if (!capture_worker_running && capture_buf_a && capture_buf_b) {
+			capture_worker_quit = false;
+			capture_worker_has_frame = false;
+			if (pthread_create(&capture_worker_thread, NULL, capture_worker_func, NULL) == 0)
+				capture_worker_running = true;
+		}
+		if (capture_buf_a && capture_buf_b)
+			capture_active = true;
+	} else if (!needed && capture_active) {
+		// Stop worker thread
+		if (capture_worker_running) {
+			pthread_mutex_lock(&capture_worker_mutex);
+			capture_worker_quit = true;
+			pthread_cond_signal(&capture_worker_cond);
+			pthread_mutex_unlock(&capture_worker_mutex);
+			pthread_join(capture_worker_thread, NULL);
+			capture_worker_running = false;
+		}
+		if (capture_shm_ptr) {
+			munmap(capture_shm_ptr, capture_frame_size);
+			capture_shm_ptr = NULL;
+		}
+		if (capture_shm_fd >= 0) {
+			close(capture_shm_fd);
+			capture_shm_fd = -1;
+			capture_lock_held = false;
+		}
+		if (capture_buf_a) {
+			free(capture_buf_a);
+			capture_buf_a = NULL;
+		}
+		if (capture_buf_b) {
+			free(capture_buf_b);
+			capture_buf_b = NULL;
+		}
+		unlink("/tmp/fb_mirror.raw");
+		unlink("/tmp/fb_mirror.info");
+		capture_active = false;
+	}
+}
+
+static uint32_t capture_mono_ms(void) {
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (uint32_t)(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+
+// Called from the shared input poll (PAD_poll): lets an idle dirty-flag app
+// notice the OSD screenshot/recorder toggles without waiting for a
+// user-driven redraw. Re-presents the current layer stack once so
+// capture_check()/capture_write() run and publish a frame even when nothing
+// else would flip.
+void PLAT_pokeCapture(void) {
+	if (strcmp(PLATFORM, "tg5050") != 0)
+		return;
+	if (capture_active || !vid.renderer)
+		return;
+	static uint32_t poke_last_ms = 0;
+	uint32_t now_ms = capture_mono_ms();
+	if (now_ms - poke_last_ms < 500)
+		return;
+	// An app that is flipping on its own will activate capture through the
+	// normal flip path; only step in when the screen has genuinely gone idle,
+	// so we never inject an out-of-band present mid-render.
+	if (capture_flip_ms && now_ms - capture_flip_ms < 1000)
+		return;
+	poke_last_ms = now_ms;
+	if (access("/tmp/screenshot.pid", F_OK) == 0 ||
+		access("/tmp/screenrecorder.pid", F_OK) == 0)
+		PLAT_GPU_Flip();
+}
+
+static void capture_write(void) {
+	if (!capture_active || !capture_buf_a)
+		return;
+
+	// The activation-time flock can lose a race against the daemon's brief
+	// liveness probe; retry until held so the mirror reads as live.
+	if (!capture_lock_held && capture_shm_fd >= 0)
+		capture_lock_held = (flock(capture_shm_fd, LOCK_EX | LOCK_NB) == 0);
+
+	// Time-based rate limiting at ~30fps
+	uint32_t now_ms = capture_mono_ms();
+	if (now_ms - capture_last_ms < 33)
+		return;
+
+	// Skip expensive GPU readback if worker is still busy with previous frame.
+	// This avoids unnecessary GPU pipeline stalls during gameplay.
+	if (capture_worker_has_frame)
+		return;
+
+	capture_last_ms = now_ms;
+
+	int w = device_width;
+	int h = device_height;
+
+	// GPU readback into buf_a (must happen on render thread).
+	// Always use glReadPixels — works for both SDL renderer and raw GL paths.
+	// Returns bottom-to-top RGBA consistently; ffmpeg handles vflip at encode time.
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, capture_buf_a);
+
+	// Hand off to worker: swap buffers and signal
+	pthread_mutex_lock(&capture_worker_mutex);
+	if (!capture_worker_has_frame) {
+		uint8_t* tmp = capture_buf_a;
+		capture_buf_a = capture_buf_b;
+		capture_buf_b = tmp;
+		capture_worker_frame_ts = now_ms;
+		capture_worker_has_frame = true;
+		pthread_cond_signal(&capture_worker_cond);
+	}
+	pthread_mutex_unlock(&capture_worker_mutex);
+}
+
+void PLAT_flipHidden() {
+	SDL_RenderClear(vid.renderer);
+	resizeVideo(device_width, device_height, FIXED_PITCH); // !!!???
+	SDL_UpdateTexture(vid.stream_layer1, NULL, vid.screen->pixels, vid.screen->pitch);
+	bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+	compositeLayers();
+	//  SDL_RenderPresent(vid.renderer); // no present want to flip  hidden
+}
+
+
+void PLAT_flip(SDL_Surface* IGNORED, int ignored) {
+	capture_check();
+	// dont think we need this here tbh
+	// SDL_RenderClear(vid.renderer);
+	if (!vid.blit) {
+		int kept_w = vid.width, kept_h = vid.height;
+		resizeVideo(device_width, device_height, FIXED_PITCH); // !!!???
+		uploadScreen(kept_w == vid.width && kept_h == vid.height);
+		compositeLayers();
+		capture_write();
+		SDL_RenderPresent(vid.renderer);
+		return;
+	}
+
+	// Safety check: ensure texture dimensions match blit buffer dimensions
+	if (vid.width != vid.blit->true_w || vid.height != vid.blit->true_h) {
+		// Texture size doesn't match buffer, clear blit and use screen buffer instead
+		vid.blit = NULL;
+		upload_band_n = 0;
+		resizeVideo(device_width, device_height, FIXED_PITCH);
+		SDL_UpdateTexture(vid.stream_layer1, NULL, vid.screen->pixels, vid.screen->pitch);
+		bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+		compositeLayers();
+		capture_write();
+		SDL_RenderPresent(vid.renderer);
+		return;
+	}
+
+	upload_band_n = 0; // a core's frame: always whole
+	SDL_UpdateTexture(vid.stream_layer1, NULL, vid.blit->src, vid.blit->src_p);
+	bandShadowInvalidate(); // the texture no longer matches the bars' last copies
+
+	SDL_Texture* target = vid.stream_layer1;
+	int x = vid.blit->src_x;
+	int y = vid.blit->src_y;
+	int w = vid.blit->src_w;
+	int h = vid.blit->src_h;
+	if (vid.sharpness == SHARPNESS_CRISP) {
+		SDL_SetRenderTarget(vid.renderer, vid.target);
+		SDL_RenderCopy(vid.renderer, vid.stream_layer1, NULL, NULL);
+		SDL_SetRenderTarget(vid.renderer, NULL);
+		x *= hard_scale;
+		y *= hard_scale;
+		w *= hard_scale;
+		h *= hard_scale;
+		target = vid.target;
+	}
+
+	SDL_Rect* src_rect = &(SDL_Rect){x, y, w, h};
+	SDL_Rect* dst_rect = &(SDL_Rect){0, 0, device_width, device_height};
+
+	setRectToAspectRatio(dst_rect);
+
+	SDL_RenderCopy(vid.renderer, target, src_rect, dst_rect);
+
+	capture_write();
+	SDL_RenderPresent(vid.renderer);
+	vid.blit = NULL;
+}
+
+static int frame_count = 0;
+void runShaderPass(GLuint src_texture, GLuint shader_program, GLuint* target_texture,
+				   int x, int y, int dst_width, int dst_height, Shader* shader, int alpha, int filter) {
+	static GLuint static_VAO = 0, static_VBO = 0;
+	static GLuint last_program = 0;
+	static GLfloat last_texelSize[2] = {-1.0f, -1.0f};
+	static GLfloat texelSize[2] = {-1.0f, -1.0f};
+	static GLuint fbo = 0;
+	static GLuint last_bound_texture = 0;
+	static GLint max_tex_size = 0;
+	static int logged_bad_size = 0;
+	GLenum pre_err;
+
+	while ((pre_err = glGetError()) != GL_NO_ERROR) {
+		(void)pre_err;
+	}
+
+	if (max_tex_size == 0) {
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+		if (max_tex_size <= 0) {
+			max_tex_size = 2048;
+		}
+	}
+
+	if (dst_width <= 0 || dst_height <= 0 || dst_width > max_tex_size || dst_height > max_tex_size) {
+		if (!logged_bad_size) {
+			LOG_error("Shader pass invalid target size: %dx%d (max %d)\n", dst_width, dst_height, max_tex_size);
+			logged_bad_size = 1;
+		}
+		return;
+	}
+
+	if (shaderResetRequested) {
+		// Force rebuild of GL objects and cached state
+		if (static_VAO) {
+			glDeleteVertexArrays(1, &static_VAO);
+			static_VAO = 0;
+		}
+		if (static_VBO) {
+			glDeleteBuffers(1, &static_VBO);
+			static_VBO = 0;
+		}
+		last_program = 0;
+		last_texelSize[0] = last_texelSize[1] = -1.0f;
+		fbo = 0;
+		last_bound_texture = 0;
+	}
+
+	if (hwr.state_dirty) {
+		// A GPU core ran on this context: the cached program/texture say
+		// nothing about what is bound now, and the attribute setup below
+		// records into whatever VAO/VBO is current -- rebind ours first.
+		last_program = 0;
+		last_bound_texture = 0;
+		if (static_VAO) {
+			glBindVertexArray(static_VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, static_VBO);
+		}
+		hwr.state_dirty = 0;
+	}
+
+	texelSize[0] = 1.0f / shader->texw;
+	texelSize[1] = 1.0f / shader->texh;
+
+
+	if (shader_program != last_program)
+		glUseProgram(shader_program);
+
+	if (static_VAO == 0) {
+		glGenVertexArrays(1, &static_VAO);
+		glGenBuffers(1, &static_VBO);
+		glBindVertexArray(static_VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, static_VBO);
+
+		float vertices[] = {
+			// x,    y,    z,    w,     u,    v,    s,    t
+			-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // top-left
+			-1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,	  // top-right
+			1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f	  // bottom-right
+		};
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	}
+
+	if (shader_program != last_program) {
+		GLint posAttrib = glGetAttribLocation(shader_program, "VertexCoord");
+		if (posAttrib >= 0) {
+			glVertexAttribPointer(posAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(posAttrib);
+		}
+		GLint texAttrib = glGetAttribLocation(shader_program, "TexCoord");
+		if (texAttrib >= 0) {
+			glVertexAttribPointer(texAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(4 * sizeof(float)));
+			glEnableVertexAttribArray(texAttrib);
+		}
+
+		if (shader->u_FrameDirection >= 0)
+			glUniform1i(shader->u_FrameDirection, 1);
+		if (shader->u_FrameCount >= 0)
+			glUniform1i(shader->u_FrameCount, frame_count);
+		if (shader->u_OutputSize >= 0)
+			glUniform2f(shader->u_OutputSize, dst_width, dst_height);
+		if (shader->u_TextureSize >= 0)
+			glUniform2f(shader->u_TextureSize, shader->texw, shader->texh);
+		if (shader->OrigInputSize >= 0)
+			glUniform2f(shader->OrigInputSize, shader->srcw, shader->srch);
+		// shader_p gate: the chrome passes (final scale/effect/overlay/notif) and
+		// never-loaded stock entries carry zero-initialized location fields, and
+		// location 0 in the system shaders is their Texture sampler — an ungated
+		// upload here would clobber it.
+		if (shader->shader_p && shader->u_OrigTextureSize >= 0)
+			glUniform2f(shader->u_OrigTextureSize, orig_frame_w, orig_frame_h);
+		if (shader->u_InputSize >= 0)
+			glUniform2f(shader->u_InputSize, shader->srcw, shader->srch);
+		for (int i = 0; i < shader->num_pragmas; ++i) {
+			glUniform1f(shader->pragmas[i].uniformLocation, shader->pragmas[i].value);
+		}
+
+		GLint u_MVP = glGetUniformLocation(shader_program, "MVPMatrix");
+		if (u_MVP >= 0) {
+			float identity[16] = {
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1};
+			glUniformMatrix4fv(u_MVP, 1, GL_FALSE, identity);
+		}
+		glBindVertexArray(static_VAO);
+	}
+	if (target_texture) {
+		if (*target_texture != 0 && !glIsTexture(*target_texture)) {
+			*target_texture = 0;
+			shader->updated = 1;
+		}
+		if (*target_texture == 0 || shader->updated || reloadShaderTextures) {
+			// if(target_texture) {
+			// 	glDeleteTextures(1,target_texture);
+			// }
+			if (*target_texture == 0)
+				glGenTextures(1, target_texture);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, *target_texture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, dst_width, dst_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+			shader->updated = 0;
+		}
+		if (fbo == 0) {
+			glGenFramebuffers(1, &fbo);
+		}
+
+		// Always bind before attaching to avoid stale state after swaps
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *target_texture, 0);
+
+		GLenum err = glGetError();
+		if (err != GL_NO_ERROR) {
+			LOG_error("Framebuffer error: %d\n", err);
+			LOG_info("Failed to bind framebuffer with texture %u\n", *target_texture);
+		}
+
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE) {
+			LOG_error("Framebuffer incomplete: 0x%X\n", status);
+		}
+
+	} else {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	if (alpha == 1) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	} else {
+		glDisable(GL_BLEND);
+	}
+
+	if (src_texture != last_bound_texture) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, src_texture);
+		last_bound_texture = src_texture;
+	}
+	glViewport(x, y, dst_width, dst_height);
+
+
+	if (shader->texLocation >= 0)
+		glUniform1i(shader->texLocation, 0);
+
+	// Per-draw (not only on program change): the frame texture is recreated on
+	// shader resets, so the unit-1 binding must follow the current id. Same
+	// shader_p gate as OrigTextureSize above — pointing an unresolved location 0
+	// (the system shaders' Texture sampler) at unit 1 would break every
+	// chrome pass.
+	if (shader->shader_p && shader->u_OrigTexture >= 0) {
+		glUniform1i(shader->u_OrigTexture, 1);
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, orig_texture_gl);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	if (shader->texelSizeLocation >= 0) {
+		glUniform2fv(shader->texelSizeLocation, 1, texelSize);
+		last_texelSize[0] = texelSize[0];
+		last_texelSize[1] = texelSize[1];
+	}
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	last_program = shader_program;
+}
+
+typedef struct {
+	SDL_Surface* loaded_effect;
+	SDL_Surface* loaded_overlay;
+	int effect_ready;
+	int overlay_ready;
+} FramePreparation;
+
+static FramePreparation frame_prep = {0};
+
+int prepareFrameThread(void* data) {
+	PWR_pinHelperThread();
+	while (1) {
+		updateEffect();
+
+		// Check effectUpdated flag with mutex
+		pthread_mutex_lock(&video_prep_mutex);
+		int effect_updated = effectUpdated;
+		pthread_mutex_unlock(&video_prep_mutex);
+
+		if (effect_updated) {
+			LOG_info("effect updated %s\n", effect_path);
+			if (effect_path) {
+				SDL_Surface* tmp = IMG_Load(effect_path);
+				SDL_Surface* converted = NULL;
+				if (tmp) {
+					converted = SDL_ConvertSurfaceFormat(tmp, SDL_PIXELFORMAT_RGBA32, 0);
+					SDL_FreeSurface(tmp);
+				}
+
+				pthread_mutex_lock(&video_prep_mutex);
+				frame_prep.loaded_effect = converted;
+				effectUpdated = 0;
+				frame_prep.effect_ready = 1;
+				pthread_mutex_unlock(&video_prep_mutex);
+			} else {
+				pthread_mutex_lock(&video_prep_mutex);
+				frame_prep.loaded_effect = 0;
+				effectUpdated = 0;
+				frame_prep.effect_ready = 1;
+				pthread_mutex_unlock(&video_prep_mutex);
+			}
+		}
+
+		// Check if effect is disabled
+		pthread_mutex_lock(&video_prep_mutex);
+		int effect_type = effect.type;
+		SDL_Surface* loaded_effect = frame_prep.loaded_effect;
+		pthread_mutex_unlock(&video_prep_mutex);
+
+		if (effect_type == EFFECT_NONE && loaded_effect != 0) {
+			pthread_mutex_lock(&video_prep_mutex);
+			frame_prep.loaded_effect = 0;
+			frame_prep.effect_ready = 1;
+			pthread_mutex_unlock(&video_prep_mutex);
+		}
+
+		// Check overlayUpdated flag with mutex
+		pthread_mutex_lock(&video_prep_mutex);
+		int overlay_updated = overlayUpdated;
+		pthread_mutex_unlock(&video_prep_mutex);
+
+		if (overlay_updated) {
+			LOG_info("overlay updated\n");
+			if (overlay_path) {
+				SDL_Surface* tmp = IMG_Load(overlay_path);
+				SDL_Surface* converted = NULL;
+				if (tmp) {
+					converted = SDL_ConvertSurfaceFormat(tmp, SDL_PIXELFORMAT_RGBA32, 0);
+					SDL_FreeSurface(tmp);
+				}
+
+				pthread_mutex_lock(&video_prep_mutex);
+				frame_prep.loaded_overlay = converted;
+				frame_prep.overlay_ready = 1;
+				overlayUpdated = 0;
+				pthread_mutex_unlock(&video_prep_mutex);
+			} else {
+				pthread_mutex_lock(&video_prep_mutex);
+				frame_prep.loaded_overlay = 0;
+				frame_prep.overlay_ready = 1;
+				overlayUpdated = 0;
+				pthread_mutex_unlock(&video_prep_mutex);
+			}
+		}
+
+		SDL_Delay(120);
+	}
+	return 0;
+}
+
+static SDL_Thread* prepare_thread = NULL;
+
+void PLAT_GL_Swap() {
+	capture_check();
+	//uint64_t performance_frequency = SDL_GetPerformanceFrequency();
+	//uint64_t frame_start = SDL_GetPerformanceCounter();
+
+	if (prepare_thread == NULL) {
+		prepare_thread = SDL_CreateThread(prepareFrameThread, "PrepareFrameThread", NULL);
+
+		if (prepare_thread == NULL) {
+			LOG_error("Error creating background thread: %s\n", SDL_GetError());
+			return;
+		}
+	}
+
+	static int lastframecount = 0;
+	if (reloadShaderTextures)
+		lastframecount = frame_count;
+	if (frame_count < lastframecount + 3 || notif.clear_frames > 0) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (notif.clear_frames > 0)
+			notif.clear_frames--;
+	}
+
+	SDL_Rect dst_rect = {0, 0, device_width, device_height};
+	setRectToAspectRatio(&dst_rect);
+
+	if (!hwr.frame_ready && (!vid.blit || !vid.blit->src)) {
+		return;
+	}
+
+	SDL_GL_MakeCurrent(vid.window, vid.gl_context);
+
+	static GLuint effect_tex = 0;
+	static int effect_w = 0, effect_h = 0;
+	static GLuint overlay_tex = 0;
+	static int overlay_w = 0, overlay_h = 0;
+	static int overlayload = 0;
+
+	static GLuint src_texture = 0;
+	static int src_w_last = 0, src_h_last = 0;
+	static int last_w = 0, last_h = 0;
+
+	if (shaderResetRequested) {
+		if (src_texture) {
+			glDeleteTextures(1, &src_texture);
+			src_texture = 0;
+		}
+		src_w_last = src_h_last = 0;
+		last_w = last_h = 0;
+		if (effect_tex) {
+			glDeleteTextures(1, &effect_tex);
+			effect_tex = 0;
+			effect_w = effect_h = 0;
+			// Force reload by marking as ready again if effect is active
+			pthread_mutex_lock(&video_prep_mutex);
+			if (effect.type != EFFECT_NONE) {
+				frame_prep.effect_ready = 1;
+			}
+			pthread_mutex_unlock(&video_prep_mutex);
+		}
+		if (overlay_tex) {
+			glDeleteTextures(1, &overlay_tex);
+			overlay_tex = 0;
+			overlay_w = overlay_h = 0;
+			// Force reload if we had an overlay
+			pthread_mutex_lock(&video_prep_mutex);
+			if (frame_prep.loaded_overlay) {
+				frame_prep.overlay_ready = 1;
+			}
+			pthread_mutex_unlock(&video_prep_mutex);
+		}
+		reloadShaderTextures = 1;
+	}
+
+	// Check if effect needs updating
+	pthread_mutex_lock(&video_prep_mutex);
+	int effect_ready = frame_prep.effect_ready;
+	SDL_Surface* loaded_effect = frame_prep.loaded_effect;
+	pthread_mutex_unlock(&video_prep_mutex);
+
+	if (effect_ready) {
+		if (loaded_effect) {
+			if (!effect_tex)
+				glGenTextures(1, &effect_tex);
+			glBindTexture(GL_TEXTURE_2D, effect_tex);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, loaded_effect->w, loaded_effect->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, loaded_effect->pixels);
+			effect_w = loaded_effect->w;
+			effect_h = loaded_effect->h;
+		} else {
+			if (effect_tex) {
+				glDeleteTextures(1, &effect_tex);
+			}
+			effect_tex = 0;
+		}
+		pthread_mutex_lock(&video_prep_mutex);
+		frame_prep.effect_ready = 0;
+		pthread_mutex_unlock(&video_prep_mutex);
+	}
+
+	// Check if overlay needs updating
+	pthread_mutex_lock(&video_prep_mutex);
+	int overlay_ready = frame_prep.overlay_ready;
+	SDL_Surface* loaded_overlay = frame_prep.loaded_overlay;
+	pthread_mutex_unlock(&video_prep_mutex);
+
+	if (overlay_ready) {
+		if (loaded_overlay) {
+			if (!overlay_tex)
+				glGenTextures(1, &overlay_tex);
+			glBindTexture(GL_TEXTURE_2D, overlay_tex);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, loaded_overlay->w, loaded_overlay->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, loaded_overlay->pixels);
+			overlay_w = loaded_overlay->w;
+			overlay_h = loaded_overlay->h;
+
+		} else {
+			if (overlay_tex) {
+				glDeleteTextures(1, &overlay_tex);
+			}
+			overlay_tex = 0;
+		}
+		pthread_mutex_lock(&video_prep_mutex);
+		frame_prep.overlay_ready = 0;
+		pthread_mutex_unlock(&video_prep_mutex);
+	}
+
+	GLuint frame_tex = src_texture;
+	int hwr_direct = 0;
+	if (hwr.frame_ready) {
+		// GPU core: the frame is already a texture; only its filtering follows
+		// the pipeline's settings (same rule as the CPU-upload texture). With no
+		// shader passes the FBO's own texture goes straight to the screen;
+		// shader passes need it copied to a frame-sized, upright texture.
+		hwr_direct = nrofshaders == 0 && hwr_present_ready();
+		if (!hwr_direct)
+			hwr_update_copy();
+		frame_tex = hwr_direct ? hwr.color_tex : hwr.copy_tex;
+		glBindTexture(GL_TEXTURE_2D, frame_tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, nrofshaders > 0 ? shaders[0]->filter : finalScaleFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nrofshaders > 0 ? shaders[0]->filter : finalScaleFilter);
+	} else {
+		if (!src_texture || reloadShaderTextures) {
+			if (src_texture == 0)
+				glGenTextures(1, &src_texture);
+			glBindTexture(GL_TEXTURE_2D, src_texture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, nrofshaders > 0 ? shaders[0]->filter : finalScaleFilter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, nrofshaders > 0 ? shaders[0]->filter : finalScaleFilter);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
+		glBindTexture(GL_TEXTURE_2D, src_texture);
+		if (vid.blit->src_w != src_w_last || vid.blit->src_h != src_h_last || reloadShaderTextures) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, vid.blit->src_w, vid.blit->src_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, vid.blit->src);
+			src_w_last = vid.blit->src_w;
+			src_h_last = vid.blit->src_h;
+		} else {
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vid.blit->src_w, vid.blit->src_h, GL_RGBA, GL_UNSIGNED_BYTE, vid.blit->src);
+		}
+	}
+	// Mid-frame GL work above may have changed the unit-0 binding.
+	hwr.state_dirty = hwr.state_dirty || hwr.frame_ready;
+
+	last_w = vid.blit->src_w;
+	last_h = vid.blit->src_h;
+
+	orig_texture_gl = frame_tex;
+	orig_frame_w = vid.blit->src_w;
+	orig_frame_h = vid.blit->src_h;
+
+	for (int i = 0; i < nrofshaders; i++) {
+		int src_w = last_w;
+		int src_h = last_h;
+		int dst_w = src_w * shaders[i]->scale;
+		int dst_h = src_h * shaders[i]->scale;
+
+		if (shaders[i]->scale == 9) {
+			dst_w = dst_rect.w;
+			dst_h = dst_rect.h;
+		}
+
+		if (reloadShaderTextures) {
+			for (int j = i; j < nrofshaders; j++) {
+				int real_input_w = (i == 0) ? vid.blit->src_w : last_w;
+				int real_input_h = (i == 0) ? vid.blit->src_h : last_h;
+
+				shaders[i]->srcw = shaders[i]->srctype == 0 ? vid.blit->src_w : shaders[i]->srctype == 2 ? dst_rect.w
+																										 : real_input_w;
+				shaders[i]->srch = shaders[i]->srctype == 0 ? vid.blit->src_h : shaders[i]->srctype == 2 ? dst_rect.h
+																										 : real_input_h;
+				shaders[i]->texw = shaders[i]->scaletype == 0 ? vid.blit->src_w : shaders[i]->scaletype == 2 ? dst_rect.w
+																											 : real_input_w;
+				shaders[i]->texh = shaders[i]->scaletype == 0 ? vid.blit->src_h : shaders[i]->scaletype == 2 ? dst_rect.h
+																											 : real_input_h;
+			}
+		}
+
+		static int shaderinfocount = 0;
+		static int shaderinfoscreen = 0;
+		if (shaderinfocount > 600 && shaderinfoscreen == i) {
+			currentshaderpass = i + 1;
+			currentshadertexw = shaders[i]->texw;
+			currentshadertexh = shaders[i]->texh;
+			currentshadersrcw = shaders[i]->srcw;
+			currentshadersrch = shaders[i]->srch;
+			currentshaderdstw = dst_w;
+			currentshaderdsth = dst_h;
+			shaderinfocount = 0;
+			shaderinfoscreen++;
+			if (shaderinfoscreen >= nrofshaders)
+				shaderinfoscreen = 0;
+		}
+		shaderinfocount++;
+
+		if (shaders[i]->shader_p) {
+			//LOG_info("Shader Pass: Pipeline step %d/%d\n", i + 1, nrofshaders);
+			runShaderPass(
+				(i == 0) ? frame_tex : shaders[i - 1]->texture,
+				shaders[i]->shader_p,
+				&shaders[i]->texture,
+				0, 0, dst_w, dst_h,
+				shaders[i],
+				0,
+				(i == nrofshaders - 1) ? finalScaleFilter : shaders[i + 1]->filter);
+		} else {
+			runShaderPass(
+				(i == 0) ? frame_tex : shaders[i - 1]->texture,
+				g_noshader,
+				&shaders[i]->texture,
+				0, 0, dst_w, dst_h,
+				shaders[i],
+				0,
+				(i == nrofshaders - 1) ? finalScaleFilter : shaders[i + 1]->filter);
+		}
+
+		last_w = dst_w;
+		last_h = dst_h;
+	}
+
+	if (nrofshaders > 0) {
+		//LOG_info("Shader Pass: Scale to screen (pipeline size: %d)\n", nrofshaders);
+		runShaderPass(
+			shaders[nrofshaders - 1]->texture,
+			g_shader_default,
+			NULL,
+			dst_rect.x, dst_rect.y, dst_rect.w, dst_rect.h,
+			&(Shader){.srcw = last_w, .srch = last_h, .texw = last_w, .texh = last_h},
+			0, GL_NONE);
+	} else if (hwr_direct) {
+		GLfloat sx = (GLfloat)hwr.frame_w / hwr.w;
+		GLfloat sy = (GLfloat)hwr.frame_h / hwr.h;
+		glUseProgram(hwr.present_program);
+		if (hwr.frame_flip)
+			glUniform4f(hwr.present_uvmap, 0.0f, 0.0f, sx, sy);
+		else
+			glUniform4f(hwr.present_uvmap, 0.0f, sy, sx, -sy);
+		GLfloat hx = 0.5f / hwr.w, hy = 0.5f / hwr.h;
+		glUniform4f(hwr.present_uvclamp, hx, hy, sx - hx, sy - hy);
+		runShaderPass(frame_tex,
+					  hwr.present_program,
+					  NULL,
+					  dst_rect.x, dst_rect.y, dst_rect.w, dst_rect.h,
+					  &(Shader){.srcw = hwr.frame_w, .srch = hwr.frame_h, .texw = hwr.w, .texh = hwr.h, .u_FrameDirection = -1, .u_FrameCount = -1, .u_OutputSize = -1, .u_TextureSize = -1, .u_InputSize = -1, .OrigInputSize = -1, .u_OrigTextureSize = -1, .u_OrigTexture = -1, .texLocation = -1, .texelSizeLocation = -1},
+					  0, GL_NONE);
+	} else {
+		//LOG_info("Shader Pass: Scale to screen (pipeline size: %d)\n", nrofshaders);
+		runShaderPass(frame_tex,
+					  g_shader_default,
+					  NULL,
+					  dst_rect.x, dst_rect.y, dst_rect.w, dst_rect.h,
+					  &(Shader){.srcw = vid.blit->src_w, .srch = vid.blit->src_h, .texw = vid.blit->src_w, .texh = vid.blit->src_h},
+					  0, GL_NONE);
+	}
+
+	if (effect_tex) {
+		//LOG_info("Shader Pass: Screen Effect\n");
+		runShaderPass(
+			effect_tex,
+			g_shader_overlay,
+			NULL,
+			dst_rect.x, dst_rect.y, effect_w, effect_h,
+			&(Shader){.srcw = effect_w, .srch = effect_h, .texw = effect_w, .texh = effect_h},
+			1, GL_NONE);
+	}
+
+	if (overlay_tex) {
+		//LOG_info("Shader Pass: Overlay\n");
+		runShaderPass(
+			overlay_tex,
+			g_shader_overlay,
+			NULL,
+			0, 0, device_width, device_height,
+			&(Shader){.srcw = vid.blit->src_w, .srch = vid.blit->src_h, .texw = overlay_w, .texh = overlay_h},
+			1, GL_NONE);
+	}
+
+	// Debug HUD over a GPU core's frame (software cores draw it into the frame)
+	if (hwr.frame_ready && hwr.hud_tex) {
+		runShaderPass(
+			hwr.hud_tex,
+			g_shader_overlay,
+			NULL,
+			dst_rect.x, dst_rect.y, dst_rect.w, dst_rect.h,
+			&(Shader){.srcw = hwr.hud_w, .srch = hwr.hud_h, .texw = hwr.hud_w, .texh = hwr.hud_h},
+			1, GL_NONE);
+	}
+
+	// Render notification overlay if present (texture pre-allocated in PLAT_initShaders)
+	if (notif.dirty && notif.surface) {
+		glBindTexture(GL_TEXTURE_2D, notif.tex);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, notif.surface->w, notif.surface->h, GL_RGBA, GL_UNSIGNED_BYTE, notif.surface->pixels);
+		notif.dirty = 0;
+	}
+
+	if (notif.tex && notif.surface) {
+		runShaderPass(
+			notif.tex,
+			g_shader_overlay,
+			NULL,
+			notif.x, notif.y, notif.tex_w, notif.tex_h,
+			&(Shader){.srcw = notif.tex_w, .srch = notif.tex_h, .texw = notif.tex_w, .texh = notif.tex_h},
+			1, GL_NONE);
+	}
+
+	capture_write();
+	SDL_GL_SwapWindow(vid.window);
+
+	frame_count++;
+	reloadShaderTextures = 0;
+	shaderResetRequested = 0;
+
+	//{
+	//	uint64_t op_ts = SDL_GetPerformanceCounter();
+	//	uint64_t frame_duration = op_ts - frame_start;
+	//	frame_start = op_ts;
+	//	double elapsed_time_s = (double)frame_duration / performance_frequency;
+	//	double frame_ms = elapsed_time_s * 1000.0;
+	//	LOG_info("10: %.2f ms\n", frame_ms);
+	//}
+}
+
+// flipping image upside down
+void PLAT_pixelFlipper(uint8_t* pixels, int width, int height) {
+	const int rowBytes = width * 4;
+	uint8_t* rowTop;
+	uint8_t* rowBottom;
+
+	for (int y = 0; y < height / 2; ++y) {
+		rowTop = pixels + y * rowBytes;
+		rowBottom = pixels + (height - 1 - y) * rowBytes;
+
+		int x = 0;
+// NEON optimization for compatible ARM architectures
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+		for (; x + 15 < rowBytes; x += 16) {
+			uint8x16_t top = vld1q_u8(rowTop + x);
+			uint8x16_t bottom = vld1q_u8(rowBottom + x);
+
+			vst1q_u8(rowTop + x, bottom);
+			vst1q_u8(rowBottom + x, top);
+		}
+#endif
+		for (; x < rowBytes; ++x) {
+			uint8_t temp = rowTop[x];
+			rowTop[x] = rowBottom[x];
+			rowBottom[x] = temp;
+		}
+	}
+}
+
+unsigned char* PLAT_GL_screenCapture(int* outWidth, int* outHeight) {
+	glViewport(0, 0, device_width, device_height);
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	int width = viewport[2];
+	int height = viewport[3];
+
+	if (outWidth)
+		*outWidth = width;
+	if (outHeight)
+		*outHeight = height;
+
+	unsigned char* pixels = malloc(width * height * 4); // RGBA
+	if (!pixels)
+		return NULL;
+
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+	PLAT_pixelFlipper(pixels, width, height);
+
+	return pixels; // caller must free
+}

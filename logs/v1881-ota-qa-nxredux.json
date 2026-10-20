@@ -1,0 +1,21 @@
+{
+  "version": "1.8.8.1",
+  "rom": "nxredux",
+  "exit": 0,
+  "installer_sha256": "7d51e3cc3bde7b3a192a193061e1f253e875b026a6b24fa14f31081b5171e7c6",
+  "OTA_source_sha256": {
+    "nxt_ota.c": "2e0ee3b27837767eda9ee686b59f14fb94a3cb6878e01da7028bb5408e5e887d",
+    "nxt_ota_package.c": "60bff4aefb97a18c9399eedd1dc349aa766e10f527e9e5f9e03bdf3b40637570",
+    "nxt_ota_package.h": "a8c6d9f6454d882b9146a881a9768984883ebef8e363763b7a266fb659eef59d"
+  },
+  "actual_v1881_full_installer": true,
+  "baseline_installed_version_fixture": "1.8.8",
+  "production_worker_and_installer": true,
+  "drive_download_confirmation_fixture": true,
+  "sha_size_rom_checks": true,
+  "userdata_and_wallpaper_preserved": true,
+  "previous_app_backup": true,
+  "asan_ubsan": true,
+  "publisher_live_url_tested": false,
+  "hardware_tested": false
+}

@@ -1,0 +1,34 @@
+{
+  "exit": 0,
+  "native_driver_checks": {
+    "compile_volume": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "hid_pcm_volume": {
+      "exit": 0,
+      "stdout": "Failed to open mixer\nFailed to open mixer\nPASS production output controller: closes SDL before ALSA reset, speaker/DAC handoff retains playback, transient USB open failure retries and recovers, slow DAC starts after five seconds recover with bounded polling.\nPASS one-time hotplug defaults migration retains theme/font/key mappings; later manual output preferences persist.\nPASS DAC volume: 200 HID presses, foreground/background evdev input, bounds/mute, PCM gain changes, unchanged sink/device, zero DAC mixer writes, speaker path retained.\n"
+    },
+    "compile_route": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "dac_route": {
+      "exit": 0,
+      "stdout": "PASS live LED driver latch: color and mode/effect writes commit new RGB while enabled; no disable/on cycle during 16 colors, gradients, mode changes and animation.\nPASS production Bluetooth ready/disconnect, peer change, DAC priority/fallback, auto off and stable manual output.\nPASS Stock LED: native animation disabled/reclaimed/restored, driver-table static=4 (not sniff=3), table-aware/fallback IDs, verified RGB readback, all 16 presets/reactive brightness, trailing-space/newline RGB, enable/60-scale and manual color; RGB retry/reclaim and private device snapshot; DAC route: failed write recovers without new hotplug; volume preserves selected PCM; short disconnect/reconnect retains DAC; sustained unplug follows setting; new ALSA card and explicit speaker selection work.\n"
+    },
+    "compile_nextui_led": {
+      "exit": 0,
+      "stdout": ""
+    },
+    "nextui_live_led": {
+      "exit": 0,
+      "stdout": "PASS NextUI production LED: live color/mode/effect latches without disable, two group colors, animated changes, NextUI static ID and original driver state restored.\n"
+    }
+  },
+  "effect_write_latches_actual_RGB": true,
+  "no_disable_cycle_for_config_changes": true,
+  "multicolor_group_rgb": true,
+  "restores_original_driver_state": true,
+  "physical_device_tested": false
+}

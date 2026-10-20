@@ -1,0 +1,14 @@
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-2.wav; 44100 Hz / 16 bit / 2 ch; 176400 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-2.flac; 44100 Hz / 16 bit / 2 ch; 176400 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-2.m4a; 44100 Hz / 16 bit / 2 ch; 176400 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/48000-24-2.wav; 48000 Hz / 24 bit / 2 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/48000-24-2.flac; 48000 Hz / 24 bit / 2 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/48000-24-2.m4a; 48000 Hz / 24 bit / 2 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/96000-24-1.wav; 96000 Hz / 24 bit / 1 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/96000-24-1.flac; 96000 Hz / 24 bit / 1 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/96000-24-1.m4a; 96000 Hz / 24 bit / 1 ch; 288000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/192000-32-2.wav; 192000 Hz / 32 bit / 2 ch; 1536000 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-1.wav; 44100 Hz / 16 bit / 1 ch; 88200 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-1.flac; 44100 Hz / 16 bit / 1 ch; 88200 bytes
+PASS bit-exact decode + seek: /workspace/scratch/d7cab07fb248/nxt-v186-work/NXT_Retro_Music_v1.8.5_Source/.cache/v186/pcm/44100-16-1.m4a; 44100 Hz / 16 bit / 1 ch; 88200 bytes
+PASS incompatible/lossy source rejected

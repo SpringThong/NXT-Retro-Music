@@ -1,0 +1,9 @@
+{
+  "rom_version": "2.1.2",
+  "original_sha256": "ded138923424aa6ed324382bfc1c1905af3989002ea7376afcd58d4da8c2720c",
+  "patched_sha256": "ea1f92faab6f6efc0df6fb6b483a41a7979e888bd1a532cba89fb1786dd5ad47",
+  "original_size": 740656,
+  "patched_size": 2137608,
+  "patch": "Adds NXT Retro Music to native tool icon mapping; corresponding official launcher source included"
+}
+

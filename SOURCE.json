@@ -1,0 +1,512 @@
+{
+  "project": "NXT Retro Music",
+  "stage": "v1.9.7.7-refined-icons-artwork-alignment",
+  "upstream_repository": "https://github.com/nborodikhin/nextui-music-player.git",
+  "upstream_commit": "f0e5e2ea2fea4f535d659b72aa1d2a8e969e5484",
+  "nextui_ref": "v6.14.0",
+  "device_platform": "tg5040",
+  "compiler_release": "v8.3.0-20260204-190602-d37268f5",
+  "compiler_url": "https://github.com/LoveRetro/gcc-arm-8.3-aarch64-tg5040/releases/download/v8.3.0-20260204-190602-d37268f5/gcc-8.3.0-aarch64-nextui-linux-gnu-x86_64-host.tar.xz",
+  "compiler_sha256": "d4ac4ef1968668f93f625f2b226c69d74739ae58ff640d2ce3aaae6b4d1b93d3",
+  "sysroot_url": "https://github.com/trimui/toolchain_sdk_smartpro/releases/download/20231018/SDK_usr_tg5040_a133p.tgz",
+  "sysroot_sha256": "b6b615d03204e9d9bb1a91c31de0c3402434f6b8fc780743fa88a5f1da6f3c79",
+  "libzip_ref": "v1.10.1",
+  "libsamplerate_ref": "0.2.2",
+  "container_runtime_required": false,
+  "version": "1.9.7.7",
+  "ffmpeg_ref": "n6.1.6",
+  "ffmpeg_commit": "f1e3a2bf7a2f2cde936d1ed97f09a26853d20125",
+  "stock_status": "Three fresh ARM64 builds, ASan/UBSan native UI at two sizes, active-state/alignment pixels, preservation, QEMU loaders, full packages and production OTA installer fixtures passed. No physical device or live OTA publication.",
+  "hardware_test_status": "Not tested on physical TrimUI; no measured 60 FPS, temperature or battery guarantee",
+  "freetype_ref": "2.13.2",
+  "harfbuzz_ref": "8.3.0",
+  "sdl2_ttf_ref": "2.24.0",
+  "utf8proc_ref": "2.9.0",
+  "fribidi_ref": "1.0.13",
+  "noto_cjk_ref": "Sans2.004",
+  "unifont_ref": "16.0.04",
+  "lucide_ref": "0.468.0",
+  "baseline_version": "Unified v1.9.7.6",
+  "baseline_hardware_status": "User reports aliasing, small glass icons with ambiguous active state and some misaligned themes.",
+  "build_variant": "Shared source, separate Stock/NextUI/NX Redux binaries",
+  "spotify": {
+    "client_id": "320f1ca055564990bcdf4de6fe58b397",
+    "redirect_uri": "http://127.0.0.1:8080/callback",
+    "rust_version": "1.99.0",
+    "librespot_version": "0.8.0-dev",
+    "snapshot_archive_sha256": "289c34edb7dbe33c8da6b848a909c6cdb64fe97fd2b953727b9ece4028b0b2c8",
+    "account_tested": false,
+    "hardware_tested": false,
+    "test1_login_and_playlists_user_confirmed": true,
+    "audio_pipeline": "librespot decoded F32 44100 Hz stereo → bounded SOCK_SEQPACKET fd3 → libsamplerate → existing SDL/DSP/volume/DAC engine; no helper-owned ALSA device",
+    "test2_playback_on_device_confirmed": false,
+    "test3_playback_on_device_confirmed": false,
+    "test3_feedback": "User reports playback authentication rejected before library connection",
+    "test4_auth_flow": "Separate Developer Web API login and desktop device authorization for direct playback; QR/code at spotify.com/pair",
+    "playback_client_id": "65b708073fc0480ea92a077233ca87bd",
+    "device_authorization_request_tested": true,
+    "device_authorization_approved_by_real_account": false,
+    "test4_playback_on_device_confirmed": true,
+    "diagnostic_file": "NXT_Spotify_Log.txt",
+    "qrcode_version": "0.14.1",
+    "test5_playback_on_device_confirmed": false,
+    "test5_auth_flow": "Single desktop QR authorization requests streaming/private-profile/private-playlists/library-read/library-modify; matching-account legacy compatibility fallback",
+    "test5_lyrics": "Spotify color lyrics then conservative LRCLIB match/cache",
+    "test5_native_player": true,
+    "test5_background_session": true,
+    "test5_scopes": [
+      "streaming",
+      "user-read-private",
+      "playlist-read-private",
+      "playlist-read-collaborative",
+      "user-library-read",
+      "user-library-modify"
+    ],
+    "user_confirmed_integrated_build": true,
+    "user_confirmation": "2026-10-07 Asia/Saigon: app runs well; user requests final v1.1 name and removal of experimental labels",
+    "premium_required_for_playback": true,
+    "test5_app_running_on_device_user_confirmed": true
+  },
+  "soundcloud": {
+    "mode": "public unofficial yt-dlp",
+    "credentials_required": false,
+    "yt_dlp_version": "2026.08.19",
+    "runtime_sha256": "4e27ad43f3a34bacffd078694eb3edbb4e3b378e7da44edab2be02e98555516e",
+    "pcm": "stereo f32 generation-tagged SOCK_SEQPACKET; shared NXT audio engine",
+    "helper_sha256": "38c1593f1510b4cbed0b5cf35c8b39ea7120f97277f7df233b0a9f10ad04214b"
+  },
+  "stock_source": "STOCK_SOURCE.json",
+  "wallpaper_provider": "Wallhaven public SFW API; 24 themed queries; continuous pagination; original offline presets; JPG/PNG SD images",
+  "build_define": "NXT_ROM_STOCK",
+  "current_build_report": "BUILD_REPORT_v1.9.7.6_Stock.json",
+  "features_v1891": [
+    "Tools icon",
+    "Effective NX CPU modes",
+    "Native Home music widget",
+    "Immediate LED colors",
+    "Groq TXT import",
+    "Official NX OTA source retained"
+  ],
+  "features_v170": {
+    "interfaces": 24,
+    "avatar_icons": 64,
+    "avatar_emoji": 64,
+    "pixel_patterns": 64,
+    "EQ_presets": 12,
+    "custom_EQ_bands": 5,
+    "spectrum_palettes": 21,
+    "spectrum_styles": 5,
+    "LED_effects": 6,
+    "online_suggestions": "provider catalog search plus eligibility/access filters; Spotify NXT Mix is an NXT queue, not Spotify personalized Recommendations API"
+  },
+  "previous_build_report": "BUILD_REPORT_v1.8.2_Stock.json",
+  "build_report": "BUILD_REPORT_v1.9.7.6_Stock.json",
+  "features_v171": {
+    "approved_demo": {
+      "url": "https://chatgpt.com/s/t_6ac953ad43108191a0b18c7103a3a664",
+      "source": "HTML/CSS/JS recovered verbatim from public shared message",
+      "native_target": [
+        1024,
+        768
+      ],
+      "original_interface_preserved": true
+    },
+    "interfaces": 24,
+    "full_device_layouts": 23,
+    "original_preserved": true,
+    "live_LED_without_toggle": true,
+    "genre_EQ_icons": 12,
+    "simultaneous_seven_colors": true,
+    "real_PCM_scope_without_FFT": true,
+    "static_chassis_cache": "one active surface",
+    "full_player_Hz": {
+      "mechanical": 20,
+      "other": 10,
+      "eink": 4,
+      "paused": 1
+    },
+    "spectrum_max_Hz": 30,
+    "hidden_visual_work": false,
+    "animation_step_logging": false
+  },
+  "current_build_reports": [
+    "BUILD_REPORT_v1.9.7.6_Stock.json",
+    "BUILD_REPORT_v1.9.7.6_NextUI.json",
+    "BUILD_REPORT_v1.9.7.6_NXRedux.json"
+  ],
+  "features_v18": {
+    "interfaces": 50,
+    "avatar_icons": 300,
+    "avatar_3D_emoji": 180,
+    "pixel_avatar_removed": true,
+    "profile_saved_avatar_startup": true,
+    "mood_genre_country_checkin": true,
+    "queue_shuffle_repeat_timer_controls": true,
+    "full_screen_4_3_native_themes": true,
+    "system_languages": 14,
+    "first_launch_language": "en",
+    "matching_offline_keyboards": true,
+    "offline_IME_rows": 1136777,
+    "settings_groups": 6,
+    "searchable_settings": true,
+    "help_sections": 8,
+    "WiFi_transfer_on_demand": true,
+    "USB_firmware_handoff": true,
+    "PayPal": "thongkhung2@gmail.com",
+    "live_LED_without_toggle": true,
+    "render_budget": "20/10/4 Hz playing, 1 Hz paused; spectrum capped; input unchanged",
+    "hidden_visual_work": false,
+    "author": "Nguyễn Xuân Thông",
+    "nickname": "Spring Thông",
+    "Vibe_Code_retained": true
+  },
+  "v18_verification": "RELEASE_QA_v1.8.md",
+  "features_v181": {
+    "approved_demo": "https://nxt-music-v181-demo.bold-eft-4749.chatgpt.site",
+    "settings_groups": 5,
+    "personal_appearance_groups": 4,
+    "interfaces": 50,
+    "WiFi_transfer_only": true,
+    "USB_DAC_host_retained": true,
+    "icon_player_controls": true,
+    "static_full_sentence_lyrics": true,
+    "actual_source_and_output_DAC_information": true
+  },
+  "v181_verification": "RELEASE_QA_v1.8.1.md",
+  "features_v182": {
+    "original_player_restored_from": "v1.8 upstream/src/nxt_skin.c",
+    "performance_modes": [
+      "Battery saver",
+      "Balanced",
+      "Performance"
+    ],
+    "default_performance_mode": "Balanced",
+    "mode_scope": "Device-wide visual budgets; unchanged audio and firmware CPU/thermal policy",
+    "original_options_renamed": true,
+    "OTA_kit": true,
+    "original_non_square_art": "Centered aspect-fit within the old album frame",
+    "performance_policy": {
+      "playing_regular_ms": [
+        125,
+        100,
+        50
+      ],
+      "playing_mechanical_ms": [
+        100,
+        50,
+        33
+      ],
+      "FFT_ms": [
+        67,
+        33,
+        33
+      ],
+      "vinyl_preview_ms": [
+        100,
+        50,
+        33
+      ],
+      "paused_ms": 1000,
+      "EInk_ms": 250,
+      "hidden_off_visual_work": 0
+    },
+    "Bluetooth_source_fix": {
+      "NextUI_private_named_PCM": true,
+      "close_before_ALSA_reset": true,
+      "A2DP_device_and_mixer_target_match": true,
+      "explicit_volume_unmute": true,
+      "no_Bluetooth_startup_zero_volume": true,
+      "unit_test_report": "logs/v182-nextui-bluetooth-test.json",
+      "physical_headset_tested": false,
+      "new_native_release_built": true
+    },
+    "NXRedux_port": {
+      "firmware_reference": "NX Redux v2.0.0 Brick Pro",
+      "native_build_define": "NXT_ROM_NXREDUX",
+      "installed_firmware_settings_adapter": true,
+      "flat_Tools_path": true,
+      "ROM_specific_OTA": true,
+      "timer_expiry_full_app_exit_including_background": true,
+      "timer_full_exit_scope": "NX Redux only",
+      "sleep_policy": "NX Redux firmware screen-off/suspend settings after app cleanup",
+      "physical_hardware_tested": false
+    }
+  },
+  "v182_verification": "RELEASE_QA_v1.8.2.md",
+  "release_build_paused_by_user": false,
+  "current_binaries_contain_Bluetooth_fix": true,
+  "bluetooth_verification": "BLUETOOTH_CHECK_v1.8.2.md",
+  "bluetooth_device_log_evidence": {
+    "version": "1.8.1",
+    "ROM": "NextUI",
+    "headset": "EDIFIER W820NB Plus",
+    "device_log_library_id": "libfile_bc36efda6c188191a319ca30402d8e01",
+    "device_log_sha256": "10863a17fe7cb8ba1041465158c5c84b5803f8cafbd86025dc85af74aa017f47",
+    "input_log_library_id": "libfile_a62ad7fea6a08191932d3487e42c1ef5",
+    "input_log_sha256": "e146c158e6716399f419d71071b6496bfcb2025532aae9ec712e5c823f23f546",
+    "requested_sink": 1,
+    "actual_logical_sink": 0,
+    "route_apply_failed": true,
+    "old_selector_failure_reproduced": true,
+    "fixed_source_regression_passed": true,
+    "new_native_release_built": true
+  },
+  "build_resume_requested_by_user": true,
+  "latest_build_scope": "All three ROMs: fix public SoundCloud MONETIZE permission filter; generalize inconclusive stream error and correct log build metadata.",
+  "nxredux_source": "NXREDUX_SOURCE.json",
+  "v183_verification": "RELEASE_QA_v1.8.3.md",
+  "features_v183": {
+    "full_app_exit_on_sleep_timer": true,
+    "saves_resume_and_settings": true,
+    "background_exit": true,
+    "timer_counts_paused_screen_off_time": true,
+    "idle_inhibitors_released_on_stock": true,
+    "sleep_policy": "Firmware configured idle/suspend policy; no forced suspend",
+    "built_ROMs": [
+      "stock",
+      "nextui"
+    ]
+  },
+  "features_v184": [
+    "SELECT toggles EQ without applying preset",
+    "Native lossless integer USB DAC Bit-Perfect with exact hw PCM and no DSP/resampling/software gain",
+    "Cold start into saved Now Playing, paused by default, no questionnaire",
+    "Profile-local last playback and position; optional auto-play",
+    "Five settings groups and everyday START controls",
+    "Separate ROM installers and OTA manifests; existing themes/Bluetooth/timer/LED/Wi-Fi retained"
+  ],
+  "latest_build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ],
+  "v184_verification": "RELEASE_QA_v1.8.8.md",
+  "v188_lyric_translation": {
+    "default": "off",
+    "modes": [
+      "off",
+      "translation",
+      "bilingual"
+    ],
+    "target_languages": 14,
+    "providers": [
+      "MyMemory public",
+      "Google Cloud Basic v2 with own key"
+    ],
+    "worker": "one low-priority generation-cancelled worker, parked idle/hidden",
+    "cache_files_max": 96,
+    "cache_bytes_max": 16777216,
+    "original_timestamps_preserved": true,
+    "audio_pipeline_unchanged": true,
+    "successful_live_translation_tested": false,
+    "physical_thermal_battery_tested": false
+  },
+  "features_v1882": {
+    "OTA_upgrade_from": "1.8.8.1",
+    "listener_deletion": true,
+    "delete_confirmation_default_cancel": true,
+    "last_listener_protected": true,
+    "deleted_listener_not_reseeded": true,
+    "music_and_shared_credentials_preserved": true,
+    "LyricsFix2_retained": true,
+    "italic_translation_Y_only": true
+  },
+  "v1882_verification": "RELEASE_QA_v1.8.8.2.md",
+  "features_v189": {
+    "providers": [
+      "MyMemory",
+      "Google Cloud",
+      "Groq"
+    ],
+    "separate_provider_keys": true,
+    "Groq_default_model": "openai/gpt-oss-20b",
+    "Groq_batch_lines": 24,
+    "Groq_batch_bytes": 2400,
+    "Groq_retry_headers": true,
+    "cache_files_max": 512,
+    "built_ROMs": [
+      "stock",
+      "nextui",
+      "nxredux"
+    ],
+    "nxredux_build_deferred": false
+  },
+  "release_ready": true,
+  "release_roms": [
+    "stock",
+    "nextui",
+    "nxredux"
+  ],
+  "v189_verification": "RELEASE_QA_v1.8.9.md",
+  "official_OTA_sources": {
+    "stock": "https://drive.google.com/file/d/1OUrxqAs2fOnjKeqZscGcMEiX5Yv3jP5m/view?usp=sharing",
+    "nextui": "https://drive.google.com/file/d/16OuNQmcxwLE3VTTN2bUyZ0yL2EiGFeuD/view?usp=sharing",
+    "nxredux": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing"
+  },
+  "publisher_manifest_replacement_required": true,
+  "official_source_verification": {
+    "stock": {
+      "rom": "stock",
+      "version": "1.8.8.2",
+      "size": 111651374,
+      "sha256": "891fd58784a1661c155d0324226f93aa8b0d090f09b08cfaa35e6597284e6f63",
+      "matches_previous_stock_build": true
+    },
+    "nextui": {
+      "rom": "nextui",
+      "version": "1.8.8.2",
+      "size": 109290224,
+      "sha256": "67fda59596a5598dbf046ae1558651bfc54e734888ca1665bcaf3953f471b5bf",
+      "matches_previous_nextui_build": true
+    },
+    "nxredux": {
+      "rom": "nxredux",
+      "version": "1.8.8.2",
+      "size": 109252118,
+      "sha256": "ec5477430243c280b8a07415fa018dec2dd09a8baba2d642a2bbf17e877e83c5",
+      "direct_public_JSON_checked": true,
+      "matches_previous_nxredux_build": true
+    }
+  },
+  "dsd": {
+    "source": "local raw DSF/DFF mono/stereo DSD64-512",
+    "default": "Retain saved mode; Native is initial default, confirmed DoP or explicit Native-to-DoP available",
+    "DoP": "explicit compatible-DAC selection",
+    "PCM_conversion": false,
+    "bounded_reads": true,
+    "DSP_FFT_software_gain": false
+  },
+  "baseline_versions": {
+    "stock": "1.9.7",
+    "nextui": "1.9.7",
+    "nxredux": "1.9.7"
+  },
+  "translation_cache_bytes": 268435456,
+  "translation_cache_song_limit": null,
+  "build_reports": [
+    "BUILD_REPORT_v1.9.7.4_Stock.json",
+    "BUILD_REPORT_v1.9.7.4_NextUI.json",
+    "BUILD_REPORT_v1.9.7.4_NXRedux.json"
+  ],
+  "features_v193": [
+    "Cached library immediately",
+    "Once-per-session incremental stat check",
+    "Unchanged media not re-probed; zero unchanged index writes",
+    "Fixed batches; old tracks schema/favorites retained",
+    "Stable All/Folders/Artists/Albums views",
+    "Atomic Wi-Fi completion notification/debounce",
+    "Idle-priority worker pauses during hidden/screen-off/active transfers",
+    "Explicit full metadata rebuild without deleting saved index",
+    "Retains v1.9.2 DSD Native/DoP fixes, DAC labels, diagnostics and official ROM-specific OTA"
+  ],
+  "v193_verification": "RELEASE_QA_v1.9.3.md",
+  "unified_build_command": "python3 tools/build-release.py --rom all",
+  "unified_build_guide": "BUILD_v1.9.7.4.md",
+  "unified_source_status": "Final v1.9.7.7 three-ROM fingerprints and current evidence verified",
+  "baseline_source_sha256": "d5c42040e044661361ac9061e3ebfd61bd665941d12e9095e893cf14e10bf33e",
+  "features_v194": [
+    "Auralis theme 51, full-cover bilingual paired cues",
+    "Xiaomi MiSans Semibold font 17",
+    "Italic translations in Now Playing and full lyrics",
+    "Real 1% volume with legacy config migration",
+    "No overlapping firmware shortcut hints",
+    "Preserves v1.9.3 behavior and official feeds"
+  ],
+  "v194_verification": "RELEASE_QA_v1.9.4.md",
+  "MiSans": {
+    "font": "MiSans Semibold 4.009, unmodified",
+    "copyright": "Xiaomi",
+    "font_sha256": "77c23f31ae124867778344970155a0c8d34a89897dedaab81aeee82ff00a4ce6",
+    "license": "upstream/licenses/MiSans.txt",
+    "NX_Redux_reference_commit": "e39bb1d321f42ba3561144ec1c9dd391f88c8727"
+  },
+  "previous_baseline_versions": {
+    "stock": "1.9.1",
+    "nextui": "1.9.1",
+    "nxredux": "1.9.3"
+  },
+  "features_v195": [
+    "Neutral-black Auralis including menus and dialogs",
+    "Independent per-profile Now Playing/full-lyrics cover brightness, Auralis-only settings",
+    "Glass icon-only controls and integer volume level labels",
+    "Enhanced LRC real timestamp karaoke, line-only fallback without invented word timing",
+    "60 Hz target for short cached menu transitions and active lyric/word motion; idle redraw bounded",
+    "Five new font choices appended without moving original 17 font indices",
+    "Full lyrics suspends spectrum visualization without changing saved preference"
+  ],
+  "v195_verification": "RELEASE_QA_v1.9.5.md",
+  "features_v196": [
+    "Reference charcoal/soft-white Auralis palette and HarmonyOS Sans face",
+    "Remove duplicate font chooser from Personal appearance",
+    "Six selectable cached lyric transitions with paired italic translations",
+    "Opaque short page entrances; selection input cancels motion immediately",
+    "Fine volume reconciles duplicate ROM keymon coarse changes",
+    "Accurate karaoke only with real Enhanced-LRC word timestamps; no fabricated voice alignment",
+    "Opt-in Groq Whisper word analysis for local files <=10 min; exact text matches only; offline timing cache; no guarantee for every song"
+  ],
+  "v196_verification": "RELEASE_QA_v1.9.6.md",
+  "features_v197": [
+    "Centred Auralis transport and symmetric auxiliary controls at both sizes",
+    "Larger two-line title, independent metadata colours, lyric bold/outline/shadow per listener",
+    "Ten cached lyric transition options",
+    "Bounded partial accent-insensitive word alignment and manual refresh bypass",
+    "Labelled offline estimated fallback; real Enhanced LRC retained",
+    "Manual previous/next honours shuffle for local/Drive/Spotify/SoundCloud queues"
+  ],
+  "v197_verification": "RELEASE_QA_v1.9.7.md",
+  "features_v1971": [
+    "60 font choices, 38 additional families with complete primary Vietnamese cmap",
+    "Native draft preview with current cover and clearly labelled bilingual demo text",
+    "Now Playing/full lyrics toggle, RGB channels, animation replay, Apply/Cancel without leaving editor",
+    "Rendering-only draft fields; background audio/volume/saves retain committed settings",
+    "All three ROM-specific installers, embedded official feeds and OTA publisher kits"
+  ],
+  "fonts_total": 60,
+  "v1971_verification": "RELEASE_QA_v1.9.7.1.md",
+  "features_v1972": [
+    "Fix duplicate Now Playing page identities restarting the page entrance on every Original redraw.",
+    "Optional device-wide screen-off controls: keys stay active, backlight stays off; Power wakes; lock remains available.",
+    "Retain all v1.9.7.1 resources, audio engines, profiles, fonts and official ROM OTA sources."
+  ],
+  "v1972_verification": "RELEASE_QA_v1.9.7.2.md",
+  "features_v1973": [
+    "Remove whole-page framebuffer slide/snapshot; leave lyric/vinyl/spectrum motion intact.",
+    "Compose full and layer-only native frames once, from a clean window target with reset viewport/clip.",
+    "Retain Screen-off controls, all v1.9.7.2 resources/audio/online engines and official ROM OTA feeds."
+  ],
+  "v1973_verification": "RELEASE_QA_v1.9.7.3.md",
+  "features_v1974": [
+    "Device-only live vocal reduction with L3 and first-row quick toggle; no external service/model.",
+    "Strong stereo-centre cancellation with dual-mono output or preserve-bass alternative; 20 ms mix ramps.",
+    "Mono-source bypass; stereo vocal-only passages stay removed; original DSD bypassed.",
+    "Temporarily use Normal for PCM while enabled, restore saved mode on disable; no reload in existing Normal/online playback.",
+    "Session defaults off; custom L3 mappings preserved; retain v1.9.7.3 atomic presentation and all official ROM OTA feeds."
+  ],
+  "v1974_verification": "RELEASE_QA_v1.9.7.4.md",
+  "features_v1975": {
+    "vocal_reduction_removed": true,
+    "original_DSP_audio_policy_restored": true,
+    "retired_action_22_mapped_to_unassigned": true,
+    "other_playback_and_lyrics_preserved": true
+  },
+  "v1975_verification": "RELEASE_QA_v1.9.7.5.md",
+  "features_v1976": {
+    "public_MONETIZE_tracks_accepted": true,
+    "private_preview_block_subscription_checks_retained": true,
+    "stream_errors_do_not_assert_Go_or_region": true,
+    "current_ROM_version_in_SoundCloud_log": true,
+    "new_official_stream_CDN_recognized": true,
+    "SoundCloud_helper_recompiled": true
+  },
+  "v1976_verification": "RELEASE_QA_v1.9.7.6.md",
+  "visual_refinement_v1977": {
+    "vector_icons": 316,
+    "icon_source_pixels": 192,
+    "lucide_archive_sha256": "d87c47325f0b2ac3ad2d6f056889da32b8f1216eafe4ed6534bc02786effe8cc",
+    "runtime_filter": "premultiplied-alpha area downsampling, bilinear enlargement; cached native-size output",
+    "icon_cache_bytes": 2097152,
+    "panel_cache_bytes": 4194304,
+    "physical_device_tested": false
+  },
+  "v1977_verification": "RELEASE_QA_v1.9.7.7.md"
+}

@@ -1,0 +1,14 @@
+{
+  "attempted": true,
+  "samples": "own synthetic English/Chinese/Korean/Japanese sentences",
+  "endpoint": "api.mymemory.translated.net",
+  "HTTP_statuses": [
+    429,
+    429,
+    429,
+    429
+  ],
+  "successful_live_translation_verified": false,
+  "Google_real_key_tested": false,
+  "note": "HTTP 429 observed from this execution environment; no attribution to provider vs shared gateway is claimed."
+}

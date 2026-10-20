@@ -1,0 +1,194 @@
+{
+  "google_fonts_commit": "9710da1eacb3be272583c3224dcb70f9da6eadbb",
+  "primary": [
+    {
+      "name": "Noto Sans",
+      "file": "./res/fonts/notosans.ttf",
+      "glyphs": 3094,
+      "sha256": "530d5dc60721720c33a98ffba297357576417797b38b2dfb2178aac56b4eaf84",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notosans.txt"
+    },
+    {
+      "name": "Inter",
+      "file": "./res/fonts/inter.ttf",
+      "glyphs": 2849,
+      "sha256": "fc8c1922fbfdf7ae047437ef767e99474c0fb64fdf18dd733557fd6d22fbbf14",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
+      "license": "licenses/fonts/inter.txt"
+    },
+    {
+      "name": "Roboto",
+      "file": "./res/fonts/roboto.ttf",
+      "glyphs": 927,
+      "sha256": "e71027ae5700176c2713e272f12505164808d8177076c3db80484b6a31001d49",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/roboto/Roboto%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/roboto.txt"
+    },
+    {
+      "name": "Source Sans 3",
+      "file": "./res/fonts/sourcesans3.ttf",
+      "glyphs": 1615,
+      "sha256": "48942faf1b93da0ceae39f671c06079e2d1172312e7c6f73dceccfb18a6ca2c0",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/sourcesans3/SourceSans3%5Bwght%5D.ttf",
+      "license": "licenses/fonts/sourcesans3.txt"
+    },
+    {
+      "name": "Nunito Sans",
+      "file": "./res/fonts/nunitosans.ttf",
+      "glyphs": 939,
+      "sha256": "ac5496113a20f827568b1894ab7aea67acce1374c3962886697c504eafd821e3",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/nunitosans/NunitoSans%5BYTLC%2Copsz%2Cwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/nunitosans.txt"
+    },
+    {
+      "name": "Manrope",
+      "file": "./res/fonts/manrope.ttf",
+      "glyphs": 678,
+      "sha256": "077ae82df8c62f907565b77c6cf866f85d2328ae3e4cc6ff30576f9409ac3221",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/manrope/Manrope%5Bwght%5D.ttf",
+      "license": "licenses/fonts/manrope.txt"
+    },
+    {
+      "name": "Rubik",
+      "file": "./res/fonts/rubik.ttf",
+      "glyphs": 885,
+      "sha256": "2e867408b47829659356d757ecb9b31a03eb433d650d669ce3d4e045b07797d7",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/rubik/Rubik%5Bwght%5D.ttf",
+      "license": "licenses/fonts/rubik.txt"
+    },
+    {
+      "name": "Ubuntu",
+      "file": "./res/fonts/ubuntu.ttf",
+      "glyphs": 1194,
+      "sha256": "983e939a7577df89e3575e923d523bd028f5c1bae172bdc0b3428948a7cbecd7",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ufl/ubuntu/Ubuntu-Regular.ttf",
+      "license": "licenses/fonts/ubuntu.txt"
+    },
+    {
+      "name": "Lato",
+      "file": "./res/fonts/lato.ttf",
+      "glyphs": 2164,
+      "sha256": "63ec31cdd390e7e47fe1274b8c0810384f196e236623a6c8e7becc11b454a5d8",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/lato/Lato-Regular.ttf",
+      "license": "licenses/fonts/lato.txt"
+    },
+    {
+      "name": "Montserrat",
+      "file": "./res/fonts/montserrat.ttf",
+      "glyphs": 1312,
+      "sha256": "07b73753f87906e7b9763874319ff178c8184c8ffd9b381786f5cfe5e73d0c86",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/montserrat/Montserrat%5Bwght%5D.ttf",
+      "license": "licenses/fonts/montserrat.txt"
+    },
+    {
+      "name": "Noto Serif",
+      "file": "./res/fonts/notoserif.ttf",
+      "glyphs": 2965,
+      "sha256": "90508287b77b2e5c8bc8086e980519748053c4e26e2f037aa6b489b716c1e42e",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notoserif/NotoSerif%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notoserif.txt"
+    },
+    {
+      "name": "Source Serif 4",
+      "file": "./res/fonts/sourceserif4.ttf",
+      "glyphs": 918,
+      "sha256": "05fbe376d7c88d6fca8fab34758a7a27915036229062d9e3322806f4b2a2f92b",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/sourceserif4/SourceSerif4%5Bopsz%2Cwght%5D.ttf",
+      "license": "licenses/fonts/sourceserif4.txt"
+    },
+    {
+      "name": "Lora",
+      "file": "./res/fonts/lora.ttf",
+      "glyphs": 778,
+      "sha256": "bd0895ca5746465838b0ed6ae69051d85c64ed3e9efafd379075c10560429566",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/lora/Lora%5Bwght%5D.ttf",
+      "license": "licenses/fonts/lora.txt"
+    },
+    {
+      "name": "Merriweather",
+      "file": "./res/fonts/merriweather.ttf",
+      "glyphs": 1423,
+      "sha256": "838d184812e1dfb6b20c1dd794eb5910aa9d9871854fdb6eed8d2631205f54bb",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/merriweather/Merriweather%5Bopsz%2Cwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/merriweather.txt"
+    },
+    {
+      "name": "JetBrains Mono",
+      "file": "./res/fonts/jetbrainsmono.ttf",
+      "glyphs": 976,
+      "sha256": "4b3b46c43604263636e9ea96f8db7efe6359ae22e988b159084e0943d486087c",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
+      "license": "licenses/fonts/jetbrainsmono.txt"
+    },
+    {
+      "name": "Fira Code",
+      "file": "./res/fonts/firacode.ttf",
+      "glyphs": 1551,
+      "sha256": "a4f50210b49b3e00663be533f7dc538af7c5b2e908c36f33b93062b2d79d3138",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/firacode/FiraCode%5Bwght%5D.ttf",
+      "license": "licenses/fonts/firacode.txt"
+    }
+  ],
+  "fallback": [
+    {
+      "name": "Noto Sans Thai",
+      "file": "./res/fonts/notosansthai.ttf",
+      "glyphs": 426,
+      "sha256": "4bcf11086cf2f10e713b127047857af595b224a228f6f7893941094f7b16e0de",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosansthai/NotoSansThai%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notosansthai.txt"
+    },
+    {
+      "name": "Noto Sans Lao",
+      "file": "./res/fonts/notosanslao.ttf",
+      "glyphs": 421,
+      "sha256": "9b9d8c367ee6a447459340da748356a481cb4fd48833c225f51c4bfd24657935",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosanslao/NotoSansLao%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notosanslao.txt"
+    },
+    {
+      "name": "Noto Sans Khmer",
+      "file": "./res/fonts/notosanskhmer.ttf",
+      "glyphs": 483,
+      "sha256": "fdabcbd7b8b6213eb55730831258af014d0306c48876159cf0fafc46789a1fe8",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosanskhmer/NotoSansKhmer%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notosanskhmer.txt"
+    },
+    {
+      "name": "Noto Sans Devanagari",
+      "file": "./res/fonts/notosansdevanagari.ttf",
+      "glyphs": 551,
+      "sha256": "92625ae9b91f3eab803759428653e91132e13938fc42347da02fafb7389c7ea9",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosansdevanagari/NotoSansDevanagari%5Bwdth%2Cwght%5D.ttf",
+      "license": "licenses/fonts/notosansdevanagari.txt"
+    },
+    {
+      "name": "Noto Naskh Arabic",
+      "file": "./res/fonts/notonaskharabic.ttf",
+      "glyphs": 1551,
+      "sha256": "b373fed1e5dab7125da28a246f3eb6726e105080e25c74a2b6c0c39918abd7b9",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
+      "license": "licenses/fonts/notonaskharabic.txt"
+    },
+    {
+      "name": "Noto Sans Symbols 2",
+      "file": "./res/fonts/notosanssymbols2.ttf",
+      "glyphs": 2955,
+      "sha256": "b9d2831362e91d2696d3194feaa1f92309643806593913439c0d82767ad4a953",
+      "source": "https://raw.githubusercontent.com/google/fonts/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf",
+      "license": "licenses/fonts/notosanssymbols2.txt"
+    }
+  ],
+  "cjk": {
+    "file": "./res/fonts/noto-cjk.ttc",
+    "faces": {
+      "ja": 0,
+      "ko": 1,
+      "zh-Hans": 2,
+      "zh-Hant": 3
+    },
+    "sha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+    "release": "Sans2.004"
+  }
+}

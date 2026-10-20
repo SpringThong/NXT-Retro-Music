@@ -1,0 +1,12 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "user_labels_scoped_to_USB_tuple": true,
+  "no_brand_or_DSD_capability_inference": true,
+  "bounded_32_entries": true,
+  "reset_Unicode_validation": true,
+  "sources": {
+    "nxt_dac_name.c": "b8393089e1aecced356b1ba759e08c40e0b31df5ad84bf1ca92fa66ae32083cd",
+    "nxt_dac_name.h": "cfdc38fbcf24f572b2bd907a1e210fc75779be528cb920f2442dd9d892805b2a"
+  }
+}

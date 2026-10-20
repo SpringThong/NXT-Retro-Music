@@ -1,0 +1,24 @@
+{
+  "cpu": {
+    "exit": 0,
+    "ASan_UBSan": true,
+    "production_source_sha256": {
+      "nxt_cpu.c": "e5822a8bdc738b56629323c0541d8d26854565f43db8447ade74e48ac79fa23c"
+    }
+  },
+  "audio-policy": {
+    "exit": 0,
+    "ASan_UBSan": true,
+    "production_source_sha256": {
+      "nxt_audio_mode.c": "08f0d3a3320018f6fb3f62f6216f649224da8bcc164fc76f3e84e7481e1241ed"
+    }
+  },
+  "writer": {
+    "exit": 0,
+    "ASan_UBSan": true,
+    "production_source_sha256": {
+      "nxt_write.c": "061d928ed139bed2df479a6c0e8acc22f04f698e525e7f30adfc4d7eee9ade4e"
+    }
+  },
+  "hardware_tested": false
+}

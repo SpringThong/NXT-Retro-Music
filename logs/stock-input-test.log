@@ -1,0 +1,2 @@
+PASS SELECT + D-pad/analogue directions: matching volume/brightness, boundaries, lock, consumed SELECT and ordinary navigation retained.
+PASS real SDL poll: both sticks and idle-stick events preserve the other stick's direction.

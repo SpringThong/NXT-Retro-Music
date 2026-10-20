@@ -1,0 +1,71 @@
+{
+  "version": "1.8.1",
+  "rom": "stock",
+  "build": {
+    "exit": 0,
+    "compiler": "pinned aarch64-nextui-linux-gnu-gcc 8.3.0",
+    "native_AArch64": true,
+    "frontend_sources": "stock/frontend-sources.json"
+  },
+  "binary": "stock/bin/tg5040/musicplayer.elf",
+  "binary_sha256": "bdcc795c75ef0419923746bffe90b6c3d621e6fd3cd5f8b36f450b42f6600751",
+  "installer": "NXT_Retro_Music_v1.8.1_Stock.zip",
+  "installer_sha256": "a6254777b4c6f55baee839ad4946f8a331a74a9403a8b825195e567b6b243048",
+  "installer_bytes": 111566270,
+  "checks": {
+    "v181-ui-test.json": {
+      "sha256": "d3081c30d4b9ebf559abb8a8fc9ae02f3841a069e8742b6a8d0a6f448c93e27f"
+    },
+    "v181-ui-nextui-test.json": {
+      "sha256": "57a67899dfe6fb70ae118f58ecbb0183c5ab2c4d1a0aeec5a24caac49fba76b3"
+    },
+    "v181-ime-test.json": {
+      "sha256": "eb2c67b2c51d1d572173e4ec36dd332049445f25ba5f87627cca7ccae3362589"
+    },
+    "v181-keyboard-test.json": {
+      "sha256": "21df25671a07d692c9d502810cd8b2f04f61b3123b31ccda6fb88556f52f2260"
+    },
+    "v181-transfer-test.json": {
+      "sha256": "a315c6be3929dd96fbf7f7cbf12f84729a6093859459bfb206b607ed5d8527d6"
+    },
+    "v181-led-driver-test.json": {
+      "sha256": "07860b39915d6a7b485c30cee7ff2c5853004f28c0d1792a6eba7d67a61c273f"
+    },
+    "nextui-frame-budget-test.json": {
+      "sha256": "b0847b59f16ce1fa7920d45e27957d174347584b50388f3251f9676770351b62"
+    },
+    "v181-stock-rootfs-test.json": {
+      "sha256": "bd95bf2471d17dd5d858a2c2cc4c91576253f7bbfb46f04838aecd8152334a3a"
+    },
+    "v181-packages-test.json": {
+      "sha256": "4f1a6c558c25caec6cfcebba1b635c32f0f07b22f1b380bb03c4ec0c09052a47"
+    },
+    "v181-baseline-preserved.json": {
+      "sha256": "4f76338a854c9f2cc75ce895582cb1dbca17413fde947e53c22fc850a182c5d5"
+    },
+    "v181-arm64-stock-test.json": {
+      "sha256": "822b47cafb8d842ad55fd2328a9fe19fea81f86591b5b2a9e02dd10cb93a5d98"
+    },
+    "v181-ota-qa-stock.json": {
+      "sha256": "409bcc80e546399e0822fc562d80bbc8627e972ce999d59cf13abadc5baf5d5c"
+    }
+  },
+  "native_render_resolutions": [
+    [
+      1024,
+      768
+    ],
+    [
+      640,
+      480
+    ]
+  ],
+  "full_native_layouts": 36,
+  "hardware_tested": false,
+  "physical_temperature_measured": false,
+  "physical_USB_DAC_tested": false,
+  "authenticated_account_playback_tested": false,
+  "OTA_published": false,
+  "verification_notes": "RELEASE_QA_v1.8.1.md",
+  "created_UTC": "2026-10-10T18:20:25.575138+00:00"
+}

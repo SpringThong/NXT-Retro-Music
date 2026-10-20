@@ -1,0 +1,23 @@
+{
+  "NXT_Device_Log.txt": {
+    "sha256": "10863a17fe7cb8ba1041465158c5c84b5803f8cafbd86025dc85af74aa017f47",
+    "bytes": 923
+  },
+  "NXT_Input_Log.txt": {
+    "sha256": "e146c158e6716399f419d71071b6496bfcb2025532aae9ec712e5c823f23f546",
+    "bytes": 9031
+  },
+  "version": "1.8.1",
+  "rom": "NextUI",
+  "headset": "EDIFIER W820NB Plus",
+  "requested_sink": 1,
+  "actual_logical_sink": 0,
+  "route_write_OK": false,
+  "route_pending": true,
+  "PCM_ready": true,
+  "USB_card": -1,
+  "headset_playback_volume_percent": 74,
+  "headset_playback_switch_on": true,
+  "conclusion": "Requested Bluetooth route failed to apply; active PCM remains default output. Physical Bluetooth playback after fix not tested.",
+  "release_build_paused_when_logs_reviewed": true
+}

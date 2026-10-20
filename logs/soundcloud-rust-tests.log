@@ -1,0 +1,21 @@
+   Compiling nxt-soundcloud-backend v1.2.0 (/workspace/scratch/766af1647819/soundcloud-nextui/work/NXT_Retro_Music_v1.2_NextUI_Source/soundcloud/backend)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.35s
+     Running unittests src/main.rs (/workspace/scratch/766af1647819/soundcloud-nextui/target/debug/deps/nxt_soundcloud_backend-2b25fa30d9178937)
+
+running 11 tests
+test api::tests::only_official_urns_and_urls ... ok
+test extras::tests::lyrics_require_title_artist_and_duration_unicode ... ok
+test api::tests::blocked_preview_and_unicode ... ok
+test hls::tests::finite_ranges_maps_seek_and_unicode_comments ... ok
+test hls::tests::reject_live_encrypted_bad_ranges_foreign_hosts ... ok
+test player::tests::pcm_header_stereo_and_cancel_backpressure ... ok
+test fixture::playlist_pagination_keeps_all_fifty_rows_and_server_cursor ... ok
+{"bitrate_kbps":128,"codec":"MP3","event":"playing","position_ms":0,"sample_rate":44100,"stream_id":12,"uri":"soundcloud:tracks:3"}
+{"bitrate_kbps":160,"codec":"AAC","event":"playing","position_ms":0,"sample_rate":44100,"stream_id":9,"uri":"soundcloud:tracks:1"}
+test fixture::oauth_refresh_single_use_survives_cancelled_request ... ok
+test fixture::actual_http_hls_aac_to_pcm_and_restricted_track_rejection ... ok
+test player::tests::genuine_mp3_and_adts_decode_to_stereo_pcm ... ok
+test fixture::mp3_hls_prefetch_crosses_segments_without_pcm_loss ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.92s
+

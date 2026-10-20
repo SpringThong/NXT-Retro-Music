@@ -1,0 +1,13 @@
+{
+  "build": "ARM64 release, GCC 8.3 pinned TG5040 SDK; native link and LGPL relink pass",
+  "font": "576 ARM64 renders / 48 NFC pixel comparisons, 16 fonts, 12 scripts, 3 sizes; coverage/Thai/search pass",
+  "audio": "10 ARM64 codecs + seek; DSP bypass, ReplayGain, 10/15/31 EQ, limiter pass",
+  "persistence": "ARM64 presets/profiles/malformed-data/UTF-8 M3U8 pass",
+  "gui": "PASS: native UI Power on/off, continuing PCM clock, paused/wake consumption, lock, six L2 steps, R2, connection indicators, About/guide captures; persisted off/favorite.",
+  "lifecycle": "PASS: cold resume stays paused; OFF and favorite persist; R2 while paused; color cycle preserves saved style.\nPASS: saved color survives restart; normal queue wraps to next track with the backlight off.\nPASS: actual 60-second sleep timer expires while screen is off; wake does not restart stopped music.\nPASS: long Power reaches the platform shutdown path and exits.",
+  "hardware": "0.3.0 reported running by user; v1.0 not tested on physical Brick Pro",
+  "connections": "simulated only in debug; release uses libmsettings GetJack and /proc/asound USB detection",
+  "qa_network": "native GUI QA runs offline; metadata lookup blocked in debug only",
+  "install_sha256": "91e195dd376cfe54e8cb2d5496317c6cc59567bf980f4ea2f9fba5836e6516f3",
+  "binary_sha256": "a5d2d692117b1c0a85c5fdeeb8ac73eea2be1745160b37f1832d16bad3e27e5f"
+}

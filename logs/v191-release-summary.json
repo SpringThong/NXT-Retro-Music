@@ -1,0 +1,51 @@
+{
+  "version": "1.9.1",
+  "exit": 0,
+  "roms": {
+    "stock": {
+      "binary_sha256": "b22b9e9bdea3ded58400101025d9b3a9aae8a0eaa2b84ade65440ae92f0f2abf",
+      "artifacts": {
+        "installer": {
+          "filename": "NXT_Retro_Music_v1.9.1_Stock.zip",
+          "size": 111669167,
+          "sha256": "faae7bb80cfd6f7d7abff556dd31271876a8c46c00612d6c2d0cf97d4194d83e"
+        },
+        "OTA_kit": {
+          "filename": "NXT_OTA_Google_Drive_v1.9.1_Stock.zip",
+          "size": 111685741,
+          "sha256": "4429c232127337ba730e5f3e9df8edb3860e55e42b38dc75be2f93af95bf17f0"
+        }
+      }
+    },
+    "nextui": {
+      "binary_sha256": "e8a512107f707cd54625d8194bac0816c902db6fad65b64178eddaf1fd2843d8",
+      "artifacts": {
+        "installer": {
+          "filename": "NXT_Retro_Music_v1.9.1_NextUI.zip",
+          "size": 109306715,
+          "sha256": "1dc784f5cac959fbfb7040cc5552dbac2a24ca740a44813f12fa18d190a8ec09"
+        },
+        "OTA_kit": {
+          "filename": "NXT_OTA_Google_Drive_v1.9.1_NextUI.zip",
+          "size": 109323357,
+          "sha256": "6162a88aed6eff1b0d2e5dfc48654433fa552aa191458fa595b84bf8055d2279"
+        }
+      }
+    },
+    "nxredux": {
+      "binary_sha256": "b92c83abc6a367a0e9a44e25529c3651bb150d216ce58ecf4d13797a0dae711d",
+      "artifacts": {
+        "installer": {
+          "filename": "NXT_Retro_Music_v1.9.1_NXRedux.zip",
+          "size": 110990209,
+          "sha256": "6cf4bcb4da585dba9f631b02224d5fb54f761edc26bf0f0fb7a39a75879de988"
+        },
+        "OTA_kit": {
+          "filename": "NXT_OTA_Google_Drive_v1.9.1_NXRedux.zip",
+          "size": 111006872,
+          "sha256": "682468c14edb3779a6ad5371f7186d540d532b54c1c5f0b5d1e781d650fe8c98"
+        }
+      }
+    }
+  }
+}

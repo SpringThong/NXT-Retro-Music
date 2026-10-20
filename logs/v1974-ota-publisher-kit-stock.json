@@ -1,0 +1,14 @@
+{
+  "version": "1.9.7.4",
+  "rom": "stock",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.7.4_Stock.zip",
+  "kit_sha256": "01d6b86879a44345bb3969611a38430279fef9168dcbf656fb61c5ba218fe048",
+  "size": 145378623,
+  "installer": "NXT_Retro_Music_v1.9.7.4_Stock.zip",
+  "installer_sha256": "a4c1ecb87a09a992d63c9803c7d13038f5a30e488509fcd085d562a70f67ff92",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

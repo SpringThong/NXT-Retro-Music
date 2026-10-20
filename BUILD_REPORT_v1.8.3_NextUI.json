@@ -1,0 +1,85 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.8.3",
+  "rom": "nextui",
+  "device": "trimui-brick-pro",
+  "build": {
+    "exit": 0,
+    "compiler": "pinned GCC 8.3.0 AArch64",
+    "all_source_inputs_verified": true,
+    "frontend_sources": "stock/frontend-sources.json",
+    "log": "logs/v183-build-nextui.log"
+  },
+  "binary": "upstream/bin/tg5040/musicplayer.elf",
+  "binary_sha256": "16308e6002476f562e63e77c08c42b85a30ab464d454aa2e08c60b84d6afe2a5",
+  "settings_library_sha256": "96730cbfb05089ad557980198d75bb7b4846a904afc74cc8a916196cc0d220d3",
+  "installer": "NXT_Retro_Music_v1.8.3_NextUI.zip",
+  "installer_sha256": "94f2b34a010bb138ce98d093d448cbd8b01a82dd8b99e91a038131b31a984229",
+  "installer_bytes": 109221490,
+  "publisher_kit": "NXT_OTA_Google_Drive_v1.8.3_NextUI.zip",
+  "publisher_kit_sha256": "29e277529e2bee50318d7c3c299b09fb8186de09fc0922db512ad480b255502b",
+  "checks": {
+    "v183-timer-test.json": {
+      "sha256": "594537c7d6147978f257d18c6d7e1fab63591c4b87bff14a29bccea046f421fb"
+    },
+    "v183-config-test.json": {
+      "sha256": "390cd3c4ad70f3d927d18860e1215372650f2401674a16b5cf3a98f198993068"
+    },
+    "v183-stock-runtime-test.json": {
+      "sha256": "de1c3c50bf7426d4dd7a4c62e39b07895e16a3873ec3b4d09602ad3f78b0ad4c"
+    },
+    "v183-nextui-bluetooth-test.json": {
+      "sha256": "00acaec215bbbe6357dc4a52b4c956931e3a40690eb2f1a4411ebd12987e6d00"
+    },
+    "v183-stock-rootfs-test.json": {
+      "sha256": "914a8a4b792a63ebda5e15a6441077e2285da48625aba91e2a269d6f967a9ddb"
+    },
+    "v183-nextui-binary-test.json": {
+      "sha256": "ef4b98631f8847f1d22868f2845d4695615f7fb3489b5bfcb380532ce47605f7"
+    },
+    "v183-baseline-preserved.json": {
+      "sha256": "fb3697e880783869706f8a7d810c87402023c5abffac99da916ee56ac72873e7"
+    },
+    "v183-publisher-generator-qa.json": {
+      "sha256": "62f6e575b82794bc852803b2d1ced143de513c38c152f65147197899c76901ef"
+    },
+    "v183-packages-test.json": {
+      "sha256": "aa60773319832b156f6c20b26a049380dc440453b3acacab9b0d30b9879d75f2"
+    },
+    "v183-ota-qa-nextui.json": {
+      "sha256": "5013f148b758f903d80d1f355a37dae82d119ee89f1c643e843f76de2b06d0da"
+    },
+    "v183-ota-publisher-kit-nextui.json": {
+      "sha256": "5f559bd2e1ae6049773e5d6da003059d4c727cf553342f8781ec18103c4ea771"
+    }
+  },
+  "sleep_timer": {
+    "saves_progress_and_settings": true,
+    "full_app_exit": true,
+    "background_exit": true,
+    "pause_screen_off_counted": true,
+    "new_daemon_added": false,
+    "SIGKILL_used": false,
+    "forced_suspend": false,
+    "sleep_policy": "Firmware configured idle/suspend settings after NXT cleanup"
+  },
+  "features_retained_from_v182": true,
+  "native_layouts": 36,
+  "system_languages": 14,
+  "hardware_tested": false,
+  "physical_Bluetooth_USB_DAC_tested": false,
+  "physical_battery_temperature_measured": false,
+  "physical_sleep_wakeup_tested": false,
+  "authenticated_online_playback_in_this_build": false,
+  "OTA_public_source_published": false,
+  "native_loader_reference": "Official Brick Pro Stock v1.1.1-20260717 rootfs; NextUI payload tested on same dependencies, not a running NextUI OS",
+  "firmware_reference": {
+    "version": "v1.1.1-20260717",
+    "url": "https://github.com/trimui/firmware_brickpro/releases/download/v1.1.1-20260717/trimui_tg4040_20260717_v1.1.1.7z",
+    "sha256": "36189b7966717c520901e6ef7318d1b092067598959b030cc0fd66b0747e5585"
+  },
+  "baseline_source_sha256": "4ede8e50f96ec523538174095e3b192874f06654985203b3a21e993ca2aabfa2",
+  "NXRedux_v182_binary_unchanged": true,
+  "verification_notes": "RELEASE_QA_v1.8.3.md",
+  "created_UTC": "2026-10-11T09:21:23.609331+00:00"
+}

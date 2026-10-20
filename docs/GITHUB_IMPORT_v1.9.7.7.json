@@ -1,0 +1,18 @@
+{
+  "version": "1.9.7.7",
+  "original_source_sha256": "e5cb7b0488af2d6775c9be9a3a2e86c00a829159f5c3056e10a61f10b60ae992",
+  "original_files": 12030,
+  "original_manifest_hashes_verified": 12029,
+  "application_source_modified": false,
+  "documentation_overlay": [
+    "README.md",
+    "README.vi.md",
+    "docs/GITHUB_PUBLISH.vi.md",
+    "docs/screenshots/auralis-now-playing.png",
+    "docs/screenshots/auralis-full-lyrics.png",
+    "docs/screenshots/cassette-player.png",
+    "docs/screenshots/studio-meter-player.png",
+    "docs/screenshots/forest-dial-menu.png"
+  ],
+  "original_installer_sha256_verified": true
+}

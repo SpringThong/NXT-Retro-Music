@@ -1,0 +1,2 @@
+PASS production audio policy: Normal/Manual/Auto, USB attach/detach, raw-ready-before-UI, exact-PCM rejection falls back once, different source/card retry, speaker/jack/Bluetooth Normal, online providers Normal, manual raw errors retained. Transport/state are fixtures.
+PASS production DSD/PCM/online policy: no implicit DSD conversion, DAC removal keeps raw paused, online Normal and original PCM policies restored.

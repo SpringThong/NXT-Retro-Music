@@ -1,0 +1,28 @@
+{
+  "key_required": false,
+  "search_count": 20,
+  "codec": "AAC",
+  "sample_rate": 44100,
+  "decoded_pcm": {
+    "1": {
+      "frames": 252928,
+      "peak": 0.4912700653076172,
+      "rate": 44100,
+      "eof": false
+    },
+    "2": {
+      "frames": 216071,
+      "peak": 0.6530898809432983,
+      "rate": 44100,
+      "eof": false
+    }
+  },
+  "seek_ms": 30000,
+  "resolve": true,
+  "hardware_tested": false,
+  "public_client_discovery_cache_seeded": true,
+  "helper_architecture": "x86_64-native",
+  "same_production_backend_source": true,
+  "host_extractor_same_vendored_version_and_release_plugin": true,
+  "no_audio_or_signed_URLs_saved": true
+}

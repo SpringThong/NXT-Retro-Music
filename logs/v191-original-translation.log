@@ -1,0 +1,6 @@
+PASS real lyrics -> translation: filename normalization, tagged metadata preserved, wrong artist rejected, explicit cover plain-only, downloaded original LRC triggers translation, original+translation cold offline caches use no network/API calls.
+fixture lookup: https://lrclib.net/api/get?artist_name=Test+Artist&track_name=Test+Song&duration=20
+[NXT translation] start generation=3 lines=2 provider=2 target=1 curl=1
+[NXT translation] end generation=3 done=2/2 cancelled=0
+[NXT translation] start generation=6 lines=2 provider=2 target=1 curl=1
+

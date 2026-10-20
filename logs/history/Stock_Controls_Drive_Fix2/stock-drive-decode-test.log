@@ -1,0 +1,1 @@
+PASS ARM64 production FFmpeg decoder: .part audio detection, Drive UTF-8 sidecar metadata, 44.1-to-48 kHz PCM and seek using shipped libraries.

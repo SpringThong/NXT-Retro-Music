@@ -1,0 +1,1 @@
+PASS production SoundCloud frontend: missing-key setup, private import, no user-token mix, UTF-8 metadata, shared player, pause/seek PCM clock, stale replies, local bookmark status, QR validation, DAC unplug/route pause, restricted-track cleanup, helper quit/kill/reap, token-free logs.

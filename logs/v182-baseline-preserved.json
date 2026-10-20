@@ -1,0 +1,35 @@
+{
+  "exit": 0,
+  "baseline": "1.8.1",
+  "unchanged_files": {
+    "upstream/src/player.c": "9d68ff7fff7817cbe4cbc7c80ed281fb590fe48f2fc944d49650acb2b272bf5d",
+    "upstream/src/module_player.c": "0cf6fbe52e294551b8c85d2f526c085491d5e6388e6ed0a833f4e6e9e8e37597",
+    "upstream/src/nxt_decoder.c": "ffbc1c93d81a3652eb7869d6d27793f35f24e838fa18675847e09af10a065f74",
+    "upstream/src/nxt_dsp.c": "6dce11b46a0d2a68887d695c33ad986d7714906e1e8f37ba6b676b5b00c8d466",
+    "upstream/src/nxt_pcm.c": "b9464f9cbee5b12e78ae87e5e54241cd283d5a5f1b0c9067386380b31e722b3d",
+    "upstream/src/nxt_led.c": "3c42abcb24795f3e18b54eb4d4ac94ec9d6bece68c31928e1a2f66fe70edf337",
+    "upstream/src/nxt_session.c": "4fce135f2b4067b7f8781d1bb58d2d7d5f4ef34e36f3c5f6e04a80b4ac2bbe8f",
+    "upstream/src/nxt_spotify.c": "72e154b0b414587d4310c2c7ae8d99496bd9491d278e9fa4a34da9aa12702a00",
+    "upstream/src/nxt_soundcloud.c": "455e6f047886257200ca128a09a1681f3017791946ec003bfc9e4d00696e2e9b",
+    "upstream/src/nxt_transfer.c": "45a5634a1e43d08afafe25c273b4862591568540aeb412224ef7e2f394c3ad58",
+    "upstream/src/nxt_spotify_pcm.inc": "f7a8a4ba1a849cf86408775989213c85e4e051f5409602e79b06a5d1035ba13b",
+    "upstream/src/nxt_soundcloud_pcm.inc": "a6b766d01ff71336305be29592549749472b60721d778cbd356373ac70b749c8",
+    "upstream/src/nxt_ime.c": "fea6e120e718de595f9eb6a35ba285550e1a6fbaa986f769af797bf263de8cc1",
+    "upstream/src/keyboard.c": "252b971b68b6e6f35231f5a8f2ae4d3df6844d98c5272647d9e3c69a05a5511d",
+    "upstream/src/module_common.c": "8f571ac48c59d4d679e24c1c48c648aa7fb0d01d726fe7098132a59e0d09f505",
+    "upstream/bin/tg5040/nxt-spotify-backend": "0f12fa810b387910e64a18c0a895cdd6a4782e6b177f9cdbe1eefc9be7815a5b",
+    "upstream/bin/tg5040/nxt-soundcloud-backend": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463",
+    "upstream/bin/tg5040/yt-dlp": "0c8c0a4f8479d51bb13c74a410feb43afd6a8af0d70b45650d51c7032739c11f",
+    "upstream/bin/tg5040/yt-dlp-runtime/yt-dlp": "7591142178569a149ef22ed170ec03c74b9a30d531842bced5b01e58c62c7b96"
+  },
+  "intentional_Bluetooth_output_changes": [
+    "upstream/src/nxt_player_core.c",
+    "upstream/src/nxt_hardware.c",
+    "upstream/src/nxt_nextui.c",
+    "upstream/src/nxt_stock.c",
+    "upstream/src/musicplayer.c",
+    "upstream/NextUI/workspace/tg5040/libmsettings/msettings.c"
+  ],
+  "Bluetooth_test": "v182-nextui-bluetooth-test.json",
+  "physical_device_tested": false
+}

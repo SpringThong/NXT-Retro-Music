@@ -1,0 +1,1 @@
+PASS actual profile persistence, shared Spotify path, private SoundCloud/playlist path, dynamic path allocation, per-profile favorites, PCM-time stats, paused/seek/underrun/output recovery, short-track/repeat qualification and recording off.

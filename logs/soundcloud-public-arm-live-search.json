@@ -1,0 +1,9 @@
+{
+  "version": "2026.08.19",
+  "architecture": "AArch64",
+  "emulator": "qemu-aarch64",
+  "public_key_required": false,
+  "results": 20,
+  "has_next": true,
+  "hardware_tested": false
+}

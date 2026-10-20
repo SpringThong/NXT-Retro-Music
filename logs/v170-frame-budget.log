@@ -1,0 +1,1 @@
+PASS production visual frame budget: spectrum <=31 updates/s at 60 Hz input loop, no FFT/paint when display-off or hidden, wake and tick-wrap.

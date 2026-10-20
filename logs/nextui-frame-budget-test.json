@@ -1,0 +1,11 @@
+{
+  "visual_budget": {
+    "exit": 0,
+    "actual_production_frame_function": true,
+    "input_poll_rate_unchanged": true,
+    "spectrum_capped": true,
+    "off_hidden_no_fft_paint": true,
+    "wake_and_uint32_wrap": true,
+    "physical_temperature_measured": false
+  }
+}

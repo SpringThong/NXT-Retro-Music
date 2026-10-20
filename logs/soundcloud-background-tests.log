@@ -1,0 +1,1 @@
+PASS production detached SoundCloud session: socketpair transport (host blocks bind/listen), hidden STATUS includes SoundCloud, tick continues, ATTACH restores UI and same active player, logo-stop blocks detach, stop-all closes SoundCloud; simulated display/audio hardware.

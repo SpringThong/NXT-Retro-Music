@@ -1,0 +1,201 @@
+#ifndef __RA_OFFLINE_H__
+#define __RA_OFFLINE_H__
+
+// Offline support layer for RetroAchievements.
+//
+// Sits between rc_client and the HTTP layer. Online, successful server
+// responses are mirrored to disk (write-through cache). Offline, cached
+// responses are served back to rc_client and achievement unlocks are
+// journaled for later submission.
+//
+// HOST-TESTABLE: this module may only depend on libc + pthread. No SDL,
+// no rcheevos, no defines.h — the storage root is injected via
+// RA_Offline_init().
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <time.h>
+
+#define RA_OFFLINE_MAX_PENDING 1024
+
+// rcheevos' synthetic "Unknown Emulator" warning achievement (shared by
+// minarch's RA integration and the ratools pak)
+#define RA_UNKNOWN_EMULATOR_ACHIEVEMENT_ID 101000001
+
+typedef enum {
+	RA_NET_ONLINE = 0,
+	RA_NET_OFFLINE,
+} RA_NetMode;
+
+/**
+ * Initialize the module. Creates <root>/cache, <root>/cache/games,
+ * <root>/cache/sessions and <root>/pending. Resets mode to RA_NET_ONLINE.
+ * @param root_dir e.g. SHARED_USERDATA_PATH "/.ra"
+ */
+void RA_Offline_init(const char* root_dir);
+
+void RA_Offline_setMode(RA_NetMode mode);
+RA_NetMode RA_Offline_getMode(void);
+
+/** The cache root passed to RA_Offline_init(), or NULL before init. Lets the
+ *  network half enumerate cache/games without hard-coding the path. */
+const char* RA_Offline_rootDir(void);
+
+/** true if cache/login.json exists (a login succeeded online at least once) */
+bool RA_Offline_hasLoginCache(void);
+
+/**
+ * Record the rom path used to load a game, keyed by its hash, so the
+ * achievements browser can later locate the rom's box art (<dir>/.media/
+ * <basename-without-ext>.png). Validates game_hash with the same rule as
+ * the cache path components (alnum/_/- only); no-op otherwise.
+ */
+void RA_Offline_setGameRomPath(const char* game_hash, const char* rom_path);
+
+/**
+ * Read back the rom path recorded by RA_Offline_setGameRomPath(). Returns
+ * false on miss (never recorded, or game_hash invalid).
+ */
+bool RA_Offline_getGameRomPath(const char* game_hash, char* out, size_t out_size);
+
+/**
+ * Extract a URL-encoded form parameter ("key=value&...") from a POST body.
+ * Returns false if key absent. Value is copied verbatim (not URL-decoded;
+ * RA usernames/hashes/ids are alphanumeric so this is sufficient).
+ */
+bool RA_Offline_getParam(const char* post_data, const char* key,
+						 char* out, size_t out_size);
+
+/**
+ * Online path: mirror a successful server response to the disk cache.
+ * Classifies the request by its "r" param; non-cacheable requests and
+ * bodies without "Success":true are ignored. Safe to call from any thread.
+ */
+void RA_Offline_cacheResponse(const char* post_data, const char* body,
+							  size_t body_len);
+
+/**
+ * Read a cache file by path relative to the root (e.g.
+ * "cache/games/<hash>/sets.json"). On success *out_body is malloc'd
+ * (NUL-terminated; caller frees) and *out_len set. Returns false on miss.
+ */
+bool RA_Offline_readCacheFile(const char* relpath, char** out_body,
+							  size_t* out_len);
+
+/**
+ * Offline path: serve or synthesize a response for an rc_client request.
+ * Returns true if handled (always, when mode is RA_NET_OFFLINE and the
+ * request has an "r" param); *out_body is malloc'd (caller frees),
+ * *out_status is 200. Returns false when mode is RA_NET_ONLINE or the
+ * request is unclassifiable.
+ * awardachievement requests are appended to the journal as a side effect.
+ */
+bool RA_Offline_handleRequest(const char* post_data, char** out_body,
+							  size_t* out_len, int* out_status);
+
+/**
+ * Online path: journal an awardachievement request (u/a/m params) before it
+ * is sent, so an unlock earned while the connection is flaky survives a quit
+ * before rc_client's in-memory retries get through. Returns false if the
+ * request is not an award or lacks a usable user/achievement/hash.
+ */
+bool RA_Offline_journalAward(const char* post_data);
+
+typedef enum {
+	RA_AWARD_RETRY = -1,   // no/unknown answer (network, 5xx, auth, HTML): keep
+	RA_AWARD_REJECTED = 0, // the achievement no longer exists: drop, not unlocked
+	RA_AWARD_ACCEPTED = 1, // awarded now or already unlocked: done
+} RA_AwardOutcome;
+
+/**
+ * Classify a raw awardachievement response. Deliberately conservative: only
+ * an accepted / already-unlocked answer or the server's "not_found" (HTTP
+ * 404, achievement removed) is final; an auth failure (401
+ * invalid_credentials) or anything unrecognised keeps the unlock journaled.
+ */
+RA_AwardOutcome RA_Offline_classifyAwardResponse(int http_status, const char* body,
+												 size_t body_len);
+
+/**
+ * Drop one entry from the journal once the server has answered it for good
+ * (see RA_Offline_classifyAwardResponse). No-op on a miss.
+ */
+void RA_Offline_removePending(const char* user, uint32_t achievement_id,
+							  const char* game_hash);
+
+/**
+ * Online path: a fresh startsession body (post_data `r=startsession`) with
+ * the journaled and confirmed unlocks for its user and the current game
+ * merged into "Unlocks", so an unlock the background sync hasn't uploaded
+ * yet still loads as unlocked. Returns a malloc'd body, or NULL when the
+ * request isn't a successful startsession or there is nothing to add.
+ */
+char* RA_Offline_mergeSession(const char* post_data, const char* body, size_t body_len,
+							  size_t* out_len);
+
+/** Hash of the game most recently seen in a gameid/achievementsets request. */
+const char* RA_Offline_currentGameHash(void);
+
+// -------------------- journal / sync --------------------
+
+typedef struct {
+	char username[64];
+	uint32_t achievement_id;
+	char game_hash[64];
+	time_t when;
+} RA_PendingUnlock;
+
+/** Number of parseable journal entries (all users). */
+int RA_Offline_pendingCount(void);
+
+/** Read journal entries into out (up to max). Returns count. */
+int RA_Offline_readJournal(RA_PendingUnlock* out, int max);
+
+/** Read confirmed (synced offline) unlocks into out. Returns count. These
+ *  are already on the server; they are kept so offline replays and the tools
+ *  pak keep showing them as unlocked until a fresh online session cache
+ *  supersedes them (and prunes them). Past `max` entries the NEWEST are
+ *  kept: older ones are the likeliest to be covered by a session cache. */
+int RA_Offline_readConfirmed(RA_PendingUnlock* out, int max);
+
+/** Confirmed unlocks for one game hash (any user when `user` is NULL),
+ *  filtered while reading so `max` bounds this game's matches, not the
+ *  whole file. Returns count. */
+int RA_Offline_readConfirmedFor(const char* user, const char* hash,
+								RA_PendingUnlock* out, int max);
+
+/**
+ * Submit callback for RA_Offline_sync. Return 0 on success (entry is
+ * removed from the journal — treat server "already unlocked" as success),
+ * 1 when the server rejected it for good (entry removed, not recorded as
+ * unlocked, not counted as synced), negative to keep it for a later sync.
+ */
+typedef int (*RA_SubmitFn)(const RA_PendingUnlock* entry,
+						   uint32_t seconds_since_unlock, void* userdata);
+
+typedef void (*RA_SyncProgressFn)(int done, int total, void* userdata);
+
+/**
+ * Replay journal entries belonging to `username` through `submit`.
+ * Entries for other users are preserved. seconds_since_unlock is
+ * max(1, now - entry.when). Journal is rewritten atomically; unparseable
+ * lines are preserved verbatim. Writes lastsync on any success (or when
+ * there was nothing to sync). Returns number of entries synced (rejected
+ * ones excluded), -1 on error.
+ */
+int RA_Offline_sync(const char* username, time_t now, RA_SubmitFn submit,
+					RA_SyncProgressFn progress, void* userdata);
+
+/** Unix time of last successful sync, or 0 if never. */
+time_t RA_Offline_lastSyncTime(void);
+
+/**
+ * Patch the cached login response's "Score" and "SoftcoreScore" fields
+ * (award responses carry the fresh totals; the login cache is otherwise
+ * only refreshed by the next online login). No-op if there is no cached
+ * login or a field is absent.
+ */
+void RA_Offline_updateCachedScores(uint32_t score, uint32_t softcore_score);
+
+#endif // __RA_OFFLINE_H__

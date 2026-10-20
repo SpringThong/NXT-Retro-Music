@@ -1,0 +1,1 @@
+PASS: ARM64 relink succeeds using the 98 objects from the final release build and bundled corresponding static libraries.

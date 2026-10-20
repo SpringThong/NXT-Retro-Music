@@ -1,0 +1,23 @@
+{
+  "rows": 1136777,
+  "sources": [
+    {
+      "repository": "rime/rime-luna-pinyin",
+      "commit": "56b934b099dfbeab842320f13aa8b461a6ab3e42",
+      "path": "luna_pinyin.dict.yaml",
+      "sha256": "75bcf6eb3ff62b129882ed89cc22b2d80a5347aa72bcfa2ccc839bac298e7314"
+    },
+    {
+      "repository": "rime/rime-essay",
+      "commit": "054920de4f54c9e5994276a96a4fc2a35cb51aa3",
+      "path": "essay.txt",
+      "sha256": "3e8512ebaa6657e35961b1f5762060717c647e3bf471d5e3b86e783b4e934ffb"
+    },
+    {
+      "repository": "skk-dev/dict",
+      "commit": "0a164e6b990c5eb5b59eb7d8789f08865dc2f644",
+      "path": "SKK-JISYO.L",
+      "sha256": "c791f578d1b4040fce282db29bc22b2cc7ea46f83e269fab2e0fa779e2967e40"
+    }
+  ]
+}

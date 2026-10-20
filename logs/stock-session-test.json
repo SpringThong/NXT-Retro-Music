@@ -1,0 +1,74 @@
+{
+  "orphan-recovery": {
+    "exit": 0,
+    "dead_peer_only": true,
+    "never_kills_live_or_unrelated_process": true
+  },
+  "current-build-open": {
+    "exit": 0,
+    "production_server_handler": true,
+    "socket_transport_fixture": true
+  },
+  "wrong-build-refused": {
+    "exit": 0,
+    "production_server_handler": true,
+    "socket_transport_fixture": true
+  },
+  "missing-newline-refused": {
+    "exit": 0,
+    "production_server_handler": true,
+    "socket_transport_fixture": true
+  },
+  "legacy-open-not-attached": {
+    "exit": 0,
+    "production_server_handler": true,
+    "socket_transport_fixture": true
+  },
+  "legacy-attach-compatible": {
+    "exit": 0,
+    "production_server_handler": true,
+    "socket_transport_fixture": true
+  },
+  "old-session-refused-then-reboot": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  },
+  "previous-v15-session-refused-then-reboot": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  },
+  "previous-v151-session-refused-then-reboot": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  },
+  "same-build-reattach": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  },
+  "stale-state-pid": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  },
+  "stale-endpoint": {
+    "exit": 0,
+    "production_client_server_protocol_and_launcher": true,
+    "transport_audio_ui_fixture": true,
+    "real_unix_ipc": "unavailable: managed runtime denies sockets",
+    "no_product_signal_to_old_or_unrelated_process": true
+  }
+}

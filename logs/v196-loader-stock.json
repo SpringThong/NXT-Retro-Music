@@ -1,0 +1,21 @@
+{
+  "version": "1.9.6",
+  "rom": "stock",
+  "exit": 0,
+  "binary_sha256": "7e75d701ab5245ecf7cc9c7fd97cfec9628adb70fb2aac1f8cfeffdd48b6a501",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.6\nStock \u00b7 v1.9.6 \u00b7 Charcoal-LyricFX\n"
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.6 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/v196-native/NXT_Retro_Music_v1.9.6_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

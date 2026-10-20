@@ -1,0 +1,116 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.8.8.1",
+  "rom": "nxredux",
+  "device": "trimui-brick-pro",
+  "build": {
+    "exit": 0,
+    "compiler": "pinned GCC 8.3.0 AArch64",
+    "all_source_inputs_verified": true,
+    "log": "logs/build-v1881-nxredux.log"
+  },
+  "binary": "nxredux/bin/tg5040/musicplayer.elf",
+  "binary_sha256": "2fb0c3743721fc785101ba47457448c2625262497c726aaf3771ede453259ce1",
+  "settings_library": "libnxt-nxredux-settings.so",
+  "settings_library_sha256": "323b75d2a2886df4d4bd21ab18ff9848aefccdf455e1867aa5f1d70422f4a492",
+  "installer": "NXT_Retro_Music_v1.8.8.1_NXRedux.zip",
+  "installer_sha256": "7d51e3cc3bde7b3a192a193061e1f253e875b026a6b24fa14f31081b5171e7c6",
+  "installer_bytes": 109249151,
+  "publisher_kit": "NXT_OTA_Google_Drive_v1.8.8.1_NXRedux.zip",
+  "publisher_kit_sha256": "18ac8f2a6ce2d2cfc2d597025de42ff3e57dc368cd9aded29f7577aa3902eeba",
+  "checks": {
+    "v1881-integer-decoder-test.json": {
+      "sha256": "01417ed48596d3d4eba2c1d53883a7a7513ea5563455e8ca79d402e4677a3258"
+    },
+    "v1881-normal-audio-test.json": {
+      "sha256": "0986ab161b8d8caecab8c1a7eaad79bb411573fe676bc2171de993798218ab97"
+    },
+    "v1881-bit-worker-test.json": {
+      "sha256": "6cb7131068b0a3de998792eb7e06986600875aff0d7f397a75c6ea16964e850b"
+    },
+    "v1881-ui-test.json": {
+      "sha256": "a4bbcb7bfe8f566415fe00f26447198d22c11d62491e512fa6d9ccb118c51737"
+    },
+    "v1881-ui-nextui-test.json": {
+      "sha256": "bc6a086ef28ada749cc1fe4c2b2c6133e07d87cff06eb7cbd6d88b88496c6258"
+    },
+    "v1881-ui-nxredux-test.json": {
+      "sha256": "f5aeb3eebef74583783238db5086d1f3dc127f995ae4439c21b489e08455e2f3"
+    },
+    "v1881-config-test.json": {
+      "sha256": "be30c85a156f2444e44eb4fcf8fb55a90442de3b688a77d35259b59d3742f4e6"
+    },
+    "v1881-timer-test.json": {
+      "sha256": "a0739821e37f708f32fa37cdb8d08b5f9f10a1fa7b2ef687d309e88604e37222"
+    },
+    "v1881-nextui-bluetooth-test.json": {
+      "sha256": "79f409b8f2e28b91fce7e3e443acb3fa7c8cdd5c28d38007df1d97faa2a3f6f9"
+    },
+    "v1881-ARM64-loader-test.json": {
+      "sha256": "ac32b908bf0d54ad5309d17ad6eef5b70150ade839529183797b3a6212910bd3"
+    },
+    "v1881-baseline-preserved.json": {
+      "sha256": "c18775748dc05d43d716ef28c50d89dfd291c1aba60ebdf35559cb918596337c"
+    },
+    "v1881-new-features-test.json": {
+      "sha256": "0495d52011b19fa9d14384e246105b5be4bf0905a1937b0ac6e3c118b8e9438c"
+    },
+    "v1881-audio-core-test.json": {
+      "sha256": "8ad9727791b0e9eede1db9b0844f38ab06e0f94e53aeaa2eb692b6c4948f6562"
+    },
+    "v1881-volume-test.json": {
+      "sha256": "cf9bcd423798c14790bfccf634f0a20a5bb292b3eb4d7a9d474c3b7e53569376"
+    },
+    "v1881-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v1881-stock-volume-audio-test.json": {
+      "sha256": "c2351e5e111155b05ffc8a89f745ac424904b4017fd40ba2184bd70d5ecd9682"
+    },
+    "v1881_spotify_ipc-test.json": {
+      "sha256": "9a0e846a59b3ebfbcdab67dbbb02768c2526538441b3701efe3ace0eb3617d06"
+    },
+    "v1881_soundcloud_ipc-test.json": {
+      "sha256": "9a0e846a59b3ebfbcdab67dbbb02768c2526538441b3701efe3ace0eb3617d06"
+    },
+    "v1881-drive-decode-test.json": {
+      "sha256": "fc14be7e00ef6d6e433e3841623d2b5ffc5323399885f7040198780d799a7a84"
+    },
+    "v1881-original-fetch-test.json": {
+      "sha256": "af90373274bf7c1b351045dff725b79e79fc20250b53b6ab1d7df8109b60365f"
+    },
+    "v1881-hotfix2-session-test.json": {
+      "sha256": "4be04f446c9f1607b8b1e943853ff59bda0fd37d84e4f724b33952972274a8b1"
+    },
+    "v1881-italic-pixel-scope.json": {
+      "sha256": "f9afd5df7b5057a5c31ece88c4a440c49472834b4aade47b07740393db9c446a"
+    },
+    "v1881-theme-catalog-test.json": {
+      "sha256": "412d4987b9d6a01ca0e64488a444b834a51b5a6b888ddcb79ed5ec83b8c9c0af"
+    },
+    "v1881-regression-runner.json": {
+      "sha256": "444a7d8b447b3e5850507e37b075b7ecfc0817daefbb8e164713698e5668e45f"
+    },
+    "v1881-translation-test.json": {
+      "sha256": "70254408ec42d593ffebde1bf7fb215c6279376fac51907a803705e2e083a6a5"
+    },
+    "v1881-lyric-revision-test.json": {
+      "sha256": "1463034e1583795cedce7ee40503ba03cf51c6ff4c8adfcdceab3a51befc5d1f"
+    },
+    "v1881-ota-qa-nxredux.json": {
+      "sha256": "efc05b9379b23123b261b7ae3c73b22b7a4f6568283038b348b86e55f14c752a"
+    },
+    "v1881-ota-publisher-kit-nxredux.json": {
+      "sha256": "1edd23fa9cfca743e170412267d2763dbc8160b763bbecabffdd0aac9bce6ed1"
+    },
+    "v1881-arm64-nxredux-test.json": {
+      "sha256": "57b9b11e7e8f11abc6ce947ee8d53c81fdfc03e56041fefc9f8fe66be2942d25"
+    }
+  },
+  "hardware_tested": false,
+  "physical_battery_temperature_measured": false,
+  "OTA_public_source_published": false,
+  "verification_notes": "RELEASE_QA_v1.8.8.1.md",
+  "baseline_source_sha256": "c147fb01847412973c101e30097cd0d5ee9051888b6357d89114815827aeb36d",
+  "created_UTC": "2026-10-13T09:06:56.242488+00:00"
+}

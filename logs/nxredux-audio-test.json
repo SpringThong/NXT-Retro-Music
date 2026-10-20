@@ -1,0 +1,19 @@
+{
+  "exit": 0,
+  "actual_ALSA_parser": true,
+  "A2DP_only_discovery": true,
+  "speaker_BT_DAC_handoff": true,
+  "same_dmix_as_firmware": true,
+  "negotiated_USB_rate": 96000,
+  "SDL_hotplug_stopped_before_config_reset": true,
+  "local_Spotify_SoundCloud_music_gain_and_OSD_mute": true,
+  "private_route_firmware_config_untouched": true,
+  "transport_retry_and_no_idle_reopens": true,
+  "ASan_UBSan": true,
+  "physical_device_tested": false,
+  "sources": {
+    "nxt_hardware.c": "e886aaac08b75de9c23b8e6a0242599381712e3d298f697dc21319ad396b0b5c",
+    "nxt_nextui.c": "56f5f74d278df77f3f3878ae75c56212fcec4f74cc62da2a6acc6caa125f1e83",
+    "nxt_player_core.c": "fede6ef5fbcbbb3750244735ad294671abe820f16dd4ccbb11bd7c10b22e329c"
+  }
+}

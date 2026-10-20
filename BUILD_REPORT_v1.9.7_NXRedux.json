@@ -1,0 +1,80 @@
+{
+  "version": "1.9.7",
+  "rom": "nxredux",
+  "baseline": "unified v1.9.6",
+  "source_scope": "Shared source, separate ROM adapters and installers",
+  "build": {
+    "exit": 0,
+    "entrypoint": "python3 tools/build-release.py --rom all --jobs 4",
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_NXREDUX",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "0e0d852729c5c1700ce96d578d1e023619f74f050ad443eb913025b93eb27c07",
+  "installer": "NXT_Retro_Music_v1.9.7_NXRedux.zip",
+  "installer_size": 133719307,
+  "installer_sha256": "030b157cf5e7be1edd1c8149ee3c19fdf3bcb0318a79f46fd214c50532149533",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.7_NXRedux.zip",
+  "OTA_kit_sha256": "c5d23916a9bb449925611d6b430e16a8918ac0e828dd85fcec75a1d94897cfad",
+  "checks": {
+    "v197-preservation.json": {
+      "sha256": "723152bee344303d90fc8e14c5dba42a8993571327df9ad6be8323899d33b7ce"
+    },
+    "v197-ui-test.json": {
+      "sha256": "ad0e7f7e9f0305360089e6ae8d61afddcc6ffbc737cc0cb44f05c650ecdce41a"
+    },
+    "v197-config-test.json": {
+      "sha256": "10bb89ef104f01677795cc0431575469d486f2ec2aa0c5772bac87b09e7e79cd"
+    },
+    "v197-volume-test.json": {
+      "sha256": "527d294317b3ed003199de93d15139d1d72d0a58bf0bc99e6e866b243a9fa930"
+    },
+    "v197-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v197-index.json": {
+      "sha256": "cfcbcfda46616a4014245690fb49524092e09a45dff7a29b7bfad08137f7cd4e"
+    },
+    "v197-motion-lyrics.json": {
+      "sha256": "c05e6816f5426d9953f4dcdabba54a7145847387688f57408dc59053584e1f1d"
+    },
+    "v197-frame-budget.json": {
+      "sha256": "62d1e9ef4245d11ecde3af113aa116ea65ca410638339f160822eefe204d2c2e"
+    },
+    "v197-karaoke-test.json": {
+      "sha256": "b49c9076211f6bdf6e8c0ee10312c966c0bd59790d452b3085c577a51a08e7bf"
+    },
+    "v197-library-flow-nxredux.json": {
+      "sha256": "6bc16db05c737a930f0adaa091e32d4ec7c988d5588e6b162effb4cdefa62c8c"
+    },
+    "v197-shuffle-controls.json": {
+      "sha256": "fae7b3e561339ecfa8ef5edf9a432f15c7cdb1491e2c3b629bd21eb10c71eb93"
+    },
+    "v197-dsd-test-nxredux.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v197-loader-nxredux.json": {
+      "sha256": "ae0093a8511a1c845b1d5d2bfa93ad0b42a8c0ed41451f6efa3ee3b972e7272a"
+    },
+    "v197-package-qa-nxredux.json": {
+      "sha256": "b47e15ac313257eef8a1a514c8fbfae2a7fdf606c5e7189bf967609eb48c24b8"
+    },
+    "v197-ota-qa-nxredux.json": {
+      "sha256": "4e2d01d99154b7d2d9ab675ea9c2530e642420e041d81b54a717799feacd17e9"
+    }
+  },
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "fonts_total": 22,
+  "themes_total": 51,
+  "animation_target_Hz": 60,
+  "actual_device_FPS_measured": false,
+  "Groq_live_singing_tested": false,
+  "karaoke_scope": "Optional consented local-file Whisper word analysis <=10 min; partial accent-insensitive alignment + labelled estimated fallback; no universal singing accuracy guarantee",
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

@@ -1,0 +1,3 @@
+PASS stock real ARM64 loader 1.9.1
+PASS nextui real ARM64 loader 1.9.1
+PASS nxredux real ARM64 loader 1.9.1

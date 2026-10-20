@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "actual_ARM64_decoder": true,
+  "formats": 10,
+  "DSP_replaygain_EQ_limiter": true,
+  "physical_output_tested": false
+}

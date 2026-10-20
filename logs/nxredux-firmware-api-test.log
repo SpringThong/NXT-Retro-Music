@@ -1,0 +1,15 @@
+SetRawBrightness(72)
+SetRawColortemp(0)
+SetRawContrast(50)
+SetRawSaturation(50)
+SetRawExposure(50)
+SetAudioSink(2)
+PASS actual NX Redux v2.0.0 libmsettings API through NXT adapter, live volume/sink/music gain and optional display calibration fallback
+ALSA lib confmisc.c:767:(parse_card) cannot find card '0'
+ALSA lib conf.c:4554:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:392:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:4554:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1246:(snd_func_refer) error evaluating name
+ALSA lib conf.c:4554:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5033:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib control.c:1373:(snd_ctl_open_noupdate) Invalid CTL default

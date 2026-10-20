@@ -1,0 +1,82 @@
+[
+  {
+    "test": "decoder",
+    "exit": 0,
+    "seconds": 3.05
+  },
+  {
+    "test": "normal_audio",
+    "exit": 0,
+    "seconds": 6.81
+  },
+  {
+    "test": "bit_worker",
+    "exit": 0,
+    "seconds": 1.67
+  },
+  {
+    "test": "bluetooth",
+    "exit": 0,
+    "seconds": 4.18
+  },
+  {
+    "test": "audio_core",
+    "exit": 0,
+    "seconds": 1.59
+  },
+  {
+    "test": "volume",
+    "exit": 0,
+    "seconds": 1.08
+  },
+  {
+    "test": "volume_keys",
+    "exit": 0,
+    "seconds": 1.71
+  },
+  {
+    "test": "stock_volume_audio",
+    "exit": 0,
+    "seconds": 0.61
+  },
+  {
+    "test": "spotify_ipc",
+    "exit": 0,
+    "seconds": 2.73
+  },
+  {
+    "test": "soundcloud_ipc",
+    "exit": 0,
+    "seconds": 3.55
+  },
+  {
+    "test": "drive_decode",
+    "exit": 0,
+    "seconds": 2.16
+  },
+  {
+    "test": "loader",
+    "exit": 0,
+    "seconds": 0.72
+  },
+  {
+    "test": "baseline",
+    "exit": 0,
+    "seconds": 1.97
+  },
+  {
+    "test": "sleep_timer",
+    "exit": 0,
+    "seconds": 6.55
+  },
+  {
+    "test": "theme_catalog",
+    "exit": 0,
+    "seconds": 0.6
+  },
+  {
+    "test": "translation",
+    "exit": 0,
+    "seconds": 59.3
+  }
+]

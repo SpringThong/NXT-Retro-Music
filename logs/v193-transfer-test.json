@@ -1,0 +1,15 @@
+{
+  "exit": 0,
+  "ASan_UBSan": true,
+  "file_bytes": 16777216,
+  "worker_RSS_growth_KiB": 0,
+  "exclusive_install_FAT_compatible": true,
+  "PIN_auth": true,
+  "header_body_isolation": true,
+  "no_overwrite": true,
+  "UTF8_names": true,
+  "cancel_shutdown_cleanup": true,
+  "physical_WiFi_tested": false,
+  "only_completed_uploads_notify_library": true,
+  "DFF_DSF_uploads": true
+}

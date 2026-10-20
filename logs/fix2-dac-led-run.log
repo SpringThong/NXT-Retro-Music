@@ -1,0 +1,11 @@
+
+Failed to open mixer
+Failed to open mixer
+PASS production output controller: closes SDL before ALSA reset, speaker/DAC handoff retains playback, transient USB open failure retries and recovers, slow DAC starts after five seconds recover with bounded polling.
+PASS one-time hotplug defaults migration retains theme/font/key mappings; later manual output preferences persist.
+PASS DAC volume: 200 HID presses, foreground/background evdev input, bounds/mute, PCM gain changes, unchanged sink/device, zero DAC mixer writes, speaker path retained.
+
+PASS Stock LED: native animation disabled/reclaimed/restored, static effect, trailing-space RGB, enable/60-scale and manual color; RGB retry/reclaim and private device snapshot; DAC route: failed write recovers without new hotplug; volume preserves selected PCM; short disconnect/reconnect retains DAC; sustained unplug follows setting; new ALSA card and explicit speaker selection work.
+
+PASS official stock SDL/ALSA: AUDIODEV opens the named music PCM instead of another default output.
+PASS stock DAC volume/routing QA. Physical Black Pearl + Delci testing is still required.

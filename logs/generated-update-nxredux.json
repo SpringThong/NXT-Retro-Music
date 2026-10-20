@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "package": "vn.nguyenxuanthong.nxtretromusic",
+  "rom": "nxredux",
+  "device": "trimui-brick-pro",
+  "version": "1.8.2",
+  "download_url": "https://drive.google.com/file/d/NXT_NXREDUX_INSTALLER_FIXTURE_182/view",
+  "sha256": "864f975e70b5c13f7e669c2cca18b7de508ca395f5b61dbe83fde14ca61b25b1",
+  "size": 109185552,
+  "changelog": "# NXT Retro Music v1.8.2 — NX Redux / TrimUI Brick Pro\n\nLên ý tưởng và thực hiện: Nguyễn Xuân Thông — Spring Thông · Vibe Code.\n\n- Bộ cài native ARM64 riêng cho NX Redux, xuất hiện ở Tools với biểu tượng NXT.\n- Giữ 36 giao diện, hồ sơ/avatar, gợi ý cá nhân, LED đổi ngay, phổ nhạc, EQ/DSP,\n  lời bài hát, playlist, nghe trên thẻ và các dịch vụ online của v1.8.2.\n- Kết nối đúng API cài đặt của NX Redux; âm lượng nhạc và mute trong OSD có tác dụng\n  với NXT. Không dùng cấu trúc shared memory cũ của NextUI để sửa dữ liệu NX Redux.\n- Đầu ra Bluetooth dùng PCM riêng; USB DAC/loa dùng bộ trộn phù hợp với firmware.\n  Tạm dừng trình phát hệ thống khi mở NXT để nhường đầu ra âm thanh.\n- **Hết hẹn giờ: lưu vị trí/cài đặt, dừng nhạc và thoát toàn bộ NXT**, kể cả phát nền,\n  tạm dừng hoặc đã tắt màn hình. Không để lại phiên NXT ngủ ngầm.\n- Sau khi NXT thoát, NX Redux xử lý tắt màn hình/deep sleep theo cài đặt hệ thống.\n  NXT không tự thay thời gian ngủ của firmware. Hủy hẹn giờ bằng 0 phút.\n- OTA riêng: `rom=nxredux`, nguồn và bộ cài tách khỏi Stock/NextUI.\n- Copy file qua Wi-Fi; USB-C tiếp tục dùng cho DAC. Các chế độ hiệu năng vẫn có đủ\n  Tiết kiệm pin / Cân bằng / Hiệu năng.\n\nChỉ bản NX Redux nhận thay đổi thoát app khi hết hẹn giờ trong lượt phát hành này.\nStock/NextUI vẫn dừng nhạc như trước; chưa build lại hai bản đó.\n\nĐối chiếu runtime NX Redux v2.0.0 (Brick Pro). Kiểm thử trên máy tính/QEMU và các\nfixture của driver, không thay cho việc thử Bluetooth, DAC, deep sleep trên máy thật.\n"
+}

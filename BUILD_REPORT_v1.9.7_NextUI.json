@@ -1,0 +1,80 @@
+{
+  "version": "1.9.7",
+  "rom": "nextui",
+  "baseline": "unified v1.9.6",
+  "source_scope": "Shared source, separate ROM adapters and installers",
+  "build": {
+    "exit": 0,
+    "entrypoint": "python3 tools/build-release.py --rom all --jobs 4",
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_NEXTUI",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "a27255e528831cc71d286c1ede200beb357846a705e29a60e5d759c314a80a6f",
+  "installer": "NXT_Retro_Music_v1.9.7_NextUI.zip",
+  "installer_size": 132036141,
+  "installer_sha256": "3e09e8847d549a685e56526f6065216e7e975f7115bd19b906bcff510d6525be",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.7_NextUI.zip",
+  "OTA_kit_sha256": "d5bd01f9738e358e7f072fbda78dbc67db2255f9c520ca3c4ef47b10aa6f9304",
+  "checks": {
+    "v197-preservation.json": {
+      "sha256": "723152bee344303d90fc8e14c5dba42a8993571327df9ad6be8323899d33b7ce"
+    },
+    "v197-ui-test.json": {
+      "sha256": "ad0e7f7e9f0305360089e6ae8d61afddcc6ffbc737cc0cb44f05c650ecdce41a"
+    },
+    "v197-config-test.json": {
+      "sha256": "10bb89ef104f01677795cc0431575469d486f2ec2aa0c5772bac87b09e7e79cd"
+    },
+    "v197-volume-test.json": {
+      "sha256": "527d294317b3ed003199de93d15139d1d72d0a58bf0bc99e6e866b243a9fa930"
+    },
+    "v197-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v197-index.json": {
+      "sha256": "cfcbcfda46616a4014245690fb49524092e09a45dff7a29b7bfad08137f7cd4e"
+    },
+    "v197-motion-lyrics.json": {
+      "sha256": "c05e6816f5426d9953f4dcdabba54a7145847387688f57408dc59053584e1f1d"
+    },
+    "v197-frame-budget.json": {
+      "sha256": "62d1e9ef4245d11ecde3af113aa116ea65ca410638339f160822eefe204d2c2e"
+    },
+    "v197-karaoke-test.json": {
+      "sha256": "b49c9076211f6bdf6e8c0ee10312c966c0bd59790d452b3085c577a51a08e7bf"
+    },
+    "v197-library-flow-nxredux.json": {
+      "sha256": "6bc16db05c737a930f0adaa091e32d4ec7c988d5588e6b162effb4cdefa62c8c"
+    },
+    "v197-shuffle-controls.json": {
+      "sha256": "fae7b3e561339ecfa8ef5edf9a432f15c7cdb1491e2c3b629bd21eb10c71eb93"
+    },
+    "v197-dsd-test-nextui.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v197-loader-nextui.json": {
+      "sha256": "3c8d17af0ab6634af268b6a72eca43bd416dd09694e8c08dc749bdaef547b9d3"
+    },
+    "v197-package-qa-nextui.json": {
+      "sha256": "9250ee025dcf38d4850ede5055afbb753acb22f7b59da9f09418fc9655877ba8"
+    },
+    "v197-ota-qa-nextui.json": {
+      "sha256": "87ba7440f6f1524e0059040259f45b73a9360dbc02b68b443c740a07983c3b05"
+    }
+  },
+  "native_renderer_sizes": [
+    1024,
+    640
+  ],
+  "fonts_total": 22,
+  "themes_total": 51,
+  "animation_target_Hz": 60,
+  "actual_device_FPS_measured": false,
+  "Groq_live_singing_tested": false,
+  "karaoke_scope": "Optional consented local-file Whisper word analysis <=10 min; partial accent-insensitive alignment + labelled estimated fallback; no universal singing accuracy guarantee",
+  "physical_ROM_DAC_Bluetooth_tested": false,
+  "thermal_battery_measured": false,
+  "live_OTA_feed_uploaded": false
+}

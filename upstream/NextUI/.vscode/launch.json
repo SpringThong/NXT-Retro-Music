@@ -1,0 +1,316 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "NextUI",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb",
+              "environment": []
+            },
+            "linux": {
+              "MIMode": "gdb",
+              "environment": []
+            },
+            "cwd": "${workspaceFolder}/workspace/all/nextui/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/nextui/build/desktop/nextui.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "App: Battery",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/battery/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/battery/build/desktop/battery.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "App: Input",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minput/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/minput/build/desktop/minput.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "App: Gametime",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/gametime/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/gametime/build/desktop/gametime.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "App: Clock",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/clock/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/clock/build/desktop/clock.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "App: Gametimectl",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/gametimectl/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/gametimectl/build/desktop/gametimectl.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": ["start", "foo.txt"],
+        },
+        {
+            "name": "App: Settings",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/settings/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/settings/build/desktop/settings.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+        },
+        {
+            "name": "Minarch (gpsp)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": [
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+        },
+        {
+            "name": "Minarch (mgba)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+            "preLaunchTask": "make desktop",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": [
+              "${workspaceFolder}/workspace/desktop/cores/output/mgba_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+        },
+        {
+            "name": "Minarch (Profile)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+            "preLaunchTask": "make desktop profile",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": [
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+            "postDebugTask": "show profile results"
+        },
+        {
+            "name": "Minarch (Profile 2-Core)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "/usr/bin/taskset",
+            "preLaunchTask": "make desktop profile",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": [
+              "-c", "0,1",
+              "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+            "postDebugTask": "show profile results"
+        },
+        {
+            "name": "Minarch (GPerfTools)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+            "preLaunchTask": "make desktop gperftools",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "environment": [
+              {
+                "name": "CPUPROFILE",
+                "value": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.prof"
+              },
+              {
+                "name": "LD_PRELOAD",
+                "value": "/usr/lib/aarch64-linux-gnu/libprofiler.so.0"
+              }
+            ],
+            "args": [
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+            "postDebugTask": "show gperftools results"
+        },
+        {
+            "name": "Minarch (GPerfTools 2-Core)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "/usr/bin/taskset",
+            "preLaunchTask": "make desktop gperftools",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "environment": [
+              {
+                "name": "CPUPROFILE",
+                "value": "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.prof"
+              },
+              {
+                "name": "LD_PRELOAD",
+                "value": "/usr/lib/aarch64-linux-gnu/libprofiler.so.0"
+              }
+            ],
+            "args": [
+              "-c", "0,1",
+              "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ],
+            "postDebugTask": "show gperftools results"
+        },
+        {
+            "name": "Minarch (TSAN 2-Core)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "/usr/bin/taskset",
+            "preLaunchTask": "make desktop tsan",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "environment": [
+              {
+                "name": "TSAN_OPTIONS",
+                "value": "suppressions=${workspaceFolder}/tsan.supp"
+              }
+            ],
+            "args": [
+              "-c", "0,1",
+              "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ]
+        },
+        {
+            "name": "Minarch (ASAN 2-Core)",
+            "request": "launch",
+            "type": "cppdbg",
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "cwd": "${workspaceFolder}/workspace/all/minarch/build/desktop",
+            "program": "/usr/bin/taskset",
+            "preLaunchTask": "make desktop asan",
+            "envFile": "${workspaceFolder}/.env_desktop",
+            "args": [
+              "-c", "0,1",
+              "${workspaceFolder}/workspace/all/minarch/build/desktop/minarch.elf",
+              "${workspaceFolder}/workspace/desktop/cores/output/gpsp_libretro.so", 
+              "/var/tmp/nextui/sdcard/Roms/Game Boy Advance (GBA)/Advance Wars 2 - Black Hole Rising (USA).zip"
+            ]
+        },
+        {
+          "name": "Remote debug minarch",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}/workspace/all/minarch/build/tg5040/minarch.elf",
+          "cwd": "${workspaceFolder}",
+
+          // if you want to connect at entry point (requires remote program to start paused)
+          "stopAtEntry": true,
+          "stopAtConnect": true,
+
+          "MIMode": "gdb",
+          "miDebuggerPath": "/opt/homebrew/bin/gdb",
+          "miDebuggerServerAddress": "192.168.178.153:13337",
+          "setupCommands": [{
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true,
+          }],
+          "preLaunchTask": "launch minarch",
+        },
+        {
+          "name": "Remote GDB Debug - eth0",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}/workspace/all/minarch/build/tg5040/minarch.elf",
+          //"miDebuggerServerAddress": "192.168.178.153:13337", // wifi0
+          "miDebuggerServerAddress": "192.168.178.137:13337", // eth0
+          "miDebuggerPath": "/opt/homebrew/bin/gdb", // or arm-none-eabi-gdb, etc.
+          "cwd": "${workspaceFolder}",
+          "externalConsole": false,
+          "MIMode": "gdb",
+          "setupCommands": [
+            {
+              "description": "Enable pretty-printing",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+            }
+          ],
+          "logging": {
+            "engineLogging": false
+          },
+          "preLaunchTask": "launch minarch",
+          "sourceFileMap": {
+            //"/root/workspace/all/minarch/minarch.c": "${workspaceFolder}/workspace/all/minarch/minarch.c",
+            "/root/workspace/all": "${workspaceFolder}/workspace/all",
+          },
+          "args": [
+            "env", 
+            "HOME=/mnt/SDCARD/.userdata/tg5040"
+          ],
+    }
+    ]
+}

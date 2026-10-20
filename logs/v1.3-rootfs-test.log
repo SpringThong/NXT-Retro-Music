@@ -1,0 +1,26 @@
+musicplayer.elf ['--help'] exit 0 NXT Retro Music v1.2 for Stock
+
+Usage: /workspace/scratch/d7cab07fb248/nxt-stock-v1.3/NXT_Retro_Music_v1.3_Stock_Source/dist/stock-stage/Apps/NXT_Retro_Music/bin/tg5040/musicplayer.elf [options]
+
+Options:
+  --build-info                 Show frontend revision and stop.
+  -h, --help                   Give this text and stop. 
+musicplayer.elf ['--build-info'] exit 0 NXT Retro Music
+Stock · Feedback Update1 
+musicplayer.elf ['--stock-info'] exit 0 NXT Retro Music v1.3 — Stock · Feedback Update1 / TrimUI Brick Pro
+SDL 2.30.8
+Video drivers: mali
+Render drivers: opengles2 opengles software
+Resources: /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res
+Settings: /mnt/SDCARD/.userdata/nxt-stock/system
+OK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/font1.ttf
+OK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/font2.ttf
+OK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/assets@3x.png
+OK /mnt/SDCARD/Apps/NXT_Retro_Music/compat/res/inputs@3x.png
+OK ./res/icons/spotify-source.png
+OK ./res/icons/soundcloud-source.png 
+nxt-spotify-backend () exit 0 {"build":"Stock-v1.3","connect_service":false,"event":"ready","experimental":false,"version":"1.3"}
+{"event":"closed"} Spotify v1.3.0: Backend build: Stock-v1.3
+nxt-soundcloud-backend () exit 0 {"api":"yt-dlp-public-unofficial","build":"Stock-v1.3-SoundCloud","credentials_required":false,"event":"ready"} 
+yt-dlp-runtime/yt-dlp ['--version'] exit 0 2026.08.19 
+PASS official stock rootfs: frontend help/resources/SDL drivers, Spotify & SoundCloud startup/quit, bundled yt-dlp.

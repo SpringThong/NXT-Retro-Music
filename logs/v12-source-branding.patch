@@ -1,0 +1,125 @@
+--- before/upstream/src/nxt_skin.h
++++ after/upstream/src/nxt_skin.h
+@@ -3,6 +3,9 @@
+ #define NXT_SKIN_H
+ #include "nxt.h"
+ typedef enum {NXT_BG,NXT_PANEL,NXT_INK,NXT_MUTED,NXT_LINE,NXT_ACCENT,NXT_ACCENT_INK} NxtColor;
++typedef enum {NXT_SOURCE_AUTO,NXT_SOURCE_SPOTIFY,NXT_SOURCE_SOUNDCLOUD} NxtSkinSource;
++/* Provider menus restore the previous source when returning to their caller. */
++NxtSkinSource NxtSkin_setSource(NxtSkinSource);
+ SDL_Color NxtSkin_color(NxtColor);
+ void NxtSkin_rect(SDL_Surface *,SDL_Rect,SDL_Color,int);
+ void NxtSkin_icon(SDL_Surface *,const char *,int,int,int,SDL_Color);
+--- before/upstream/src/nxt_skin.c
++++ after/upstream/src/nxt_skin.c
+@@ -38,13 +38,29 @@
+ }
+ typedef struct {char name[48];SDL_Surface *image;} Icon;
+ static Icon icons[80];static int nicons;
+-static SDL_Surface *soundcloud_logo;
+-static void soundcloud_brand(SDL_Surface *s,int x,int y){
+-    if(!soundcloud_logo)soundcloud_logo=IMG_Load("./res/icons/soundcloud-source.png");
+-    if(!soundcloud_logo)return;
+-    int w=unit(s,152),h=w*soundcloud_logo->h/soundcloud_logo->w,pad=unit(s,12);
++static NxtSkinSource screen_source=NXT_SOURCE_AUTO;
++static SDL_Surface *source_logos[3];
++NxtSkinSource NxtSkin_setSource(NxtSkinSource source){
++    NxtSkinSource previous=screen_source;screen_source=source;return previous;
++}
++static NxtSkinSource playback_source(void){
++    if(NxtSoundCloud_hasMetadata())return NXT_SOURCE_SOUNDCLOUD;
++    if(NxtSpotify_hasMetadata())return NXT_SOURCE_SPOTIFY;
++    return NXT_SOURCE_AUTO;
++}
++static NxtSkinSource header_source(const char *title){
++    if(title&&strstr(title,"Spotify"))return NXT_SOURCE_SPOTIFY;
++    if(title&&strstr(title,"SoundCloud"))return NXT_SOURCE_SOUNDCLOUD;
++    return screen_source!=NXT_SOURCE_AUTO?screen_source:playback_source();
++}
++static void source_brand(SDL_Surface *s,NxtSkinSource source,int x,int y){
++    const char *paths[]={NULL,"./res/icons/spotify-source.png","./res/icons/soundcloud-source.png"};
++    if(source!=NXT_SOURCE_SPOTIFY&&source!=NXT_SOURCE_SOUNDCLOUD)return;
++    if(!source_logos[source])source_logos[source]=IMG_Load(paths[source]);
++    SDL_Surface *image=source_logos[source];if(!image)return;
++    int w=unit(s,152),h=w*image->h/image->w,pad=unit(s,12);
+     NxtSkin_rect(s,(SDL_Rect){x-pad,y-pad,w+pad*2,h+pad*2},(SDL_Color){18,18,18,255},unit(s,8));
+-    SDL_BlitScaled(soundcloud_logo,NULL,s,&(SDL_Rect){x,y,w,h});
++    SDL_BlitScaled(image,NULL,s,&(SDL_Rect){x,y,w,h});
+ }
+ void NxtSkin_icon(SDL_Surface *s,const char *name,int x,int y,int size,SDL_Color color){
+     if(!name||!size)return;SDL_Surface *image=NULL;
+@@ -65,7 +81,7 @@
+     int offset=0;if(rendered->w>width){int distance=rendered->w-width,speed=unit(s,35);if(speed<1)speed=1;int duration=distance*1000/speed,phase=SDL_GetTicks()%(duration+4000);if(phase>1800)offset=(phase-1800)*speed/1000;if(offset>distance)offset=distance;}
+     SDL_BlitSurface(rendered,&(SDL_Rect){offset,0,width<rendered->w?width:rendered->w,rendered->h},s,&(SDL_Rect){x,y,0,0});SDL_FreeSurface(rendered);
+ }
+-void NxtSkin_release(void){for(int i=0;i<nf;i++)TTF_CloseFont(fonts[i]);nf=0;signature=0;for(int i=0;i<nicons;i++)SDL_FreeSurface(icons[i].image);nicons=0;if(soundcloud_logo)SDL_FreeSurface(soundcloud_logo);soundcloud_logo=NULL;}
++void NxtSkin_release(void){for(int i=0;i<nf;i++)TTF_CloseFont(fonts[i]);nf=0;signature=0;for(int i=0;i<nicons;i++)SDL_FreeSurface(icons[i].image);nicons=0;for(int i=0;i<3;i++){if(source_logos[i])SDL_FreeSurface(source_logos[i]);source_logos[i]=NULL;}screen_source=NXT_SOURCE_AUTO;}
+ void NxtSkin_begin(SDL_Surface *s,const char *title,const char *detail,bool mini){
+     GFX_clear(s);UiLayer_clear(UI_LAYER_STATUS);UiLayer_clear(UI_LAYER_ANIMATION);UiLayer_clear(UI_LAYER_SELECTION);
+     NxtSkin_rect(s,(SDL_Rect){0,0,s->w,s->h},NxtSkin_color(NXT_BG),0);
+@@ -86,10 +102,10 @@
+     if(PLAT_btIsConnected()){NxtSkin_icon(s,"bluetooth",status_x,y+unit(s,10),unit(s,26),NxtSkin_color(NXT_ACCENT));status_x-=step;}
+     NxtSkin_icon(s,PLAT_wifiConnected()?"wifi":"wifi-off",status_x,y+unit(s,10),unit(s,26),NxtSkin_color(NXT_MUTED));
+     NxtSkin_text(s,20,clock,status_x-unit(s,83),y+unit(s,7),unit(s,70),NxtSkin_color(NXT_MUTED));
+-    bool sc_screen=title&&(strstr(title,"SoundCloud")||NxtSoundCloud_hasMetadata());
++    NxtSkinSource source=header_source(title);
+     int brand_x=s->w-p-unit(s,164)-(detail&&*detail?unit(s,110):0);
+-    if(title)NxtSkin_text(s,32,title,p,unit(s,87),sc_screen?brand_x-p-unit(s,32):s->w-p*2,NxtSkin_color(NXT_INK));
+-    if(sc_screen)soundcloud_brand(s,brand_x,unit(s,88));
++    if(title)NxtSkin_text(s,32,title,p,unit(s,87),source!=NXT_SOURCE_AUTO?brand_x-p-unit(s,32):s->w-p*2,NxtSkin_color(NXT_INK));
++    if(source!=NXT_SOURCE_AUTO)source_brand(s,source,brand_x,unit(s,88));
+     if(detail&&*detail){int w=0;TTF_SizeUTF8(NxtSkin_font(s,19),detail,&w,NULL);NxtSkin_text(s,19,detail,s->w-p-w,unit(s,94),w,NxtSkin_color(NXT_MUTED));}
+     if(mini)NxtSkin_mini(s);
+ }
+@@ -175,7 +191,10 @@
+ }
+ void NxtSkin_tabs(SDL_Surface *s,const char *const *labels,int count,int selected,int y){int x=unit(s,32);for(int i=0;i<count;i++){int w=0;TTF_SizeUTF8(NxtSkin_font(s,21),labels[i],&w,NULL);w+=unit(s,28);if(i==selected)NxtSkin_rect(s,(SDL_Rect){x,y,w,unit(s,43)},NxtSkin_color(NXT_ACCENT),unit(s,10));NxtSkin_text(s,21,labels[i],x+unit(s,14),y+unit(s,4),w-unit(s,24),NxtSkin_color(i==selected?NXT_ACCENT_INK:NXT_INK));x+=w+unit(s,8);}list_top=y+unit(s,58);}
+ void NxtSkin_playing(SDL_Surface *s,int track,int total,bool shuffle,int repeat){
+-    char counter[32];snprintf(counter,32,"%02d / %02d",track,total);NxtSkin_begin(s,Nxt_text("Now playing","Đang phát"),counter,false);
++    char counter[32];snprintf(counter,32,"%02d / %02d",track,total);
++    NxtSkinSource previous=NxtSkin_setSource(playback_source());
++    NxtSkin_begin(s,Nxt_text("Now playing","Đang phát"),counter,false);
++    NxtSkin_setSource(previous);
+     int p=unit(s,32),top=unit(s,147),aw=unit(s,242),x=p+aw+unit(s,32),w=s->w-p-x;
+     SDL_Surface *cover=NxtPlayback_art();if(!cover&&!NxtSoundCloud_hasMetadata()&&!NxtSpotify_hasMetadata())cover=album_art_get();
+     if(cover)SDL_BlitScaled(cover,NULL,s,&(SDL_Rect){p,top,aw,aw});else{NxtSkin_rect(s,(SDL_Rect){p,top,aw,aw},NxtSkin_color(NXT_PANEL),unit(s,18));NxtSkin_icon(s,"headphones",p+aw/3,top+aw/4,aw/3,NxtSkin_color(NXT_ACCENT));NxtSkin_text(s,18,"NXT RETRO",p+unit(s,22),top+aw-unit(s,67),aw-unit(s,44),NxtSkin_color(NXT_ACCENT));NxtSkin_text(s,13,"YOUR MUSIC, ANYWHERE",p+unit(s,22),top+aw-unit(s,35),aw-unit(s,44),NxtSkin_color(NXT_MUTED));}
+--- before/upstream/src/nxt_spotify.c
++++ after/upstream/src/nxt_spotify.c
+@@ -304,7 +304,7 @@
+   if(rr==MODULE_EXIT_QUIT)return rr;
+  }
+ }
+-ModuleExitReason NxtSpotify_run(DisplayContext *d){
++static ModuleExitReason spotify_menu_run(DisplayContext *d){
+  int selected=0;bool tried_pair=false;paths();if(!start())Toast_show(status,2500);
+  for(;;){
+   if(!busy&&!track_loaded&&(auth_required||auth_upgrade)&&!tried_pair){tried_pair=true;ModuleExitReason rr=pair_dialog(d);if(rr==MODULE_EXIT_QUIT)return rr;selected=0;}
+@@ -324,3 +324,8 @@
+   if(rr==MODULE_EXIT_QUIT)return rr;if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
+  }
+ }
++ModuleExitReason NxtSpotify_run(DisplayContext *d){
++ NxtSkinSource previous=NxtSkin_setSource(NXT_SOURCE_SPOTIFY);
++ ModuleExitReason result=spotify_menu_run(d);
++ NxtSkin_setSource(previous);return result;
++}
+--- before/upstream/src/nxt_soundcloud.c
++++ after/upstream/src/nxt_soundcloud.c
+@@ -262,7 +262,7 @@
+ static ModuleExitReason configuration(DisplayContext *d){
+  NxtSoundCloud_quit();start();return MODULE_EXIT_TO_MENU;
+ }
+-ModuleExitReason NxtSoundCloud_run(DisplayContext *d){
++static ModuleExitReason soundcloud_menu_run(DisplayContext *d){
+  int selected=0;paths();start();
+  for(;;){char heading[340];snprintf(heading,sizeof(heading),"SoundCloud · %s",status);
+   const char *online[]={Nxt_text("Search tracks / playlists","Tìm bài / playlist"),Nxt_text("Discover · themed searches","Khám phá · tìm theo chủ đề"),Nxt_text("Saved tracks on this device","Bài đã lưu trên máy"),Nxt_text("Open SoundCloud link","Mở liên kết SoundCloud"),Nxt_text("Now playing","Đang phát"),Nxt_text("Restart SoundCloud","Kết nối lại SoundCloud"),Nxt_text("Setup guide","Hướng dẫn thiết lập")};
+@@ -281,3 +281,8 @@
+   if(rr==MODULE_EXIT_QUIT)return rr;if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
+  }
+ }
++ModuleExitReason NxtSoundCloud_run(DisplayContext *d){
++ NxtSkinSource previous=NxtSkin_setSource(NXT_SOURCE_SOUNDCLOUD);
++ ModuleExitReason result=soundcloud_menu_run(d);
++ NxtSkin_setSource(previous);return result;
++}

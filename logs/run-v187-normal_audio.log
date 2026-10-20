@@ -1,0 +1,18 @@
+PASS decode / seek: viet.wav (pcm_s16le) 720000 frames
+PASS decode / seek: korea.mp3 (mp3) 720000 frames
+PASS decode / seek: japan.flac (flac) 720000 frames
+PASS decode / seek: chinese.m4a (aac) 720005 frames
+PASS decode / seek: traditional-alac.m4a (alac) 720000 frames
+PASS decode / seek: thai.ogg (vorbis) 720000 frames
+PASS decode / seek: thai.opus (opus) 720000 frames
+PASS decode / seek: test.aac (aac) 721119 frames
+PASS decode / seek: 24bit.wav (pcm_s24le) 96000 frames
+PASS decode / seek: 32bit.wav (pcm_s32le) 96000 frames
+PASS: DSP bypass, ReplayGain, 10/15/31-band stability and limiter.
+[mp3float @ 0x15ca030] Could not update timestamps for skipped samples.
+[mp3float @ 0x15ca030] Could not update timestamps for discarded samples.
+[vorbis @ 0x15ca030] Could not update timestamps for discarded samples.
+[opus @ 0x15ca030] Could not update timestamps for skipped samples.
+[opus @ 0x15ca030] Could not update timestamps for discarded samples.
+[aac @ 0x15b72e0] Estimating duration from bitrate, this may be inaccurate
+[aac @ 0x15b72e0] Estimating duration from bitrate, this may be inaccurate

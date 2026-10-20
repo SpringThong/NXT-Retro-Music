@@ -1,0 +1,27 @@
+In file included from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/v189_translation.c:2:
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c:6: warning: "_GNU_SOURCE" redefined
+    6 | #define _GNU_SOURCE
+      | 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c: In function ‘save_cache’:
+/workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c:168:70: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size between 200 and 1599 [-Wformat-truncation=]
+  168 |   CacheEntry *e=&entries[count];snprintf(e->path,sizeof(e->path),"%s/%s",j->cache_dir,d->d_name);struct stat st;if(lstat(e->path,&st)||!S_ISREG(st.st_mode))continue;e->age=st.st_mtime;e->bytes=st.st_size;bytes+=st.st_size;count++;
+      |                                                                      ^~
+In file included from /usr/include/stdio.h:980,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/.cache/render-sp/include/SDL2/SDL_stdinc.h:43,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/.cache/render-sp/include/SDL2/SDL_main.h:25,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/.cache/render-sp/include/SDL2/SDL.h:32,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/.cache/render-sp/include/SDL2/SDL_ttf.h:39,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt.h:7,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.h:4,
+                 from /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c:7:
+In function ‘snprintf’,
+    inlined from ‘prune’ at /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c:168:33,
+    inlined from ‘save_cache’ at /workspace/scratch/d7cab07fb248/nxt-v189-work/NXT_Retro_Music_v1.8.8.2_Source/qa/../upstream/src/nxt_translate.c:183:98:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:54:10: note: ‘__builtin___snprintf_chk’ output between 2 and 1656 bytes into a destination of size 1600
+   54 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   55 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   56 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~

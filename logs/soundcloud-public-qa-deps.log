@@ -1,0 +1,5 @@
+Get:1 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/main amd64 libsamplerate0-dev amd64 0.2.2-4build1 [61.5 kB]
+Get:2 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/main amd64 liburing2 amd64 2.5-1build1 [21.1 kB]
+Get:3 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/universe amd64 libcapstone4 amd64 4.0.2-5.1build1 [656 kB]
+Get:4 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/universe amd64 qemu-user amd64 1:8.2.2+ds-0ubuntu1.18 [9635 kB]
+Fetched 10.4 MB in 6s (1665 kB/s)

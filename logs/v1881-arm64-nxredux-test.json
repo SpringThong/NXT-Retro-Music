@@ -1,0 +1,25 @@
+{
+  "rom": "nxredux",
+  "version": "1.8.8.1",
+  "exit": 0,
+  "binary_sha256": "2fb0c3743721fc785101ba47457448c2625262497c726aaf3771ede453259ce1",
+  "actual_release_ELF": true,
+  "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+  "checks": [
+    {
+      "args": [
+        "--build-info"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.8.1\nNX Redux · v1.8.8.1 · LyricsFix2\n"
+    },
+    {
+      "args": [
+        "--help"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.8.1 for NX Redux\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v1881-work/NXT_Retro_Music_v1.8.8.1_Source/nxredux/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

@@ -1,0 +1,25 @@
+{
+  "rom": "stock",
+  "version": "1.8.7",
+  "exit": 0,
+  "binary_sha256": "20e2803058f3a5bac50fa9281fa3d05cb5793b756ed52e825195ffbb11eef068",
+  "actual_release_ELF": true,
+  "runtime": "QEMU user-mode with pinned SDK ARM64 libc",
+  "checks": [
+    {
+      "args": [
+        "--build-info"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.7\nStock · v1.8.7\n"
+    },
+    {
+      "args": [
+        "--help"
+      ],
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.7 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v187-work/NXT_Retro_Music_v1.8.7_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

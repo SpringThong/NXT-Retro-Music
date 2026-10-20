@@ -1,0 +1,67 @@
+{
+  "version": "1.9.4",
+  "rom": "stock",
+  "baseline": "unified v1.9.3",
+  "source_scope": "Shared source; separate ROM adapters and packages",
+  "build": {
+    "exit": 0,
+    "entrypoint": "python3 tools/build-release.py --rom all --jobs 4",
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2",
+    "ROM_define": "NXT_ROM_STOCK",
+    "freshly_recompiled": true
+  },
+  "binary_sha256": "ebdeb53dfe39b82cc4cfc99e1b8e1e8c4d146298539bc8d8e31d26ccd454d8f0",
+  "installer": "NXT_Retro_Music_v1.9.4_Stock.zip",
+  "installer_size": 117154801,
+  "installer_sha256": "c1ebcf0c6ccb1df6dd5b29089f3e11985eed586ca4103b2633dfce24f90907c0",
+  "OTA_kit": "NXT_OTA_Google_Drive_v1.9.4_Stock.zip",
+  "OTA_kit_sha256": "c9c081f45471cfc5d1e9d69fd845dbdfe55a57193f2f155fd46a9e5babfde4d5",
+  "checks": {
+    "v194-preservation.json": {
+      "sha256": "497ea63b93bb6bdb5f82a56321280e198f74972836068008fafd3ecb7b7055db"
+    },
+    "v194-ui-test.json": {
+      "sha256": "8e85d2fb414c94b87efe8dd29fffc86844b64dbbb23a5caa0e248e20a382d499"
+    },
+    "v194-config-test.json": {
+      "sha256": "ad2679056bc1451f493ddb8a7f933562766db1add1b9867dbd0cda6c015e8a7e"
+    },
+    "v194-volume-test.json": {
+      "sha256": "253e90c691411226a4de43a864142fc53da6d295a3d573e73815abb54ade23bf"
+    },
+    "v194-volume-keys-test.json": {
+      "sha256": "4aaee4a137655c5ba28f75325b288bfbbad02130c1c4d131264fa16c8bc48b0f"
+    },
+    "v194-index.json": {
+      "sha256": "b5850a90a5e3b07d53a65673148ba1a58b99b7e80ca279f1b19c5b782f43ab4d"
+    },
+    "v194-dsd-test-stock.json": {
+      "sha256": "f98a9e0db038a9f47081567b6cbcf841cee9708c9702dfaade27dc8d5112816d"
+    },
+    "v194-library-flow-stock.json": {
+      "sha256": "ea53032b0a0196fd7f163822b650d8606c2cf761d454eb0c38c4e887dfd3127c"
+    },
+    "v194-loader-stock.json": {
+      "sha256": "767e92b577a002315cb8d0957d2fddf91d6e48a0999376b825cd7aa8f9c19585"
+    },
+    "v194-ota-qa-stock.json": {
+      "sha256": "76646c33c0957787177120f7f8a71250cebfd66b0b6bc2cbf913522d179a0c5b"
+    },
+    "v194-ota-publisher-kit-stock.json": {
+      "sha256": "6dc6ce689e84de4f9eb5e85ebabf3cbdd22367bf2cd6374560f00bf00f0e5a53"
+    },
+    "v194-package-qa-stock.json": {
+      "sha256": "b6e0ecd224d3859fd37d1dcb0ac575a3d1a6fb739b26a1cdee8fcd1e876948b6"
+    }
+  },
+  "evidence_scope": "Native production render/input/config/controller and library/DSD tests, final full installer OTA checks, final ARM64 loader and baseline byte audit; explicit hardware and service fixtures, not physical device testing.",
+  "official_OTA_source_retained": true,
+  "live_feed_uploaded": false,
+  "hardware_tested": false,
+  "limits": [
+    "No physical volume/Bluetooth/DAC/DSD or thermal/battery tests here",
+    "Publish the exact installer ZIP; regenerate OTA metadata if rebuilt",
+    "Source is shared; app path/settings integration/frontend/feed remain ROM-specific"
+  ]
+}

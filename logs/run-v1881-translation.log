@@ -1,0 +1,112 @@
+PASS production translation: default-off zero work, repeated-line dedup, cache/offline reuse, 14 targets, CJK script detection, source override, UTF-8 chunks, HTTP/JSON/oversize/quota errors, cooldown/manual retry, stale-result rejection, hidden/screen-off pause, Google protocol/private key and bounded quit/reap. Lyrics/audio inputs are fixtures.
+[NXT translation] start generation=3 lines=3 provider=0 target=1 curl=1
+[NXT translation] end generation=3 done=3/3 cancelled=0
+[NXT translation] start generation=5 lines=3 provider=0 target=1 curl=1
+[NXT translation] start generation=6 lines=1 provider=0 target=0 curl=1
+[NXT translation] end generation=6 done=1/1 cancelled=0
+[NXT translation] start generation=7 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=7 done=1/1 cancelled=0
+[NXT translation] start generation=8 lines=1 provider=0 target=2 curl=1
+[NXT translation] end generation=8 done=1/1 cancelled=0
+[NXT translation] start generation=9 lines=1 provider=0 target=3 curl=1
+[NXT translation] end generation=9 done=1/1 cancelled=0
+[NXT translation] start generation=10 lines=1 provider=0 target=4 curl=1
+[NXT translation] end generation=10 done=1/1 cancelled=0
+[NXT translation] start generation=11 lines=1 provider=0 target=5 curl=1
+[NXT translation] end generation=11 done=1/1 cancelled=0
+[NXT translation] start generation=12 lines=1 provider=0 target=6 curl=1
+[NXT translation] end generation=12 done=1/1 cancelled=0
+[NXT translation] start generation=13 lines=1 provider=0 target=7 curl=1
+[NXT translation] end generation=13 done=1/1 cancelled=0
+[NXT translation] start generation=14 lines=1 provider=0 target=8 curl=1
+[NXT translation] end generation=14 done=1/1 cancelled=0
+[NXT translation] start generation=15 lines=1 provider=0 target=9 curl=1
+[NXT translation] end generation=15 done=1/1 cancelled=0
+[NXT translation] start generation=16 lines=1 provider=0 target=10 curl=1
+[NXT translation] end generation=16 done=1/1 cancelled=0
+[NXT translation] start generation=17 lines=1 provider=0 target=11 curl=1
+[NXT translation] end generation=17 done=1/1 cancelled=0
+[NXT translation] start generation=18 lines=1 provider=0 target=12 curl=1
+[NXT translation] end generation=18 done=1/1 cancelled=0
+[NXT translation] start generation=19 lines=1 provider=0 target=13 curl=1
+[NXT translation] end generation=19 done=1/1 cancelled=0
+[NXT translation] start generation=20 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=20 done=1/1 cancelled=0
+[NXT translation] start generation=21 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=21 done=1/1 cancelled=0
+[NXT translation] start generation=22 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=22 done=1/1 cancelled=0
+[NXT translation] start generation=23 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=23 done=1/1 cancelled=0
+[NXT translation] start generation=24 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=24 done=1/1 cancelled=0
+[NXT translation] start generation=25 lines=1 provider=0 target=1 curl=1
+[NXT translation] error generation=25 state=5 done=0/1 HTTP=429 curl=0
+[NXT translation] end generation=25 done=0/1 cancelled=1
+[NXT translation] start generation=26 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=26 done=0/1 cancelled=1
+[NXT translation] start generation=27 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=27 done=1/1 cancelled=0
+[NXT translation] start generation=28 lines=1 provider=0 target=1 curl=1
+[NXT translation] error generation=28 state=4 done=0/1 
+[NXT translation] end generation=28 done=0/1 cancelled=1
+[NXT translation] start generation=29 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=29 done=1/1 cancelled=0
+[NXT translation] start generation=30 lines=1 provider=0 target=1 curl=1
+[NXT translation] error generation=30 state=4 done=0/1 transport state=4 curl=-1
+[NXT translation] end generation=30 done=0/1 cancelled=1
+[NXT translation] start generation=31 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=31 done=1/1 cancelled=0
+[NXT translation] start generation=32 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=32 done=0/1 cancelled=1
+[NXT translation] start generation=33 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=33 done=1/1 cancelled=0
+[NXT translation] start generation=34 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=34 done=1/1 cancelled=0
+[NXT translation] start generation=35 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=35 done=1/1 cancelled=0
+[NXT translation] start generation=36 lines=36 provider=0 target=1 curl=1
+[NXT translation] end generation=36 done=36/36 cancelled=0
+[NXT translation] start generation=37 lines=2 provider=0 target=1 curl=1
+[NXT translation] end generation=37 done=2/2 cancelled=0
+[NXT translation] start generation=38 lines=3 provider=0 target=1 curl=1
+[NXT translation] error generation=38 state=4 done=0/3 
+[NXT translation] error generation=38 state=4 done=0/3 
+[NXT translation] end generation=38 done=3/3 cancelled=0
+[NXT translation] start generation=39 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=39 done=1/1 cancelled=0
+[NXT translation] start generation=40 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=40 done=0/1 cancelled=1
+[NXT translation] start generation=42 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=42 done=0/1 cancelled=1
+[NXT translation] start generation=43 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=43 done=0/1 cancelled=1
+[NXT translation] start generation=46 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=46 done=0/1 cancelled=1
+[NXT translation] start generation=49 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=49 done=0/1 cancelled=1
+[NXT translation] start generation=52 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=52 done=0/1 cancelled=1
+[NXT translation] start generation=54 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=54 done=0/1 cancelled=1
+[NXT translation] start generation=55 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=55 done=0/1 cancelled=1
+[NXT translation] start generation=58 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=58 done=0/1 cancelled=1
+[NXT translation] start generation=61 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=61 done=0/1 cancelled=1
+[NXT translation] start generation=63 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=63 done=0/1 cancelled=1
+[NXT translation] start generation=64 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=64 done=1/1 cancelled=0
+[NXT translation] start generation=65 lines=1 provider=0 target=1 curl=1
+[NXT translation] end generation=65 done=1/1 cancelled=0
+[NXT translation] start generation=66 lines=1 provider=1 target=1 curl=1
+[NXT translation] end generation=66 done=1/1 cancelled=0
+[NXT translation] start generation=67 lines=3 provider=1 target=1 curl=1
+[NXT translation] end generation=67 done=3/3 cancelled=0
+[NXT translation] start generation=68 lines=1 provider=1 target=1 curl=1
+[NXT translation] error generation=68 state=6 done=0/1 HTTP=403 curl=0
+[NXT translation] end generation=68 done=0/1 cancelled=1
+[NXT translation] start generation=69 lines=1 provider=1 target=1 curl=1
+[NXT translation] end generation=69 done=0/1 cancelled=1

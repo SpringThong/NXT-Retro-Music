@@ -1,0 +1,30 @@
+{
+  "version": "1.8.1",
+  "rom": "stock",
+  "exit": 0,
+  "actual_release_ELFs": true,
+  "binary_sha256": "bdcc795c75ef0419923746bffe90b6c3d621e6fd3cd5f8b36f450b42f6600751",
+  "runtime": "Pinned SDK ARM64 libc; QEMU user-mode loader and quit checks",
+  "checks": {
+    "['--build-info']": {
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.1\nStock · v1.8.1\n"
+    },
+    "['--help']": {
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.8.1 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/native-v181/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    },
+    "nxt-spotify-backend": {
+      "exit": 0,
+      "stdout": "{\"build\":\"Stock-v1.3-Hardware-Login-Fix2\",\"connect_service\":false,\"event\":\"ready\",\"experimental\":false,\"version\":\"1.3\"}\n{\"event\":\"closed\"}\n",
+      "stderr": "Spotify v1.3.0: Backend build: Stock-v1.3-Hardware-Login-Fix2\n"
+    },
+    "nxt-soundcloud-backend": {
+      "exit": 0,
+      "stdout": "{\"api\":\"yt-dlp-public-unofficial\",\"build\":\"Stock-v1.3-SoundCloud\",\"credentials_required\":false,\"event\":\"ready\"}\n",
+      "stderr": ""
+    }
+  },
+  "physical_hardware_tested": false,
+  "authenticated_playback_tested": false
+}

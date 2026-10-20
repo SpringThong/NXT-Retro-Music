@@ -1,0 +1,210 @@
+Stock: utils.c
+Stock: scaler.c
+In file included from /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/tg5040/platform/platform.c:903:
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c: In function 'wifi_find_network_id':
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:449:9: warning: 'strncpy' specified bound depends on the length of the source argument [-Wstringop-overflow=]
+         strncpy(line, current, len);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/all/common/generic_wifi.c:447:56: note: length computed here
+         size_t len = next ? (size_t)(next - current) : strlen(current);
+                                                        ^~~~~~~~~~~~~~~
+Stock: config.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/album_art.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: add_to_playlist.c
+Stock: album_art.c
+Stock: kiss_fftr.c
+Stock: platform.c
+Stock: kiss_fft.c
+Stock: api.c
+Stock: background.c
+Stock: sonic.c
+Stock: browser.c
+Stock: db_schema.c
+Stock: db.c
+Stock: debug.c
+Stock: db_statement.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/downloader.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: frame_state.c
+Stock: display_helper.c
+Stock: file_utils.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/http_download.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: downloader.c
+Stock: http_download.c
+Stock: yxml.c
+Stock: keyboard_map.c
+Stock: list_nav.c
+Stock: keyboard.c
+Stock: lyric_window.c
+Stock: list_nav_pad.c
+Stock: parson.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/lyrics.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: menu_rows.c
+Stock: module_downloader.c
+Stock: module_common.c
+Stock: lyrics.c
+Stock: module_library.c
+Stock: module_menu.c
+Stock: module_playlist.c
+Stock: module_podcast.c
+Stock: module_settings.c
+Stock: module_player.c
+Stock: module_radio.c
+Stock: mp3_seek.c
+Stock: musicplayer.c
+Stock: nxt_controls.c
+Stock: nxt_appearance.c
+Stock: nxt_config.c
+Stock: nxt_decoder.c
+Stock: nxt_drive_parser.c
+Stock: nxt_dsp.c
+Stock: nxt_i18n.c
+Stock: nxt_eq.c
+Stock: nxt_drive.c
+Stock: nxt_hardware.c
+Stock: nxt_led.c
+Stock: nxt_log.c
+Stock: nxt_music_playing.c
+Stock: nxt_library.c
+Stock: nxt_ota_package.c
+Stock: nxt_ota.c
+Stock: nxt_pcm.c
+Stock: nxt_pad.c
+Stock: nxt_presets.c
+Stock: nxt_player_core.c
+Stock: nxt_record.c
+Stock: nxt_personal.c
+Stock: nxt_route.c
+Stock: nxt_session.c
+Stock: nxt_sort.c
+Stock: nxt_screens.c
+Stock: nxt_skin.c
+Stock: nxt_stock.c
+Stock: nxt_soundcloud.c
+Stock: nxt_radio_decoders.c
+Stock: nxt_telex.c
+Stock: nxt_spotify.c
+Stock: nxt_stream.c
+Stock: nxt_usb.c
+Stock: nxt_text.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/podcast.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: playlist.c
+Stock: playlist_m3u.c
+Stock: podcast_episode_layout.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/podcast_rss.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/podcast_search.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: nxt_ui.c
+Stock: podcast_search.c
+Stock: podcast_rss.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/radio.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE  // For strcasestr
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/radio_curated.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/radio_hls.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: podcast.c
+Stock: radio_curated.c
+Stock: radio_hls.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/radio_net.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: resume.c
+Stock: screen_title.c
+Stock: radio.c
+Stock: seek_scan.c
+Stock: radio_net.c
+Stock: selfupdate.c
+Stock: spectrum_ceiling.c
+Stock: spectrum.c
+Stock: settings.c
+Stock: toast.c
+Stock: toast_state.c
+Stock: ui_album_art.c
+Stock: ui_fonts.c
+Stock: ui_icons.c
+Stock: ui_downloader.c
+Stock: ui_layers.c
+Stock: ui_keyboard.c
+Stock: ui_main.c
+Stock: ui_music.c
+Stock: ui_playlist.c
+Stock: ui_podcast_playing.c
+Stock: ui_radio.c
+Stock: ui_radio_playing.c
+Stock: ui_settings.c
+Stock: ui_system.c
+Stock: ui_podcast.c
+Stock: ui_theme.c
+Stock: ui_theme_utils.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/wget_fetch.c:1: warning: "_GNU_SOURCE" redefined
+ #define _GNU_SOURCE
+ 
+<command-line>: note: this is the location of the previous definition
+Stock: utf8.c
+Stock: wget_fetch.c
+Stock: wifi.c
+Stock: ui_utils.c
+Stock: nxt_wallpaper_store.c
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/nxt_monitor.c: In function 'draw':
+/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/nxt_monitor.c:37:182: error: implicit declaration of function 'elsesnprintf'; did you mean 'SDL_snprintf'? [-Werror=implicit-function-declaration]
+ static void draw(SDL_Surface *s,int period){const NxtMonitorSnapshot *p=NxtMonitor_snapshot();int u=s->w;char values[5][100];if(p->cpu_valid)snprintf(values[0],100,"%.1f%%",p->cpu);elsesnprintf(values[0],100,"%s",Nxt_text("Reading…","Đang đọc…"));if(p->temp_valid)snprintf(values[1],100,"%.1f °C",p->temperature);else snprintf(values[1],100,"%s",Nxt_text("Unsupported","Không hỗ trợ"));if(p->freq_valid)snprintf(values[2],100,"%d MHz",p->frequency);else snprintf(values[2],100,"%s",Nxt_text("Unsupported","Không hỗ trợ"));if(p->ram_valid)snprintf(values[3],100,"%d / %d MB",p->ram_used,p->ram_total);else snprintf(values[3],100,"%s",Nxt_text("Unsupported","Không hỗ trợ"));if(p->battery_valid)snprintf(values[4],100,"%d%% · %s",p->battery,p->charging?Nxt_text("Charging","Đang sạc"):Nxt_text("Battery","Dùng pin"));else snprintf(values[4],100,"%s",Nxt_text("Unsupported","Không hỗ trợ"));const char *names[]={"CPU",Nxt_text("CPU / SoC temperature","Nhiệt CPU / SoC"),Nxt_text("CPU frequency","Xung CPU"),"RAM",Nxt_text("Battery","Pin")};for(int i=0;i<5;i++){int x=32+(i%3)*325,y=151+(i/3)*103;SDL_Rect r={x*u/1024,y*u/1024,310*u/1024,89*u/1024};NxtSkin_rect(s,r,NxtSkin_color(NXT_PANEL),11*u/1024);NxtSkin_text(s,17,names[i],(x+16)*u/1024,(y+8)*u/1024,280*u/1024,NxtSkin_color(NXT_MUTED));NxtSkin_text(s,26,values[i],(x+16)*u/1024,(y+39)*u/1024,280*u/1024,NxtSkin_color(NXT_INK));}
+                                                                                                                                                                                      ^~~~~~~~~~~~
+                                                                                                                                                                                      SDL_snprintf
+Stock: nxt_theme.c
+cc1: some warnings being treated as errors
+Stock: nxt_custom.c
+Stock: nxt_wallpapers.c
+Traceback (most recent call last):
+  File "/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/tools/build-stock.py", line 159, in <module>
+    main()
+  File "/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/tools/build-stock.py", line 124, in main
+    objects = list(pool.map(compile_one, sources))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/tools/build-stock.py", line 120, in compile_one
+    run([CC, "-c", *flags, *extra, "-o", obj, ROOT / relative], cwd=src)
+  File "/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/tools/build-stock.py", line 24, in run
+    subprocess.run([str(x) for x in args], check=True, **kwargs)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.nxt-sdk/tg5040/compiler/bin/aarch64-nextui-linux-gnu-gcc', '-c', '-O2', '-fomit-frame-pointer', '-D_GNU_SOURCE', '-DNXT_ROM_STOCK', '-DPLATFORM="tg5040"', '-DUSE_SDL2', '-DUSE_GLES', '-DGL_GLEXT_PROTOTYPES', '-std=gnu99', '-MMD', '-MP', '-Werror=implicit-function-declaration', '-Werror=int-conversion', '-Werror=switch', '-include', '/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/nxt_i18n.h', '-DMBEDTLS_CONFIG_FILE=<mbedtls_config.h>', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/ffmpeg', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/utf8proc', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/zip/lib', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/fribidi/lib', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/harfbuzz/src', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/freetype/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/samplerate', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/headers/samplerate/src', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/audio', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include/mbedtls_lib', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include/yxml', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include/libogg/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include/libopus/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/include/opusfile/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/all/common', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/tg5040/platform', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/tg5040/libmsettings', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/NextUI/workspace/all/minarch/libretro-common/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.nxt-sdk/tg5040/compiler/aarch64-nextui-linux-gnu/libc/usr/include', '-I/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.nxt-sdk/tg5040/compiler/aarch64-nextui-linux-gnu/libc/usr/include/SDL2', '-o', '/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/.cache/stock-build/obj/upstream/src/nxt_monitor.o', '/workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/upstream/src/nxt_monitor.c']' returned non-zero exit status 1.

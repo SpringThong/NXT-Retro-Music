@@ -1,0 +1,22 @@
+Get:1 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble InRelease [256 kB]
+Get:2 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates InRelease [126 kB]
+Get:3 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-security InRelease [126 kB]
+Get:4 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-backports InRelease [126 kB]
+Get:5 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/universe amd64 Packages [19.3 MB]
+Get:6 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/multiverse amd64 Packages [331 kB]
+Get:7 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/restricted amd64 Packages [117 kB]
+Get:8 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble/main amd64 Packages [1808 kB]
+Get:9 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/restricted amd64 Packages [1842 kB]
+Get:10 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/main amd64 Packages [1525 kB]
+Get:11 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/universe amd64 Packages [2149 kB]
+Get:12 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-updates/multiverse amd64 Packages [55.8 kB]
+Get:13 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-security/multiverse amd64 Packages [50.0 kB]
+Get:14 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-security/restricted amd64 Packages [1730 kB]
+Get:15 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-security/universe amd64 Packages [1527 kB]
+Get:16 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-security/main amd64 Packages [1200 kB]
+Get:17 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-backports/universe amd64 Packages [35.9 kB]
+Get:18 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-backports/multiverse amd64 Packages [671 B]
+Get:19 https://snapshot.ubuntu.com/ubuntu/20260828T000000Z noble-backports/main amd64 Packages [48.9 kB]
+rm: cannot remove '/var/cache/apt/archives/partial/*.deb': Permission denied
+Fetched 32.4 MB in 25s (1291 kB/s)
+Reading package lists...

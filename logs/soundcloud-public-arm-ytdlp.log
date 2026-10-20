@@ -1,0 +1,2 @@
+PASS official yt-dlp 2026.08.19 ARM64 runtime --version under QEMU.
+PyInstaller child environment pre-set for QEMU-only re-exec; the device uses the normal wrapper.

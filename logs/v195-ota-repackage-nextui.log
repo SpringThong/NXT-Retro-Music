@@ -1,0 +1,15 @@
+Created /workspace/scratch/d7cab07fb248/v195-native/NXT_Retro_Music_v1.9.4_Source/dist/OTA_Google_Drive_v1.9.5_NextUI/templates/update.json (132011688 bytes, SHA-256 c247679a54cbd45316b3bab92b6851f093d7b595d8d2a003062672bc5f37f4db)
+{
+  "version": "1.9.5",
+  "rom": "nextui",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.9.5_NextUI.zip",
+  "kit_sha256": "2a0440ed6d4195f1c89f1cced533bce053305f133e220030fcecb6a251b284cc",
+  "size": 132037712,
+  "installer": "NXT_Retro_Music_v1.9.5_NextUI.zip",
+  "installer_sha256": "c247679a54cbd45316b3bab92b6851f093d7b595d8d2a003062672bc5f37f4db",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

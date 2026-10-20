@@ -1,0 +1,21 @@
+{
+  "version": "1.9.3",
+  "rom": "nextui",
+  "exit": 0,
+  "installer_sha256": "ac4010bb9866e26c698e8400e2f1d84e217064627e5953a6d45a10fcc395310a",
+  "OTA_source_sha256": {
+    "nxt_ota.c": "8daa973b0f8957a383a411b2d98783ecaed48568d80cb47b2b87d769f5503063",
+    "nxt_ota_package.c": "60bff4aefb97a18c9399eedd1dc349aa766e10f527e9e5f9e03bdf3b40637570",
+    "nxt_ota_package.h": "a8c6d9f6454d882b9146a881a9768984883ebef8e363763b7a266fb659eef59d"
+  },
+  "actual_v193_full_installer": true,
+  "baseline_installed_version_fixture": "1.9.1",
+  "production_worker_and_installer": true,
+  "drive_download_confirmation_fixture": true,
+  "sha_size_rom_checks": true,
+  "userdata_and_wallpaper_preserved": true,
+  "previous_app_backup": true,
+  "asan_ubsan": true,
+  "publisher_live_url_tested": false,
+  "hardware_tested": false
+}

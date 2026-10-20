@@ -1,0 +1,8 @@
+profiles: /workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/qa/v15_personal_test.c:54: PlayerModule_runWithPlaylist: Assertion `count==3&&selected==1' failed.
+Traceback (most recent call last):
+  File "/workspace/scratch/d7cab07fb248/nxt-stock-v1.5/NXT_Retro_Music_v1.5_Stock_Source/qa/test_v15_core.py", line 14, in <module>
+    (R/'logs/v15-core-test.log').write_text(output);print(result.stdout+result.stderr,end='');result.check_returncode()
+                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 502, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+subprocess.CalledProcessError: Command '['/tmp/nxt-v15-profiles-e14lc0d8/profiles', '--mixed-queue']' died with <Signals.SIGABRT: 6>.

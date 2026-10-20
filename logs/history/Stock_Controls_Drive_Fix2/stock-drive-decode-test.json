@@ -1,0 +1,8 @@
+{
+  "actual_arm64_decoder": {
+    "exit": 0,
+    "official_stock_rootfs": true,
+    "synthesized_audio": true,
+    "network_or_device_test": false
+  }
+}

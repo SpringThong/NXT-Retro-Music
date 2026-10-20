@@ -1,0 +1,41 @@
+{
+  "native_render": {
+    "exit": 0,
+    "dimensions": [
+      1024,
+      768
+    ],
+    "results": {
+      "v151": {
+        "home": {
+          "cpu_ms_per_paint": 13.092486,
+          "text_renders_150_paints": 3900
+        },
+        "statistics": {
+          "cpu_ms_per_paint": 11.658813,
+          "text_renders_150_paints": 5250
+        },
+        "profile": {
+          "cpu_ms_per_paint": 11.476733,
+          "text_renders_150_paints": 3600
+        }
+      },
+      "current": {
+        "home": {
+          "cpu_ms_per_paint": 11.414463,
+          "text_renders_150_paints": 0
+        },
+        "statistics": {
+          "cpu_ms_per_paint": 10.316479,
+          "text_renders_150_paints": 0
+        },
+        "profile": {
+          "cpu_ms_per_paint": 10.77507,
+          "text_renders_150_paints": 0
+        }
+      }
+    },
+    "physical_hardware_tested": false,
+    "scope": "paint CPU only; native x86 renderer, no audio, temperature, total-device CPU or battery claim"
+  }
+}

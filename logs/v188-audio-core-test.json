@@ -1,0 +1,11 @@
+{
+  "exit": 0,
+  "actual_player_and_policy_handoff": true,
+  "ASan_UBSan": true,
+  "hardware_tested": false,
+  "decoder_and_raw_PCM_fixtures": true,
+  "sources": {
+    "nxt_audio_mode.c": "2860b8a33b40c3827eb5408453873cb57b998838d32e2920c42dcd734e88109a",
+    "nxt_player_core.c": "fede6ef5fbcbbb3750244735ad294671abe820f16dd4ccbb11bd7c10b22e329c"
+  }
+}

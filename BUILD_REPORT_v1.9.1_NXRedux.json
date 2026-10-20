@@ -1,0 +1,189 @@
+{
+  "version": "1.9.1",
+  "rom": "nxredux",
+  "baseline_version": "1.9",
+  "build": {
+    "exit": 0,
+    "compiler": "GCC 8.3.0 AArch64",
+    "optimization": "O2"
+  },
+  "binary_sha256": "b92c83abc6a367a0e9a44e25529c3651bb150d216ce58ecf4d13797a0dae711d",
+  "artifacts": {
+    "installer": {
+      "filename": "NXT_Retro_Music_v1.9.1_NXRedux.zip",
+      "size": 110990209,
+      "sha256": "6cf4bcb4da585dba9f631b02224d5fb54f761edc26bf0f0fb7a39a75879de988"
+    },
+    "OTA_kit": {
+      "filename": "NXT_OTA_Google_Drive_v1.9.1_NXRedux.zip",
+      "size": 111006872,
+      "sha256": "682468c14edb3779a6ad5371f7186d540d532b54c1c5f0b5d1e781d650fe8c98"
+    }
+  },
+  "tests": {
+    "common": {
+      "cache": {
+        "exit": 0,
+        "budget_bytes": 268435456,
+        "more_than_512_retained": true,
+        "multi_batch_oldest_eviction": true,
+        "current_file_and_unrelated_files_preserved": true,
+        "bounded_metadata_heap_max_32KiB": true,
+        "generation_cancellation": true,
+        "growing_commit_headroom_accounting": true,
+        "cache_hash_format_compatible": true,
+        "cold_offline_Groq_cache_without_key_or_network": true,
+        "ASan_UBSan": true,
+        "hardware_tested": false,
+        "source_sha256": "72536f025f8cc5464910c54d6bf45c59235ec3bda73ea4ceead4ea14081bbfc1"
+      },
+      "translation": {
+        "exit": 0,
+        "real_worker_cache_curl": true,
+        "service_servers_simulated": true,
+        "MyMemory_Google_Groq_retained": true,
+        "cold_offline_cache_reuse": true,
+        "quota_retries_and_model_provider_caches": true,
+        "14_languages": true,
+        "rapid_track_change_and_environment_snapshot": true,
+        "nonblocking_UI_and_hidden_screenoff_behavior": true,
+        "ASan_UBSan": true,
+        "live_services_tested": false,
+        "hardware_tested": false,
+        "source_sha256": "72536f025f8cc5464910c54d6bf45c59235ec3bda73ea4ceead4ea14081bbfc1"
+      },
+      "original_then_translation": {
+        "exit": 0,
+        "production_original_and_translation_workers": true,
+        "filename_metadata_normalization": true,
+        "known_wrong_artist_rejected": true,
+        "cover_plain_only": true,
+        "fetched_LRC_triggers_translation": true,
+        "cold_original_and_translation_offline_caches": true,
+        "network_and_service_fixtures": true,
+        "ASan_UBSan": true,
+        "live_sources_tested": false,
+        "hardware_tested": false,
+        "sources": {
+          "lyrics.c": "c77c4b4854ee7c411c7dc64f6ac975b41d0a22ed1d2210f1adec4bca755b8976",
+          "nxt_translate.c": "72536f025f8cc5464910c54d6bf45c59235ec3bda73ea4ceead4ea14081bbfc1"
+        }
+      },
+      "Groq_TXT_CPU": {
+        "exit": 0,
+        "ASan_UBSan": true,
+        "NX_CPU_three_modes": true,
+        "launcher_cap_not_hardware_cap": true,
+        "dynamic_governor": true,
+        "restore_and_external_policy": true,
+        "Groq_TXT_UTF8_BOM_CRLF_UTF16": true,
+        "invalid_ambiguous_and_nonregular_input_rejected": true,
+        "source_TXT_retained": true,
+        "physical_hardware_tested": false
+      }
+    },
+    "DSD": {
+      "exit": 0,
+      "ASan_UBSan": true,
+      "parser_golden_cases": 576,
+      "eight_transports_byte_equal": true,
+      "DSF_LSB_MSB_DFF_mono_stereo_eight_rates": true,
+      "DoP_markers_partial_reads_seek": true,
+      "malformed_DST_truncated_nonregular_rejected": true,
+      "production_worker_pause_seek_EOF_removal": true,
+      "PCM_regression": true,
+      "PCM_only_DAC_native_rejected": true,
+      "exact_rate_and_observed_mismatch_rejected": true,
+      "production_audio_policy": true,
+      "hardware_tested": false,
+      "sources": {
+        "nxt_dsd.c": "31374e7bced2d07d334f1e6994447c9a3549804e704a579f7ffa6de90701f5ba",
+        "nxt_dsd_alsa.c": "39e3aaead28414bce62bfd5f507b386de15b0865cf94d858ebc3cd603bb13393",
+        "nxt_bitperfect.c": "2eb6270ab47c3a7449b0332254c6889cb55b7b50f584018b29d4173e310de8bc",
+        "nxt_audio_mode.c": "47c33a4e9ad01c55449a5995ab1335c54587bd5aa4847d36072158340882ce02"
+      }
+    },
+    "loader": {
+      "version": "1.9.1",
+      "rom": "nxredux",
+      "exit": 0,
+      "binary_sha256": "b92c83abc6a367a0e9a44e25529c3651bb150d216ce58ecf4d13797a0dae711d",
+      "real_ARM64_release": true,
+      "QEMU_with_pinned_SDK": true,
+      "checks": [
+        {
+          "argument": "--build-info",
+          "exit": 0,
+          "output": "NXT Retro Music v1.9.1\nNX Redux · v1.9.1 · DSDCache256\n"
+        },
+        {
+          "argument": "--help",
+          "exit": 0,
+          "output": "NXT Retro Music v1.9.1 for NX Redux\n\nUsage: /workspace/scratch/d7cab07fb248/v19-project/NXT_Retro_Music_v1.8.9.1_NXRedux_Source/nxredux/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+        }
+      ],
+      "physical_ROM_boot_tested": false
+    },
+    "OTA": {
+      "version": "1.9.1",
+      "rom": "nxredux",
+      "exit": 0,
+      "installer_sha256": "6cf4bcb4da585dba9f631b02224d5fb54f761edc26bf0f0fb7a39a75879de988",
+      "OTA_source_sha256": {
+        "nxt_ota.c": "8daa973b0f8957a383a411b2d98783ecaed48568d80cb47b2b87d769f5503063",
+        "nxt_ota_package.c": "60bff4aefb97a18c9399eedd1dc349aa766e10f527e9e5f9e03bdf3b40637570",
+        "nxt_ota_package.h": "a8c6d9f6454d882b9146a881a9768984883ebef8e363763b7a266fb659eef59d"
+      },
+      "actual_v191_full_installer": true,
+      "baseline_installed_version_fixture": "1.9",
+      "production_worker_and_installer": true,
+      "drive_download_confirmation_fixture": true,
+      "sha_size_rom_checks": true,
+      "userdata_and_wallpaper_preserved": true,
+      "previous_app_backup": true,
+      "asan_ubsan": true,
+      "publisher_live_url_tested": false,
+      "hardware_tested": false
+    },
+    "Home": {
+      "exit": 0,
+      "production_ARM64_bridge": true,
+      "protocol_version": 10,
+      "snapshot_and_frames": true,
+      "waveform": true,
+      "local_Spotify_SoundCloud_queue_controls": true,
+      "music_gain_not_master_volume": true,
+      "malformed_client_rejected": true,
+      "owner_lock_and_cleanup": true,
+      "Unix_socket_transport_mocked": true,
+      "physical_device_tested": false
+    },
+    "LED": {
+      "exit": 0,
+      "production_LED_loop": true,
+      "ASan_UBSan": true,
+      "driver_fixture_static4": true,
+      "live_16_colors_gradient_rainbow": true,
+      "native_frame_animation_disabled": true,
+      "reclaim_and_restore": true,
+      "physical_device_tested": false
+    }
+  },
+  "changes": [
+    "256 MiB translation cache on SD; no 512-song cap; bounded low-priority cleanup",
+    "Original local raw DSF/DFF DSD64-512, strict Native DSD and explicit DoP",
+    "Groq TXT import on all ROMs; MyMemory and Google retained",
+    "Original LRC/cache/LRCLIB lookup feeds translation; filename normalization and artist matching",
+    "ROM-specific integrations preserved"
+  ],
+  "OTA": {
+    "official_source": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing",
+    "publisher_live_feed_uploaded": false
+  },
+  "hardware_tested": false,
+  "limits": [
+    "Physical ROM/DAC compatibility, temperature, power and underruns require device testing",
+    "No DST/SACD ISO/remote DSD/DSD-to-PCM fallback",
+    "Original lyrics availability depends on metadata and LRCLIB; no audio speech transcription"
+  ]
+}

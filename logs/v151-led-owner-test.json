@@ -1,0 +1,13 @@
+{
+  "native_LED_ownership": {
+    "exit": 0,
+    "production_common_writer": true,
+    "production_NXT_owner": true,
+    "native_writes_when_enabled": 0,
+    "native_writes_when_disabled": 25,
+    "charging_and_ambient_guard": true,
+    "regression_without_guard_fails": true,
+    "asan_ubsan": true,
+    "physical_hardware_tested": false
+  }
+}

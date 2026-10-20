@@ -1,0 +1,72 @@
+{
+  "version": "1.6",
+  "rom": "stock",
+  "device": "trimui-brick-pro",
+  "build": {
+    "exit": 0,
+    "define": "NXT_ROM_STOCK",
+    "frontend_sources": 119,
+    "binary_sha256": "585f50f2d5fea02a446beaa650698e306b5160e953a862d4e510754a9ea0279b",
+    "compiler": "aarch64-nextui-linux-gnu-gcc pinned to SOURCE.json"
+  },
+  "installer": {
+    "filename": "NXT_Retro_Music_v1.6_Stock.zip",
+    "size": 77376101,
+    "sha256": "efb556217154ec3e38cef99b6e0268ac17a9244ddbaeb8d65557fa217689967d",
+    "crc_verified": true,
+    "aarch64_headers_and_executable_modes": true
+  },
+  "wallpapers": {
+    "version": "1.6",
+    "exit": 0,
+    "production_parser_resize_sort_persistence": true,
+    "production_gallery_and_image_worker": true,
+    "ui_sizes": [
+      640,
+      1024
+    ],
+    "asan_ubsan": true,
+    "hardware_tested": false,
+    "network": "deterministic curl child fixtures; live Wallhaven catalog tested separately"
+  },
+  "ota": {
+    "version": "1.6",
+    "rom": "stock",
+    "exit": 0,
+    "actual_v16_full_installer": true,
+    "baseline_installed_version_fixture": "1.5.2",
+    "production_worker_and_installer": true,
+    "drive_download_confirmation_fixture": true,
+    "sha_size_rom_checks": true,
+    "userdata_and_wallpaper_preserved": true,
+    "previous_app_backup": true,
+    "asan_ubsan": true,
+    "publisher_live_url_tested": false,
+    "hardware_tested": false
+  },
+  "baseline": {
+    "baseline": "1.5.2",
+    "rom": "stock",
+    "byte_identical": {
+      "upstream/src/nxt_hardware.c": true,
+      "upstream/src/nxt_led.c": true,
+      "upstream/src/player.c": true,
+      "upstream/src/nxt_ota.c": true,
+      "upstream/src/nxt_ota_package.c": true,
+      "upstream/bin/tg5040/nxt-spotify-backend": true,
+      "upstream/bin/tg5040/nxt-soundcloud-backend": true
+    }
+  },
+  "physical_hardware_tested": false,
+  "baseline_device_result": "Owner confirmed v1.5.2 works on both ROMs",
+  "publisher_action_required": "Upload the ROM installer ZIP and replace only download_url in its prepared JSON. Publish using the existing update.json file ID.",
+  "live_wallhaven": {
+    "version": "1.6",
+    "exit": 0,
+    "actual_https_worker": true,
+    "bundled_ca": true,
+    "catalog_thumbnail_full_and_resize": true,
+    "provider": "Wallhaven",
+    "hardware_tested": false
+  }
+}

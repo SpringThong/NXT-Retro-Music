@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "binary_sha256": "38c1593f1510b4cbed0b5cf35c8b39ea7120f97277f7df233b0a9f10ad04214b",
+  "actual_ARM64_release_ready_event_under_QEMU": true,
+  "build": "Shared-v1.9.7.6-SoundCloud",
+  "QEMU_full_live_transport_verified": false,
+  "host_live_flow_verified_separately": true,
+  "physical_ROM_tested": false
+}

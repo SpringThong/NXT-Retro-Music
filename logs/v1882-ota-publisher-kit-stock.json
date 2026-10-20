@@ -1,0 +1,14 @@
+{
+  "version": "1.8.8.2",
+  "rom": "stock",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.8.8.2_Stock.zip",
+  "kit_sha256": "3f3666accf66c42d30eddc99587a23278a07ebc995035058fdcd6801bcc17b9f",
+  "size": 111671751,
+  "installer": "NXT_Retro_Music_v1.8.8.2_Stock.zip",
+  "installer_sha256": "891fd58784a1661c155d0324226f93aa8b0d090f09b08cfaa35e6597284e6f63",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

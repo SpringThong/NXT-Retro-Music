@@ -1,0 +1,19 @@
+@ok 1
+@ok 2
+@ok 3
+@state playback=2 position_ms=21 lock=0 font=0 bands=10 off=0 spectrum=1 color=2 favorite=0 jack=0 dac=0 output=0 timer=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 4
+@ok 5
+@ok 6
+@ok 7
+@state playback=1 position_ms=597 lock=0 font=0 bands=10 off=0 spectrum=1 color=2 favorite=0 jack=0 dac=0 output=0 timer=0 title=사랑의 노래
+@ok 8
+@ok 9
+@ok 10
+@state playback=1 position_ms=2432 lock=0 font=0 bands=10 off=1 spectrum=1 color=2 favorite=0 jack=0 dac=0 output=0 timer=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 11
+@ok 12
+@ok 13
+@state playback=1 position_ms=2858 lock=0 font=0 bands=10 off=0 spectrum=1 color=2 favorite=0 jack=0 dac=0 output=0 timer=0 title=01 Kiểm tra 한국어 日本語 中文 ไทย.wav
+@ok 14
+@bye

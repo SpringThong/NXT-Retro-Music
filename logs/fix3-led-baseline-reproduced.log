@@ -1,0 +1,15 @@
+
+Failed to open mixer
+Failed to open mixer
+PASS production output controller: closes SDL before ALSA reset, speaker/DAC handoff retains playback, transient USB open failure retries and recovers, slow DAC starts after five seconds recover with bounded polling.
+PASS one-time hotplug defaults migration retains theme/font/key mappings; later manual output preferences persist.
+PASS DAC volume: 200 HID presses, foreground/background evdev input, bounds/mute, PCM gain changes, unchanged sink/device, zero DAC mixer writes, speaker path retained.
+
+Traceback (most recent call last):
+  File "/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/qa/test_stock_dac_volume.py", line 325, in <module>
+    run("dac_route", [work / "hardware", work])
+  File "/workspace/scratch/d7cab07fb248/nxt-stock-v1.3-fix3/NXT_Retro_Music_v1.3_Stock_Source/qa/test_stock_dac_volume.py", line 22, in run
+    raise RuntimeError(name + "\n" + result.stdout + result.stderr)
+RuntimeError: dac_route
+hardware: /tmp/nxt-stock-dac-pze5k290/hardware.c:65: main: Assertion `readtext(NXT_LED_ROOT "/effect_lr",raw,sizeof(raw))&&!strcmp(raw,"4")' failed.
+

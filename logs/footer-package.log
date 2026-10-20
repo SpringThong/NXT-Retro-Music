@@ -1,0 +1,1 @@
+PASS: release AArch64, v1.0 metadata, executable modes, payload CRC, embedded guide, exact binary, no QA hooks; fonts match approved 0.3.0.

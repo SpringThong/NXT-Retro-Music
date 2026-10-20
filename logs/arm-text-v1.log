@@ -1,0 +1,1 @@
+PASS: 576 font/script renders; 48 NFC pixel comparisons; glyph coverage, Thai clusters, Vietnamese search.

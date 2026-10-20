@@ -1,0 +1,14 @@
+{
+  "version": "1.8.8.1",
+  "rom": "nextui",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.8.8.1_NextUI.zip",
+  "kit_sha256": "6b840a9a71d5ef71e537a8788100ae86819e924b9c0302755863b51984aba06b",
+  "size": 109305926,
+  "installer": "NXT_Retro_Music_v1.8.8.1_NextUI.zip",
+  "installer_sha256": "5445108a0942593ce7fc87c32b14a6c4b4209e9dce4bf12551adbb16db0a0ef0",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

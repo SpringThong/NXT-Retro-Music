@@ -1,0 +1,235 @@
+{
+  "project": "NXT Retro Music",
+  "version": "1.7.0",
+  "rom": "stock",
+  "date_UTC": "2026-10-09",
+  "build": {
+    "exit": 0,
+    "define": "NXT_ROM_STOCK",
+    "target": "ARM64 TG5040",
+    "compiler_release": "v8.3.0-20260204-190602-d37268f5",
+    "compiler_archive_sha256": "d4ac4ef1968668f93f625f2b226c69d74739ae58ff640d2ce3aaae6b4d1b93d3",
+    "sysroot_archive_sha256": "b6b615d03204e9d9bb1a91c31de0c3402434f6b8fc780743fa88a5f1da6f3c79",
+    "frontend": "stock/bin/tg5040/musicplayer.elf",
+    "frontend_sha256": "f25c6dd3f8ca2e076b2c5b707b4c162e6fdc483c78ae1f992393ab4dc4b749f9",
+    "log": "logs/v170-stock-build.log"
+  },
+  "features": {
+    "interfaces": 24,
+    "avatar_icons": 64,
+    "avatar_emoji": 64,
+    "pixel_patterns": 64,
+    "EQ_presets": 12,
+    "custom_EQ_bands": 5,
+    "spectrum_palettes": 21,
+    "spectrum_styles": 5,
+    "LED_effects": 6,
+    "online_suggestions": "provider catalog search plus eligibility/access filters; Spotify NXT Mix is an NXT queue, not Spotify personalized Recommendations API"
+  },
+  "provider_binaries": {
+    "nxt-spotify-backend": "0f12fa810b387910e64a18c0a895cdd6a4782e6b177f9cdbe1eefc9be7815a5b",
+    "nxt-soundcloud-backend": "3ef6affcedd234e2c92f49b342158fb211b9065c08e57da95d02bb255dc21463"
+  },
+  "checks": {
+    "v170-ui-test": {
+      "exit": 0,
+      "native_layouts": 24,
+      "sizes": [
+        640,
+        1024
+      ],
+      "icon_choices": 64,
+      "emoji_choices": 64,
+      "spectrum_combinations": 105,
+      "LED_effects": 6,
+      "ASan_UBSan": true,
+      "theme_RGB_original_background_cover_preserved": true,
+      "controller_flow": true,
+      "physical_device_tested": false,
+      "live_account_playback_tested": false
+    },
+    "v170-core-test": {
+      "exit": 0,
+      "production_config_migration_persistence": true,
+      "kernel_sensor_files_and_SQLite_history": true,
+      "five_band_DSP_response_and_PCM": true,
+      "ASan_UBSan": true,
+      "physical_hardware_tested": false
+    },
+    "v170-wallpaper-qa": {
+      "version": "1.7.0",
+      "exit": 0,
+      "production_parser_resize_sort_persistence": true,
+      "production_gallery_and_image_worker": true,
+      "quality_antialias_pixel_alpha": true,
+      "full_detail_cache": true,
+      "legacy_cache_preserved_and_rebuilt": true,
+      "online_original_reused_offline": true,
+      "genre_count": 24,
+      "pagination_fixture_images": 1200,
+      "pagination_window_cap": 512,
+      "ui_sizes": [
+        640,
+        1024
+      ],
+      "asan_ubsan": true,
+      "hardware_tested": false,
+      "network": "deterministic curl child fixtures; no live network check in this v1.7.0 run"
+    },
+    "v170-arm64-test": {
+      "version": "1.7.0",
+      "rom": "stock",
+      "exit": 0,
+      "actual_release_ELFs": true,
+      "runtime": "Pinned SDK ARM64 libc; QEMU user-mode loader and quit checks",
+      "checks": {
+        "['--build-info']": {
+          "exit": 0,
+          "stdout": "NXT Retro Music\nStock · Full Themes & Personal Music\n"
+        },
+        "['--help']": {
+          "exit": 0,
+          "stdout": "NXT Retro Music v1.2 for Stock\n\nUsage: /workspace/scratch/d7cab07fb248/nxt-v17-work/NXT_Retro_Music_v1.6.1_Stock_Source/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+        },
+        "relinked_frontend": {
+          "exit": 0,
+          "stdout": "NXT Retro Music\nStock · Full Themes & Personal Music\n"
+        },
+        "nxt-spotify-backend": {
+          "exit": 0,
+          "stdout": "{\"build\":\"Stock-v1.3-Hardware-Login-Fix2\",\"connect_service\":false,\"event\":\"ready\",\"experimental\":false,\"version\":\"1.3\"}\n{\"event\":\"closed\"}\n",
+          "stderr": "Spotify v1.3.0: Backend build: Stock-v1.3-Hardware-Login-Fix2\n"
+        },
+        "nxt-soundcloud-backend": {
+          "exit": 0,
+          "stdout": "{\"api\":\"yt-dlp-public-unofficial\",\"build\":\"Stock-v1.3-SoundCloud\",\"credentials_required\":false,\"event\":\"ready\"}\n",
+          "stderr": ""
+        }
+      },
+      "physical_hardware_tested": false,
+      "authenticated_playback_tested": false
+    },
+    "v170-ota-qa": {
+      "version": "1.7.0",
+      "rom": "stock",
+      "exit": 0,
+      "actual_v170_full_installer": true,
+      "baseline_installed_version_fixture": "1.6",
+      "production_worker_and_installer": true,
+      "drive_download_confirmation_fixture": true,
+      "sha_size_rom_checks": true,
+      "userdata_and_wallpaper_preserved": true,
+      "previous_app_backup": true,
+      "asan_ubsan": true,
+      "publisher_live_url_tested": false,
+      "hardware_tested": false
+    },
+    "nextui-frame-budget-test": {
+      "visual_budget": {
+        "exit": 0,
+        "actual_production_frame_function": true,
+        "input_poll_rate_unchanged": true,
+        "spectrum_capped": true,
+        "off_hidden_no_fft_paint": true,
+        "wake_and_uint32_wrap": true,
+        "physical_temperature_measured": false
+      }
+    },
+    "v170-led-driver-test": {
+      "exit": 0,
+      "native_driver_checks": {
+        "compile_volume": {
+          "exit": 0,
+          "stdout": ""
+        },
+        "hid_pcm_volume": {
+          "exit": 0,
+          "stdout": "Failed to open mixer\nFailed to open mixer\nPASS production output controller: closes SDL before ALSA reset, speaker/DAC handoff retains playback, transient USB open failure retries and recovers, slow DAC starts after five seconds recover with bounded polling.\nPASS one-time hotplug defaults migration retains theme/font/key mappings; later manual output preferences persist.\nPASS DAC volume: 200 HID presses, foreground/background evdev input, bounds/mute, PCM gain changes, unchanged sink/device, zero DAC mixer writes, speaker path retained.\n"
+        },
+        "compile_route": {
+          "exit": 0,
+          "stdout": ""
+        },
+        "dac_route": {
+          "exit": 0,
+          "stdout": "PASS production Bluetooth ready/disconnect, peer change, DAC priority/fallback, auto off and stable manual output.\nPASS Stock LED: native animation disabled/reclaimed/restored, driver-table static=4 (not sniff=3), table-aware/fallback IDs, verified RGB readback, all 16 presets/reactive brightness, trailing-space/newline RGB, enable/60-scale and manual color; RGB retry/reclaim and private device snapshot; DAC route: failed write recovers without new hotplug; volume preserves selected PCM; short disconnect/reconnect retains DAC; sustained unplug follows setting; new ALSA card and explicit speaker selection work.\n"
+        }
+      },
+      "multicolor_group_rgb": true,
+      "restores_original_driver_state": true,
+      "physical_device_tested": false
+    },
+    "v151-led-owner-test": {
+      "native_LED_ownership": {
+        "exit": 0,
+        "production_common_writer": true,
+        "production_NXT_owner": true,
+        "native_writes_when_enabled": 0,
+        "native_writes_when_disabled": 25,
+        "charging_and_ambient_guard": true,
+        "regression_without_guard_fails": true,
+        "asan_ubsan": true,
+        "physical_hardware_tested": false
+      }
+    },
+    "v15-core-test": {
+      "profiles_and_statistics": {
+        "exit": 0,
+        "sqlite_actual": true,
+        "asan_ubsan": true,
+        "paths_and_favorites_isolated": true,
+        "seek_pause_buffer_not_counted": true,
+        "short_track_repeat_qualification": true,
+        "profile_persistence": true,
+        "recording_off": true,
+        "mixed_source_history_queue": true,
+        "profile_switch_releases_player_module": true,
+        "audio_and_hardware_boundaries": "fixtures"
+      }
+    },
+    "stock_native_runtime": {
+      "exit": 0,
+      "log": "logs/v170-stock-runtime.log",
+      "native_adapter_fixtures": true
+    },
+    "shared_spotify_backend": {
+      "exit": 0,
+      "unit_tests": 19,
+      "source_identical_for_both_ROMs": true,
+      "log": "logs/v170-spotify-unit.log",
+      "live_account_tested": false
+    },
+    "soundcloud_public_plugin": {
+      "exit": 0,
+      "full_playable_catalog_filters": true,
+      "log": "logs/v170-soundcloud-plugin.log",
+      "live_playback_tested": false
+    },
+    "relink": {
+      "exit": 0,
+      "log": "logs/v170-relink.log",
+      "ARM64_loader_verified": true,
+      "bit_identical_release_claimed": false
+    }
+  },
+  "release_archives": {
+    "NXT_Retro_Music_v1.7.0_Stock.zip": {
+      "size": 77436240,
+      "sha256": "b9b0502b702445e2b431f5807ce4f7effb02b4f2b1a923b622649f7caaff51b7"
+    },
+    "NXT_OTA_Google_Drive_v1.7.0_Stock.zip": {
+      "size": 6298,
+      "sha256": "ceeeb57177dc092f5390803c6aa1df984e9de6226268abb01948baabfb5c80c0"
+    }
+  },
+  "hardware_tested": false,
+  "live_authenticated_playback_tested": false,
+  "OTA_published": false,
+  "notes": [
+    "Native C/SDL rendering, DSP, config, kernel-reader and OTA functions tested with explicit fixtures. These checks do not emulate physical hardware.",
+    "Spotify suggestions use catalog searches and NXT Mix queues; account playlists require a successful items/readability check. Playback still depends on account/market rights.",
+    "SoundCloud guest mode uses the public unofficial yt-dlp plugin; private, blocked, preview and subscription-only results are filtered conservatively.",
+    "Separate ROM adapters preserved; Stock LED ownership and NextUI private ALSA/BlueZ and MENU/HOME lifecycle tested separately.",
+    "The previous v1.5.2 was reported stable by the user; this v1.7.0 build awaits physical-device validation."
+  ]
+}

@@ -1,0 +1,3 @@
+#!/bin/sh
+NXT_YTDLP_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+exec "$NXT_YTDLP_DIR/yt-dlp-runtime/yt-dlp" "$@"

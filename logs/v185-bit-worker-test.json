@@ -1,0 +1,9 @@
+{
+  "exit": 0,
+  "source_sha256": "d7e0ddc996fe0bfecdd204710999e3360a0d60ff2b108d70d9b18b5f599a435c",
+  "production_worker": true,
+  "four_integer_formats_byte_equal": true,
+  "ASan_UBSan": true,
+  "ALSA_and_decoder_explicit_simulators": true,
+  "hardware_tested": false
+}

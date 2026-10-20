@@ -1,0 +1,17 @@
+{
+  "STOCK": {
+    "exit": 0,
+    "real_global_custom_HID_volume_inputs": true,
+    "ASan_UBSan": true
+  },
+  "NEXTUI": {
+    "exit": 0,
+    "real_global_custom_HID_volume_inputs": true,
+    "ASan_UBSan": true
+  },
+  "NXREDUX": {
+    "exit": 0,
+    "real_global_custom_HID_volume_inputs": true,
+    "ASan_UBSan": true
+  }
+}

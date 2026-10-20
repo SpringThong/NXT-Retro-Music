@@ -1,0 +1,1 @@
+PASS actual player/controller handoff: shared SDL closed before raw; position/play state survives USB→Normal; Play works after normal load; failed exact PCM retries Normal at same position without reopen loop; Bluetooth policy Normal. Decoder/PCM hardware are fixtures.

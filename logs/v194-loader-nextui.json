@@ -1,0 +1,21 @@
+{
+  "version": "1.9.4",
+  "rom": "nextui",
+  "exit": 0,
+  "binary_sha256": "0e9d559f4c1549481931ce76fea7c6e75c280187dc53b4b03a93b5c100ea32e9",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.4\nNextUI \u00b7 v1.9.4 \u00b7 Auralis-FineVolume\n"
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "output": "NXT Retro Music v1.9.4 for NextUI\n\nUsage: /workspace/scratch/d7cab07fb248/v194-project/NXT_Retro_Music_v1.9.3_Source/upstream/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n"
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}
