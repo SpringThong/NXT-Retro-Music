@@ -1,0 +1,18 @@
+{
+  "target_repository": "SpringThong/NXT-Retro-Music",
+  "target_visibility": "public",
+  "development_repository": "SpringThong/NXT-Retro-Music-Source",
+  "development_visibility": "private",
+  "version": "1.9.7.7",
+  "status": "prepared-awaiting-public-repository-creation",
+  "application_rebuilt": false,
+  "source_available_as_separate_release_asset": true,
+  "release_assets": [
+    "NXT_Retro_Music_v1.9.7.7_Stock.zip",
+    "NXT_Retro_Music_v1.9.7.7_NextUI.zip",
+    "NXT_Retro_Music_v1.9.7.7_NXRedux.zip",
+    "NXT_Retro_Music_v1.9.7.7_Source.zip",
+    "SHA256SUMS.txt"
+  ],
+  "ota_feeds_modified": false
+}
