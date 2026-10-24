@@ -1,0 +1,42 @@
+name: Verify v1.10.2 ARM64 Spotify IPC
+on:
+  push:
+    branches: [build-v1.10.2]
+    paths: ['.github/workflows/verify-v1102-spotify.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: v1102-spotify-compiled
+          run-id: 40096644149
+          github-token: ${{ github.token }}
+          path: /tmp/nxt-v1102-helper
+      - name: Restore the exact previously compiled helper
+        shell: python
+        run: |
+          from pathlib import Path
+          import tarfile,hashlib
+          with tarfile.open('/tmp/nxt-v1102-helper/v1102-spotify-compiled.tar.gz') as t:
+              for m in t.getmembers():
+                  assert not m.name.startswith('/') and '..' not in Path(m.name).parts and not m.issym() and not m.islnk()
+              t.extractall('.',filter='data')
+          assert hashlib.sha256(Path('upstream/bin/tg5040/nxt-spotify-backend').read_bytes()).hexdigest() == 'fe3c682844ed563c5a6eace1cb8668fca1abecb050595f43a6f1967b9c29b23e'
+      - name: Load and exercise ARM64 helper IPC with the pinned SDK
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq qemu-user > /dev/null
+          python3 tools/sdk-assets.py > logs/v1102-spotify-loader-sdk.txt 2>&1
+          python3 qa/test_v1102_spotify_loader.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v1102-spotify-loader
+          path: logs/v1102-spotify-loader*.json
+          retention-days: 7
