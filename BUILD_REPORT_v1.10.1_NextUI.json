@@ -1,0 +1,41 @@
+{
+  "version": "1.10.1",
+  "rom": "nextui",
+  "build": {
+    "exit": 0,
+    "workflow_run_id": 40090328786,
+    "commit": "2e213a737cb39b05d4670b744b4aa4c36743ad0c",
+    "url": "https://github.com/SpringThong/NXT-Retro-Music/actions/runs/40090328786"
+  },
+  "binary_sha256": "dd0071c550886b9ed5e86dce636cd71c2105451bb60ec2d4b80c8d279a0ca140",
+  "inputs_sha256": "3aa1759de980e15bb6fb51abcf145f141d8c6803dffcd82cbbf8f9d19a2f8f08",
+  "spotify_backend_sha256": "a91c06152adb78a00de06ee58cb7ff23e8bfda8819d653ed7476cc047b2df50c",
+  "checks": {
+    "v1101-loader-nextui.json": {
+      "sha256": "522c51deb936e966f2fe7f95fa72df7b19a86a5a3d12316c46e5bb21a1146abc"
+    },
+    "v1101-package-qa-nextui.json": {
+      "sha256": "5bd2dd667af1ae67d8c8e325f92177cea09d1cf05ec2911d4dd26a2e5e338efb"
+    },
+    "v1101-exit-tests.txt": {
+      "sha256": "5ed96b7e95e79b09b0ff2c14c8aa7cb599c24d6c4eb8b899dbe119e0c9e3bf0a"
+    },
+    "v1101-version-tests.txt": {
+      "sha256": "78d3f8ec47741137b061947634748e28867796ddd1d17215fce333b1e2c5afa6"
+    },
+    "v1101-pcm-test.txt": {
+      "sha256": "b8f8b7c543869576277d8b714cc99f33682884d898fe146a63129adaea669e0c"
+    },
+    "v1101-spotify-tests.txt": {
+      "sha256": "76471a3da8f7117e1afcb46ee41c5aa381944fbc50f0c7329bfd49d47ac418ad"
+    },
+    "v1101-preservation.json": {
+      "sha256": "b54cd36e1a6244e2d9443c322dfb66f43c8dbb962e939f84aa9ec675ef85cc10"
+    }
+  },
+  "rust_tests_passed": 23,
+  "physical_ROM_tested": false,
+  "live_spotify_account_tested": false,
+  "performance_thermal_battery_measured": false,
+  "live_OTA_published": false
+}

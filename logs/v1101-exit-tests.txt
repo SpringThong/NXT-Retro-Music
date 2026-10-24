@@ -1,0 +1,2 @@
+PASS v1.10.1 production B flow: player returns to main menu without pause/stop/dialog; root paused/stopped exits, playing asks background/exit; saved preference unchanged
+PASS root-only exit prompt and all startup/local/playlist/Spotify/SoundCloud back routes

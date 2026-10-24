@@ -1,0 +1,21 @@
+{
+  "version": "1.10.1",
+  "baseline": "1.10",
+  "exit": 0,
+  "source_files_compared": 896,
+  "resource_files_preserved": 746,
+  "changed_C_H_INC_files": [
+    "upstream/src/module_player.c",
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_session.c",
+    "upstream/src/nxt_soundcloud.c",
+    "upstream/src/nxt_spotify.c",
+    "upstream/src/nxt_startup.c"
+  ],
+  "themes_fonts_artwork_unchanged": true,
+  "online_audio_buffering_unchanged": true,
+  "DSD_DSP_translation_cache_CPU_LED_library_OTA_code_unchanged": true,
+  "soundcloud_ytdlp_runtime_unchanged": true,
+  "original_three_OTA_feed_urls_unchanged": true,
+  "hardware_tested": false
+}

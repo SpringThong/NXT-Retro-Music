@@ -1,0 +1,23 @@
+{
+  "version": "1.10.1",
+  "rom": "stock",
+  "exit": 0,
+  "binary_sha256": "3a2cd755dce102fd98ddcb1fd80cd98d4e454e5622a07fa9257834562589e83b",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10.1\nStock \u00b7 v1.10.1 \u00b7 MainMenuBack\n",
+      "stderr": ""
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10.1 for Stock\n\nUsage: /home/runner/work/NXT-Retro-Music/NXT-Retro-Music/stock/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n",
+      "stderr": ""
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}
