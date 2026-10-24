@@ -81,14 +81,15 @@ void NxtSession_status(bool shown) {
     visible=shown;NxtStock_visible(shown);if(!enabled)return;char temp[160];snprintf(temp,sizeof(temp),"%s.tmp",status_path);FILE *f=fopen(temp,"w");if(f){fprintf(f,"%s %ld\n",shown?"VISIBLE":"HIDDEN",(long)getpid());fclose(f);rename(temp,status_path);}if(shown)poll_client();
 }
 bool NxtSession_wantsBackground(void){return background_choice||nxt.background;}
-void NxtSession_exitPrompt(DisplayContext *display){
+ModuleExitReason NxtSession_exitPrompt(DisplayContext *display){
  bool audible=NxtSpotify_isPlaying()||NxtSoundCloud_isPlaying()||Player_getState()==PLAYER_STATE_PLAYING||Radio_getState()==RADIO_STATE_PLAYING;
  background_choice=false;
- if(!audible){ModuleCommon_signalStop();ModuleCommon_requestQuit();return;}
+ if(!audible){ModuleCommon_signalStop();ModuleCommon_requestQuit();return MODULE_EXIT_QUIT;}
  int selected=0;const char *rows[]={Nxt_text("Keep playing in background","Tiếp tục nghe nhạc dưới nền"),Nxt_text("Stop music and close app","Dừng nhạc và thoát hẳn ứng dụng")};
- for(;;){NxtPick p=Nxt_pick(display,Nxt_text("Leave music player?","Thoát trình nghe nhạc?"),rows,2,&selected,Nxt_text("A Choose · B Close app","A Chọn · B Thoát hẳn"));
-  if(p.action==1&&selected==0){background_choice=true;ModuleCommon_requestQuit();return;}
-  if((p.action==1&&selected==1)||p.action==2||p.action==9){ModuleCommon_signalStop();ModuleCommon_requestQuit();return;}
+ for(;;){NxtPick p=Nxt_pick(display,Nxt_text("Leave music player?","Thoát trình nghe nhạc?"),rows,2,&selected,Nxt_text("A Choose · X Main menu · B Close app","A Chọn · X Menu chính · B Thoát hẳn"));
+  if(p.action==1&&selected==0){background_choice=true;ModuleCommon_requestQuit();return MODULE_EXIT_QUIT;}
+  if((p.action==1&&selected==1)||p.action==2||p.action==9){ModuleCommon_signalStop();ModuleCommon_requestQuit();return MODULE_EXIT_QUIT;}
+  if(p.action==3){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
  }
 }
 bool NxtSession_background(DisplayContext *display) {

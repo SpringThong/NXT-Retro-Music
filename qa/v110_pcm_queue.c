@@ -30,6 +30,13 @@ int main(void){
     packet(fd[1],8,.9f);packet(fd[1],9,.1f);wait_count(q,1);NxtPCMQueue_finish(q);
     assert(NxtPCMQueue_pop(q,out,sizeof(out))==16);float value;memcpy(&value,out+8,4);assert(value==.1f);
     NxtPCMQueue_close(q);close(fd[0]);close(fd[1]);
+    assert(!socketpair(AF_UNIX,SOCK_SEQPACKET,0,fd));q=NxtPCMQueue_open(fd[0],16);assert(q);NxtPCMQueue_reset(q,3);
+    unsigned char sc[24]={0};uint32_t epoch=3,ns=2,sr=48000,flag=0;float sample=.25f;
+    memcpy(sc,&epoch,4);memcpy(sc+4,&ns,4);memcpy(sc+8,&sr,4);memcpy(sc+12,&flag,4);memcpy(sc+16,&sample,4);memcpy(sc+20,&sample,4);
+    assert(send(fd[1],sc,sizeof(sc),0)==sizeof(sc));wait_count(q,1);assert(!NxtPCMQueue_pop(q,out,sizeof(out)));
+    ns=0;flag=1;memcpy(sc+4,&ns,4);memcpy(sc+12,&flag,4);assert(send(fd[1],sc,16,0)==16);wait_count(q,2);
+    assert(NxtPCMQueue_pop(q,out,sizeof(out))==24);assert(NxtPCMQueue_pop(q,out,sizeof(out))==16);
+    NxtPCMQueue_close(q);close(fd[0]);close(fd[1]);
     NxtOnlineRamp ramp={0};float pcm[1024];for(int i=0;i<1024;i++)pcm[i]=1;
     NxtOnlineRamp_process(&ramp,pcm,512,256,48000);
     assert(pcm[0]>0&&pcm[0]<.01f);assert(pcm[510]==1);assert(pcm[512]<1&&pcm[512]>.99f);assert(pcm[1022]==0);

@@ -541,7 +541,7 @@ static bool handle_playing_input(SDL_Surface *screen, PlayerInternalState *state
         *dirty = 1;
     }
     else if (NxtControl_pressed(NC_MENU)) {
-        NxtSession_exitPrompt(DisplayHelper_current());
+        if(NxtSession_exitPrompt(DisplayHelper_current())==MODULE_EXIT_TO_MENU){cleanup_album_art_background();cleanup_playback_ui();Background_setActive(BG_MUSIC);*state=PLAYER_INTERNAL_BROWSER;}
         *dirty=1;return true;
     }
     else if (NxtControl_pressed(NC_PREV)) {
@@ -703,6 +703,7 @@ ModuleExitReason PlayerModule_run(DisplayContext* display, bool now_playing_entr
         }
         else if (state == PLAYER_INTERNAL_PLAYING) {
             bool skip_render = handle_playing_input(screen, &state, &dirty);
+            if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
             if (entered_via_now_playing && state != PLAYER_INTERNAL_PLAYING) {
                 return MODULE_EXIT_TO_MENU;
             }
@@ -953,7 +954,7 @@ ModuleExitReason PlayerModule_runWithPlaylist(DisplayContext* display,
             dirty = 1;
         }
         else if (NxtControl_pressed(NC_MENU)) {
-            NxtSession_exitPrompt(display);cleanup_playback_ui();return MODULE_EXIT_QUIT;
+            ModuleExitReason exit_reason=NxtSession_exitPrompt(display);cleanup_playback_ui();return exit_reason;
         }
         else if (NxtControl_pressed(NC_PREV)) {
             PlayerModule_prevTrack();
@@ -1200,6 +1201,7 @@ static ModuleExitReason run_resume(DisplayContext* display, const ResumeState* r
 
             // Delegate to shared playing input handler
             if (handle_playing_input(screen, &state, &dirty)) {
+                if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
                 // If state left playing (BTN_B or all tracks ended), return to menu immediately
                 // Don't continue the loop or handle_playing_input will re-trigger track-ended logic
                 if (state != PLAYER_INTERNAL_PLAYING) {

@@ -121,7 +121,7 @@ const char *NxtHardware_bottomStatus(void);
 int NxtHardware_bottomUSB(bool host);
 int NxtSession_start(int argc, char **argv);
 bool NxtSession_background(DisplayContext *);
-void NxtSession_exitPrompt(DisplayContext *);
+ModuleExitReason NxtSession_exitPrompt(DisplayContext *);
 bool NxtSession_wantsBackground(void);
 void NxtSession_status(bool visible);
 void NxtSession_quit(void);

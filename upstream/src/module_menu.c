@@ -23,7 +23,7 @@ MenuSelection MenuModule_run(DisplayContext *display) {
    else if(NxtPad_justRepeated(BTN_UP)){if(selected==6)selected=4+column;else if(selected<2){column=selected;selected=6;}else selected-=2;}
    else if(NxtPad_justRepeated(BTN_DOWN)){if(selected==6)selected=column;else if(selected>=4){column=selected%2;selected=6;}else selected+=2;}
    else if(selected<6&&(NxtPad_justRepeated(BTN_LEFT)||NxtPad_justRepeated(BTN_RIGHT))){selected^=1;column=selected%2;}
-   else if(NxtPad_justPressed(BTN_B)){NxtSession_exitPrompt(display);return MENU_QUIT;}
+   else if(NxtPad_justPressed(BTN_B)){if(NxtSession_exitPrompt(display)==MODULE_EXIT_QUIT)return MENU_QUIT;Nxt_takeReturnHome();redraw=0;}
    else if(NxtPad_justPressed(BTN_Y)){
     if(NxtSoundCloud_active()||NxtSpotify_active()||Background_getActive()!=BG_NONE||Player_getState()!=PLAYER_STATE_STOPPED)return MENU_NOW_PLAYING;
     if(Resume_isAvailable())return MENU_RESUME;

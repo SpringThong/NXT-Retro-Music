@@ -323,7 +323,7 @@ ModuleExitReason NxtSpotify_nowPlaying(DisplayContext *d){
   if(!g.input_consumed&&!Nxt_lockInput()){
    ModuleExitReason child_result=MODULE_EXIT_TO_MENU;
    if(NxtControl_aux()){}
-   else if(NxtControl_pressed(NC_MENU)){NxtSession_exitPrompt(d);result=MODULE_EXIT_QUIT;break;}
+   else if(NxtControl_pressed(NC_MENU)){result=NxtSession_exitPrompt(d);break;}
    else if(NxtControl_pressed(NC_PLAY)){if(!track_loaded&&queue_count>0)select_track(queue_index);else NxtSpotify_togglePause();}
    else if(NxtControl_pressed(NC_PREV))select_track(adjacent(-1));
    else if(NxtControl_pressed(NC_NEXT))select_track(adjacent(1));
