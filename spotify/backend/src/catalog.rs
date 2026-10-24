@@ -1,7 +1,7 @@
 use crate::{api::{self,Api},diagnostic};
 use serde_json::{Value,json};
 #[derive(Clone)]
-pub struct Catalog { primary:Api,profile:Value,pub library_warning:Option<String>,pub import_warning:Option<String>,blocked:Option<String> }
+pub struct Catalog { primary:Api,profile:Value,pub library_warning:Option<String>,pub import_warning:Option<String>,blocked:Option<String>,native:Option<crate::native_catalog::NativeCatalog> }
 async fn profile_probe(api:&mut Api)->Result<Value,String>{
  // Bound only the library request: cancelling OAuth refresh can lose a
  // rotated token. OAuth has its own bounded HTTP request.
@@ -9,33 +9,48 @@ async fn profile_probe(api:&mut Api)->Result<Value,String>{
 }
 impl Catalog {
  pub async fn open_verified(playback:Api,username:&str,session:&librespot_core::session::Session)->Self {
-  // QR authorizes the playback session. Derive catalog access from that same
-  // session rather than requiring an unrelated developer-login JSON first.
+  // QR uses the authenticated client's library services from the start. Do not
+  // send its playback token to the developer Web API or switch identities after
+  // a denial. Explicit PC OAuth continues using its separately authorized API.
   let qr=playback.client_id()==api::PLAYBACK_CLIENT_ID;
-  let mut primary=if qr {Api::from_session(session.clone()).unwrap_or(playback)} else {playback};
   let minimal=json!({"id":username,"display_name":"Spotify"});
+  if qr {
+   match crate::native_catalog::NativeCatalog::new(session.clone()) {
+    Ok(mut native)=>{
+     let profile=native.profile().await.unwrap_or_else(|_|minimal.clone());
+     let warning=native.probe().await.err();
+     diagnostic(if warning.is_none(){"Native library: rootlist verified; QR session client services selected"}else{"Native library: rootlist probe unavailable; QR browsing can retry"});
+     return Self{primary:playback,profile,library_warning:warning,import_warning:None,blocked:None,native:Some(native)};
+    },
+    Err(e)=>return Self{primary:playback,profile:minimal,library_warning:Some(e.clone()),import_warning:None,blocked:Some(e),native:None}
+   }
+  }
+  let mut primary=playback;
   match profile_probe(&mut primary).await {
-   Ok(profile) if same_account(&profile,Some(username))=>Self{primary,profile,library_warning:None,import_warning:None,blocked:None},
-   Ok(_)=>Self{primary,profile:minimal,library_warning:Some("account_mismatch".into()),import_warning:None,blocked:Some("account_mismatch".into())},
+   Ok(profile) if same_account(&profile,Some(username))=>Self{primary,profile,library_warning:None,import_warning:None,blocked:None,native:None},
+   Ok(_)=>Self{primary,profile:minimal,library_warning:Some("account_mismatch".into()),import_warning:None,blocked:Some("account_mismatch".into()),native:None},
    Err(e)=>{
     diagnostic(&format!("Library probe: {e}; verified playback remains available"));
     let profile=match tokio::time::timeout(std::time::Duration::from_secs(5),session.spclient().get_user_profile(username,Some(0),Some(0))).await {
      Ok(Ok(bytes))=>serde_json::from_slice::<Value>(&bytes).ok().and_then(|v|profile_display(&v,username)).unwrap_or(minimal),
      _=>minimal
     };
-    Self{primary,profile,library_warning:Some(e),import_warning:None,blocked:None}
+    Self{primary,profile,library_warning:Some(e),import_warning:None,blocked:None,native:None}
    }
   }
  }
  pub fn display_name(&self)->&str {self.profile["display_name"].as_str().filter(|s|!s.is_empty()).unwrap_or("Spotify")}
+ pub fn uses_native(&self)->bool{self.native.is_some()}
  async fn get(&mut self,path:&str,params:&[(&str,&str)])->Result<Value,String>{
   if let Some(reason)=&self.blocked{return Err(reason.clone());}
   self.primary.get(path,params).await
  }
- pub async fn saved(&mut self,uri:&str)->Result<bool,String>{let body=self.get("/me/library/contains",&[("uris",uri)]).await?;body[0].as_bool().ok_or_else(||"api_invalid_json".into())}
- pub async fn favorite(&mut self,uri:&str,value:bool)->Result<(),String>{if let Some(e)=&self.blocked{return Err(e.clone());}self.primary.favorite(uri,value).await}
+ pub async fn saved(&mut self,uri:&str)->Result<bool,String>{if let Some(native)=&self.native{return native.saved(uri).await;}let body=self.get("/me/library/contains",&[("uris",uri)]).await?;body[0].as_bool().ok_or_else(||"api_invalid_json".into())}
+ pub async fn favorite(&mut self,uri:&str,value:bool)->Result<(),String>{if let Some(e)=&self.blocked{return Err(e.clone());}if let Some(native)=&mut self.native{return native.favorite(uri,value).await;}self.primary.favorite(uri,value).await}
  pub fn cover_api(&self)->Api {self.primary.clone()}
  pub async fn query(&mut self,v:&Value)->Value {
+  if let Some(native)=&mut self.native{return native.query(v).await;}
+  if let Some(reason)=&self.blocked{return json!({"event":"error","reason":reason,"request_id":v["request_id"]});}
   let cmd=v["cmd"].as_str().unwrap_or("");
   let offset=bounded_offset(cmd,v["offset"].as_u64().unwrap_or(0)).to_string();
   let q=v["query"].as_str().unwrap_or("").trim();
@@ -53,24 +68,9 @@ impl Catalog {
    "album_tracks"=>match self.get(&format!("/albums/{id}"),&[]).await {Ok(album)=>{parent=album;self.get(&format!("/albums/{id}/tracks"),&params).await},Err(e)=>Err(e)},
    _=>self.get(&format!("/playlists/{id}/items"),&params).await
   };
-  match result {Ok(mut body)=>{
-   if cmd=="playlists" {
-    // A public or followed playlist is not proof of readable items. Test
-    // access with this same account and client; never switch credentials.
-    let candidates=body["items"].as_array().cloned().unwrap_or_default();
-    let mut readable=Vec::new();
-    for playlist in candidates.iter().take(10) {
-     let Some(id)=playlist["id"].as_str().filter(|id|id.len()==22&&id.bytes().all(|c|c.is_ascii_alphanumeric()))else{continue;};
-     if playlist["owner"]["id"]!=self.profile["id"]&&playlist["collaborative"].as_bool()!=Some(true){continue;}
-     match self.primary.get_once(&format!("/playlists/{id}/items"),&[("limit","20"),("offset","0")]).await {
-      Ok(tracks) if !api::items("playlist_tracks",&tracks,&Value::Null).is_empty()=>readable.push(playlist.clone()),
-      Ok(_)=>{},
-      Err(e) if e=="api_http_403"||e=="api_http_404"=>{},
-      Err(e)=>return json!({"event":"error","reason":e,"request_id":v["request_id"]}),
-     }
-    }
-    body["items"]=json!(readable);
-   }
+  // Opening the list is one request. Check playlist contents only on selection,
+  // rather than eagerly probing every entry and generating an N+1 burst.
+  match result {Ok(body)=>{
    let root=if cmd.starts_with("search"){&body[format!("{search_type}s")]}else{&body};
    json!({"event":"results","kind":cmd,"items":api::items(cmd,root,&parent),"offset":v["offset"].as_u64().unwrap_or(0),"next_offset":root["next"].as_str().and_then(|n|reqwest::Url::parse(n).ok()).and_then(|u|u.query_pairs().find(|(k,_)|k=="offset").and_then(|(_,v)|v.parse::<u64>().ok())).unwrap_or(v["offset"].as_u64().unwrap_or(0)+if cmd.starts_with("search"){10}else{20}),"has_next":root["next"].is_string()&&(!cmd.starts_with("search")||v["offset"].as_u64().unwrap_or(0)<990),"request_id":v["request_id"]})
   },Err(e)=>json!({"event":"error","reason":if cmd=="playlist_tracks"&&e=="api_http_403"{"playlist_access_restricted"}else{&e},"request_id":v["request_id"]})}

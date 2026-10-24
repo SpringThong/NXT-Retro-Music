@@ -1,10 +1,10 @@
 {
   "name": "NXT Retro Music",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "type": "TOOL",
-  "description": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster.",
+  "description": "v1.10.2: QR client-library browsing, liked songs/saved albums/favorites, batched metadata and bounded caches; scoped context search; v1.10.1 Back behavior and original OTA sources retained.",
   "author": "Nguyễn Xuân Thông; based on Music Player by Mohammad Syuhada and nborodikhin",
-  "release_filename": "NXT_Retro_Music_v1.10.1_NextUI.zip",
+  "release_filename": "NXT_Retro_Music_v1.10.2_NextUI.zip",
   "changelog": {
     "v1.2": "SoundCloud official public API: eligible full-length tracks, track/playlist search, themed discovery, public URL resolution, native HLS AAC/MP3 playback, local bookmarks, optional matched LRCLIB lyrics, source QR, and the shared NXT PCM/DSP/DAC/background player. Requires your registered API client; live playback has not been verified without credentials.",
     "v1.1": "Spotify Premium direct playback, single QR login, shared Now Playing and mini player, Spotify/LRCLIB lyrics, account favorites, queue and NextUI background playback. Includes front TrimUI-logo exit and bottom USB DAC/charging controls.",
@@ -23,7 +23,8 @@
     "v1.9.7.6": "Fix public MONETIZE SoundCloud permission handling and misleading stream errors; keep all v1.9.7.5 features.",
     "v1.9.7.7": "Refined antialiasing and artwork, larger symmetric Auralis controls, clear filled active states and bounded per-size icon caches. All listening features retained.",
     "v1.10": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained.",
-    "v1.10.1": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster."
+    "v1.10.1": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster.",
+    "v1.10.2": "v1.10.2: QR client-library browsing, liked songs/saved albums/favorites, batched metadata and bounded caches; scoped context search; v1.10.1 Back behavior and original OTA sources retained."
   },
   "screenshots": [],
   "platforms": [

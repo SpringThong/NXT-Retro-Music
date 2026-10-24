@@ -1,6 +1,6 @@
 [package]
 name = "nxt-spotify-backend"
-version = "1.10.1"
+version = "1.10.2"
 edition = "2024"
 [dependencies]
 librespot-core = { path = "../vendor/librespot-dev/core", default-features = false, features = ["rustls-tls-webpki-roots"] }
@@ -13,3 +13,6 @@ log = "0.4"
 
 librespot-oauth = { path = "../vendor/librespot-dev/oauth", default-features = false, features = ["rustls-tls-webpki-roots"] }
 qrcode = { version = "0.14", default-features = false }
+librespot-protocol = { path = "../vendor/librespot-dev/protocol", default-features = false }
+protobuf = "=3.7.2"
+base64 = "0.22"

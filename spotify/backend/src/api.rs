@@ -12,11 +12,11 @@ pub struct Api { pub data:Value,path:PathBuf,http:reqwest::Client,session:Option
 struct RateState { gate:tokio::sync::Mutex<()>, retry:std::sync::atomic::AtomicU64 }
 static RATE_STATES:std::sync::LazyLock<std::sync::Mutex<std::collections::HashMap<String,std::sync::Arc<RateState>>>>=std::sync::LazyLock::new(Default::default);
 #[derive(Clone,Copy)]
-enum Endpoint { WebApi, OAuth }
+enum Endpoint { WebApi, OAuth, Native }
 fn retry_seconds(h:&reqwest::header::HeaderMap,attempt:u32)->u64{h.get(reqwest::header::RETRY_AFTER).and_then(|v|v.to_str().ok()).and_then(|s|s.parse().ok()).unwrap_or(2u64<<attempt).max(1)}
 impl Api {
  fn rate_state(&self,endpoint:Endpoint)->std::sync::Arc<RateState>{
-  let key=format!("{}:{}",self.client_id(),match endpoint{Endpoint::WebApi=>"api",Endpoint::OAuth=>"oauth"});
+  let key=format!("{}:{}",self.client_id(),match endpoint{Endpoint::WebApi=>"api",Endpoint::OAuth=>"oauth",Endpoint::Native=>"native"});
   RATE_STATES.lock().expect("rate state lock").entry(key).or_default().clone()
  }
  async fn send_limited(&self,request:reqwest::RequestBuilder,endpoint:Endpoint,retry:bool)->Result<reqwest::Response,String>{
@@ -54,7 +54,29 @@ impl Api {
   // Same approved account and client ID as playback. Never rotate clients to
   // bypass a provider denial or quota; all HTTP limits remain shared.
   Ok(Self{data:json!({"client_id":session.client_id()}),path:PathBuf::new(),
-   http:reqwest::Client::builder().timeout(std::time::Duration::from_secs(20)).build().map_err(|_|"http_init")?,session:Some(session)})
+   http:reqwest::Client::builder().redirect(reqwest::redirect::Policy::none()).timeout(std::time::Duration::from_secs(20)).build().map_err(|_|"http_init")?,session:Some(session)})
+ }
+ pub async fn native_bytes(&self,method:reqwest::Method,path:&str,body:Option<Vec<u8>>,content_type:&str)->Result<Vec<u8>,String>{
+  // A fixed set of authenticated client services, chosen before requests are
+  // made. Never send the QR playback token to the public developer Web API.
+  if !native_path(path){return Err("native_invalid_path".into());}
+  let session=self.session.as_ref().ok_or("native_session_missing")?;
+  let base=tokio::time::timeout(std::time::Duration::from_secs(8),session.spclient().base_url()).await.map_err(|_|"native_timeout")?.map_err(|_|"native_network")?;
+  let u=reqwest::Url::parse(&base).map_err(|_|"native_invalid_host")?;
+  let host=u.host_str().unwrap_or("");
+  if u.scheme()!="https"||!host.ends_with(".spotify.com")||u.username()!=""||u.password().is_some()||u.port().is_some_and(|p|p!=443){return Err("native_invalid_host".into());}
+  let token=tokio::time::timeout(std::time::Duration::from_secs(8),session.login5().auth_token()).await.map_err(|_|"native_timeout")?.map_err(|_|"native_session_expired")?;
+  let client=tokio::time::timeout(std::time::Duration::from_secs(8),session.spclient().client_token()).await.map_err(|_|"native_timeout")?.map_err(|_|"native_client_token_failed")?;
+  let mut request=self.http.request(method,format!("{}{path}",base.trim_end_matches('/'))).bearer_auth(token.access_token).header("client-token",client).header("accept",content_type);
+  if let Some(body)=body{request=request.header("content-type",content_type).body(body);}
+  // One attempt; retain and honour the service's cooldown for later requests.
+  // Idempotent collection writes are not retried after an unknown outcome.
+  let mut response=self.send_limited(request,Endpoint::Native,false).await?;
+  let status=response.status().as_u16();
+  let mut data=Vec::new();
+  while let Some(chunk)=response.chunk().await.map_err(|_|"native_network")?{if data.len()+chunk.len()>4*1024*1024{return Err("native_response_large".into());}data.extend_from_slice(&chunk);}
+  if !(200..300).contains(&status){crate::diagnostic(&format!("Native library HTTP {status}"));return Err(format!("native_http_{status}"));}
+  Ok(data)
  }
  pub async fn token(&mut self)->Result<String,String>{
   if let Some(session)=&self.session {
@@ -114,6 +136,10 @@ impl Api {
   let mut bytes=Vec::new();while let Some(chunk)=res.chunk().await.map_err(|_|"cover_read")?{if bytes.len()+chunk.len()>8*1024*1024{return Err("cover_too_large".into());}bytes.extend_from_slice(&chunk);}
   let tmp=format!("{path}.tmp");std::fs::write(&tmp,bytes).map_err(|_|"cover_write")?;std::fs::rename(tmp,path).map_err(|_|"cover_write".to_owned())
  }
+}
+fn native_path(path:&str)->bool{
+ path.starts_with('/')&&!path.contains("..")&&!path.contains('\\')&&!path.contains(['\r','\n','#'])
+ && ["/playlist/v2/", "/user-profile-view/v3/profile/", "/collection/v2/", "/extended-metadata/v0/extended-metadata", "/context-resolve/v1/"].iter().any(|prefix|path.starts_with(prefix))
 }
 fn api_error(status:u16,body:&Value)->String{
  let message=body["error"]["message"].as_str().unwrap_or("").to_ascii_lowercase();
@@ -228,5 +254,20 @@ mod tests {
   assert_eq!(api_error(403,&json!({"error":{"message":"Forbidden"}})),"api_http_403");
   assert_eq!(api_error(401,&json!({"error":{"message":"Expired token"}})),"api_http_401");
   assert_eq!(api_error(429,&Value::Null),"api_http_429");
+ }
+}
+
+#[cfg(test)] mod native_transport_tests {
+ #[test] fn native_route_allowlist_excludes_developer_api_and_external_destinations(){
+  for p in ["/collection/v2/paging","/playlist/v2/playlist/0123456789012345678901?from=0&length=20","/context-resolve/v1/spotify:search:test"]{assert!(super::native_path(p));}
+  for p in ["https://example.org/","/v1/me","/collection/v2/../../v1/me","/collection/v2/write\r\nAuthorization: stolen","\\collection\\v2\\write"]{assert!(!super::native_path(p));}
+ }
+ #[tokio::test] async fn native_service_honours_retry_after_without_extra_requests(){
+  use std::io::{Read,Write};
+  let listener=std::net::TcpListener::bind("127.0.0.1:0").unwrap();let address=listener.local_addr().unwrap();
+  let server=std::thread::spawn(move||{let(mut socket,_)=listener.accept().unwrap();let mut data=[0;4096];socket.read(&mut data).unwrap();socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nRetry-After: 3600\r\nContent-Length: 0\r\nConnection: close\r\n\r\n").unwrap();});
+  let a=super::Api{data:serde_json::json!({"client_id":"native-fixture-cooldown"}),path:std::path::PathBuf::new(),session:None,http:reqwest::Client::new()};
+  for _ in 0..2{let r=a.send_limited(a.http.get(format!("http://{address}/collection")),super::Endpoint::Native,false).await;assert!(matches!(r,Err(e) if e.starts_with("rate_limited:")));}
+  server.join().unwrap();
  }
 }

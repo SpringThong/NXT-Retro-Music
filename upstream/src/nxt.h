@@ -7,17 +7,17 @@
 #include <SDL2/SDL_ttf.h>
 #include "display_helper.h"
 #include "module_common.h"
-#define NXT_VERSION "1.10.1"
+#define NXT_VERSION "1.10.2"
 #define NXT_APP_NAME "NXT Retro Music"
 #ifdef NXT_ROM_NXREDUX
-#define NXT_BUILD_REVISION "NX Redux · v1.10.1 · MainMenuBack"
-#define NXT_SESSION_BUILD_KEY "1.10.1-NXRedux-MainMenuBack"
+#define NXT_BUILD_REVISION "NX Redux · v1.10.2 · QR-NativeCatalog"
+#define NXT_SESSION_BUILD_KEY "1.10.2-NXRedux-QR-NativeCatalog"
 #elif defined(NXT_ROM_STOCK)
-#define NXT_BUILD_REVISION "Stock · v1.10.1 · MainMenuBack"
-#define NXT_SESSION_BUILD_KEY "1.10.1-Stock-MainMenuBack"
+#define NXT_BUILD_REVISION "Stock · v1.10.2 · QR-NativeCatalog"
+#define NXT_SESSION_BUILD_KEY "1.10.2-Stock-QR-NativeCatalog"
 #else
-#define NXT_BUILD_REVISION "NextUI · v1.10.1 · MainMenuBack"
-#define NXT_SESSION_BUILD_KEY "1.10.1-NextUI-MainMenuBack"
+#define NXT_BUILD_REVISION "NextUI · v1.10.2 · QR-NativeCatalog"
+#define NXT_SESSION_BUILD_KEY "1.10.2-NextUI-QR-NativeCatalog"
 #endif
 
 #define NXT_EQ_BANDS 31

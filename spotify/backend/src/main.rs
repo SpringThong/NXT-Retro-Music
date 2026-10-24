@@ -3,6 +3,7 @@ mod auth;
 mod pcm;
 mod pair;
 mod catalog;
+mod native_catalog;
 mod lyrics;
 use std::sync::{Arc,atomic::{AtomicU32,Ordering}};
 // NXT direct Spotify player. JSON stdin/stdout; no Connect discovery/control service.
@@ -59,8 +60,8 @@ async fn main(){
  let mut pair_task:Option<tokio::task::JoinHandle<()>>=None;
  let mut cover_task:Option<tokio::task::JoinHandle<()>>=None;
  let generation=Arc::new(AtomicU32::new(0));
- diagnostic("Backend build: NXT-v1.10.1-Login5-Library");
- emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.10.1","build":"NXT-v1.10.1-Login5-Library"}));
+ diagnostic("Backend build: NXT-v1.10.2-NativeCatalog");
+ emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.10.2","build":"NXT-v1.10.2-NativeCatalog"}));
  while let Ok(Some(line))=input.next_line().await{
   if line.len()>16384{emit(json!({"event":"error","reason":"request_too_large"}));continue;}
   let Ok(v)=serde_json::from_str::<Value>(&line) else{emit(json!({"event":"error","reason":"invalid_json"}));continue;};
@@ -77,9 +78,9 @@ async fn main(){
      Ok(verified)=>{
       emit(json!({"event":"login_progress","stage":"library"}));
       let a=catalog::Catalog::open_verified(verified.credentials,&verified.username,&verified.session).await;
-      let name=a.display_name().to_owned();let warning=a.library_warning.clone();let import_warning=a.import_warning.clone();
+      let name=a.display_name().to_owned();let warning=a.library_warning.clone();let import_warning=a.import_warning.clone();let native_catalog=a.uses_native();
       session=Some(verified.session);api=Some(Arc::new(tokio::sync::Mutex::new(a)));
-      emit(json!({"event":"logged_in","display_name":name,"needs_upgrade":false,"playback_ready":true,"library_ready":warning.is_none(),"library_warning":warning,"import_warning":import_warning}));
+      emit(json!({"event":"logged_in","display_name":name,"needs_upgrade":false,"playback_ready":true,"library_ready":warning.is_none(),"library_warning":warning,"import_warning":import_warning,"native_catalog":native_catalog}));
      },
      Err(e)=>{diagnostic(&format!("Login: playback authentication failed: {e}"));emit(json!({"event":"error","reason":e,"operation":"login"}));}
     }

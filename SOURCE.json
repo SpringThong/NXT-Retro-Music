@@ -1,6 +1,6 @@
 {
   "project": "NXT Retro Music",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "device_platform": "tg5040",
   "upstream_repository": "https://github.com/nborodikhin/nextui-music-player.git",
   "upstream_commit": "f0e5e2ea2fea4f535d659b72aa1d2a8e969e5484",
@@ -17,22 +17,22 @@
     "nextui",
     "nxredux"
   ],
-  "release_ready": true,
+  "release_ready": false,
   "release_build_paused_by_user": false,
   "official_OTA_sources": {
     "stock": "https://drive.google.com/file/d/1OUrxqAs2fOnjKeqZscGcMEiX5Yv3jP5m/view?usp=sharing",
     "nextui": "https://drive.google.com/file/d/16OuNQmcxwLE3VTTN2bUyZ0yL2EiGFeuD/view?usp=sharing",
     "nxredux": "https://drive.google.com/file/d/1rYgL1ao0wm3V8IEA_WxUTfJ-mstKG59r/view?usp=sharing"
   },
-  "baseline_version": "1.10",
-  "stage": "v1.10.1-three-ROM-packaged",
+  "baseline_version": "1.10.1",
+  "stage": "v1.10.2-native-QR-catalog-build",
   "hardware_test_status": "Not tested on physical device",
-  "spotify_backend_version": "1.10.1",
-  "verification": "RELEASE_QA_v1.10.1.md",
+  "spotify_backend_version": "1.10.2",
+  "verification": "RELEASE_QA_v1.10.2.md",
   "current_build_reports": [
-    "BUILD_REPORT_v1.10.1_Stock.json",
-    "BUILD_REPORT_v1.10.1_NextUI.json",
-    "BUILD_REPORT_v1.10.1_NXRedux.json"
+    "BUILD_REPORT_v1.10.2_Stock.json",
+    "BUILD_REPORT_v1.10.2_NextUI.json",
+    "BUILD_REPORT_v1.10.2_NXRedux.json"
   ],
   "live_OTA_published": false
 }

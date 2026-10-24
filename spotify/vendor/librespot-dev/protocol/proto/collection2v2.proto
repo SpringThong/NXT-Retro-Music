@@ -54,3 +54,15 @@ message InitializedRequest {
 message InitializedResponse {
     bool initialized = 1;
 }
+
+// Collection service wire messages also used by go-librespot's library client.
+// Same authenticated /collection/v2 service; no Web API developer grant.
+message ContainsRequest {
+    string username = 1;
+    string set = 2;
+    repeated CollectionItem items = 3;
+}
+
+message ContainsResponse {
+    repeated bool found = 1;
+}

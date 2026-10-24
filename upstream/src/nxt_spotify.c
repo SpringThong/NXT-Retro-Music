@@ -63,6 +63,7 @@ static uint32_t position_since;
 static uint32_t loading_since;static bool pcm_seen;
 static bool backend_ended;
 static bool auth_required,auth_upgrade,favorite,favorite_pending,favorite_change;
+static bool native_catalog;
 static char lyrics_path[1024],lyrics_status[160],account_name[256];
 static void copy(char *out,size_t n,const char *in){if(!in)in="";size_t k=strlen(in);if(k>=n){k=n-1;while(k&&((unsigned char)in[k]&0xc0)==0x80)k--;}memcpy(out,in,k);out[k]=0;for(size_t i=0;i<k;i++)if(out[i]=='\n'||out[i]=='\r')out[i]=' ';}
 static void paths(void){if(*creds)return;char dir[1024];userdata_snpath("spotify",dir,sizeof(dir));mkdir(dir,0700);userdata_snpath("spotify/credentials.json",creds,sizeof(creds));userdata_snpath("spotify/playback.json",playback_creds,sizeof(playback_creds));userdata_snpath("spotify/cover.jpg",cover_path,sizeof(cover_path));userdata_snpath("spotify/lyrics.txt",lyrics_path,sizeof(lyrics_path));if(getcwd(dir,sizeof(dir)))snprintf(diag_path,sizeof(diag_path),"%s/NXT_Spotify_Log.txt",dir);}
@@ -83,7 +84,7 @@ void NxtSpotify_quit(void){
  pcm_close();free(results);free(queue);results=queue=NULL;result_count=queue_count=0;result_capacity=queue_capacity=0;queue_more=queue_request=queue_waiting=false;
  if(channel>=0){command("quit");close(channel);channel=-1;}
  if(child>0){int result=0;for(int i=0;i<10;i++){pid_t p=waitpid(child,&result,WNOHANG);if(p==child||p<0){child=-1;break;}usleep(10000);}if(child>0){kill(child,SIGTERM);for(int i=0;i<10;i++){if(waitpid(child,&result,WNOHANG)!=0){child=-1;break;}usleep(10000);}}if(child>0){kill(child,SIGKILL);waitpid(child,NULL,0);child=-1;}}
- login_retry_at=0;connected=playing=track_loaded=busy=false;pair_clear();pair_done=pair_failed=false;used=0;last_sink=last_dac=-1;
+ login_retry_at=0;connected=playing=track_loaded=busy=false;native_catalog=false;pair_clear();pair_done=pair_failed=false;used=0;last_sink=last_dac=-1;
  if(cover){SDL_FreeSurface(cover);cover=NULL;}cover_dirty=false;
  favorite_pending=false;if(had_track)Lyrics_clear();
  if(had_track)ModuleCommon_setAutosleepDisabled(false);
@@ -120,8 +121,8 @@ static void favorite_request(bool change){
 }
 void NxtSpotify_favorite(void){favorite_request(true);}
 static bool start(void){
- if(child>0)return true;paths();LOG_info("Spotify frontend build: NXT-v1.10.1-Login5-Library\n");
- if(*diag_path){struct stat st;if(!stat(diag_path,&st)&&st.st_size>262144){char previous[1300];snprintf(previous,sizeof(previous),"%s.previous",diag_path);rename(diag_path,previous);}int fd=open(diag_path,O_WRONLY|O_CREAT|O_APPEND,0600);if(fd>=0){fchmod(fd,0600);close(fd);}setenv("NXT_SPOTIFY_DIAG",diag_path,1);}diagnostic("Frontend build: NXT-v1.10.1-Login5-Library");
+ if(child>0)return true;paths();LOG_info("Spotify frontend build: NXT-v1.10.2-NativeCatalog\n");
+ if(*diag_path){struct stat st;if(!stat(diag_path,&st)&&st.st_size>262144){char previous[1300];snprintf(previous,sizeof(previous),"%s.previous",diag_path);rename(diag_path,previous);}int fd=open(diag_path,O_WRONLY|O_CREAT|O_APPEND,0600);if(fd>=0){fchmod(fd,0600);close(fd);}setenv("NXT_SPOTIFY_DIAG",diag_path,1);}diagnostic("Frontend build: NXT-v1.10.2-NativeCatalog");
  int audio[2];if(socketpair(AF_UNIX,SOCK_SEQPACKET,0,audio)){copy(status,sizeof(status),"PCM IPC unavailable");return false;}
  int sv[2];if(socketpair(AF_UNIX,SOCK_STREAM,0,sv)){close(audio[0]);close(audio[1]);copy(status,sizeof(status),"IPC unavailable");return false;}
  fcntl(audio[0],F_SETFD,FD_CLOEXEC);fcntl(audio[1],F_SETFD,FD_CLOEXEC);
@@ -181,6 +182,14 @@ void NxtSpotify_skip(int direction){if(direction==1||direction==-1)select_track(
 int NxtSpotify_queueCount(void){return queue_count;}
 int NxtSpotify_queueIndex(void){return queue_index;}
 static const char *friendly(const char *code){
+ if(!strcmp(code,"native_http_401")||!strcmp(code,"native_session_expired"))return Nxt_text("Spotify session expired; reconnect by QR","Phiên Spotify hết hạn; kết nối lại bằng QR");
+ if(!strcmp(code,"native_http_403"))return Nxt_text("Spotify denied this library item; try another item","Spotify từ chối mục thư viện này; thử mục khác");
+ if(!strcmp(code,"native_http_404"))return Nxt_text("This Spotify item is unavailable; send log if it persists","Mục Spotify này chưa sẵn sàng; gửi log nếu vẫn lỗi");
+ if(!strcmp(code,"native_timeout")||!strcmp(code,"native_network"))return Nxt_text("Spotify library connection is slow; check Wi-Fi and retry","Kết nối thư viện Spotify chậm; kiểm tra Wi-Fi rồi thử lại");
+ if(!strcmp(code,"native_page_expired"))return Nxt_text("This library page expired; reopen the list","Trang thư viện hết hiệu lực; mở lại danh sách");
+ if(!strcmp(code,"native_metadata_unavailable"))return Nxt_text("Track/album details unavailable; retry or send Spotify log","Chưa lấy được thông tin bài/album; thử lại hoặc gửi log Spotify");
+ if(!strcmp(code,"native_client_token_failed"))return Nxt_text("Spotify client verification failed; reconnect or send log","Xác thực bộ phát Spotify lỗi; kết nối lại hoặc gửi log");
+ if(!strncmp(code,"native_",7))return Nxt_text("Cannot read this Spotify library response; send Spotify log","Chưa đọc được phản hồi thư viện này; gửi log Spotify");
  if(!strcmp(code,"empty_search_query"))return Nxt_text("Enter an artist, album or track name","Nhập tên nghệ sĩ, album hoặc bài hát");
  if(!strcmp(code,"session_token_denied"))return Nxt_text("Spotify denied library access for this session","Spotify chưa cấp quyền thư viện cho phiên này");
  if(!strcmp(code,"session_token_unavailable"))return Nxt_text("Cannot refresh Spotify session; reconnect the account","Không làm mới được phiên Spotify; kết nối lại tài khoản");
@@ -203,7 +212,7 @@ static const char *friendly(const char *code){
  if(!strcmp(code,"credentials_missing"))return Nxt_text("Log in by QR to begin","Đăng nhập bằng QR để bắt đầu");
  if(!strncmp(code,"api_http_403",12))return Nxt_text("Spotify denied access; check Development users","Spotify từ chối; kiểm tra User Management");
  if(!strcmp(code,"api_http_401")||!strncmp(code,"refresh_",8))return Nxt_text("Login expired; scan QR again","Đăng nhập hết hạn; quét QR lại");
- if(!strncmp(code,"rate_limited:",13))return Nxt_text("Library rate limited; use a track link or retry later","Thư viện đang giới hạn; phát link hoặc thử lại sau");
+ if(!strncmp(code,"rate_limited:",13)){static char wait[192];unsigned long long seconds=strtoull(code+13,NULL,10);snprintf(wait,sizeof(wait),seconds>=3600?Nxt_text("Spotify cooldown · retry in %llu h","Spotify yêu cầu chờ · thử lại sau %llu giờ"):seconds>=60?Nxt_text("Spotify cooldown · retry in %llu min","Spotify yêu cầu chờ · thử lại sau %llu phút"):Nxt_text("Spotify cooldown · retry in %llu s","Spotify yêu cầu chờ · thử lại sau %llu giây"),seconds>=3600?(seconds+3599)/3600:seconds>=60?(seconds+59)/60:seconds);return wait;}
  if(!strcmp(code,"api_http_429"))return Nxt_text("Rate limited; retry later","Giới hạn truy cập; thử lại sau");
  if(!strcmp(code,"authentication_failed"))return Nxt_text("Player authentication failed; check pairing/network","Xác thực bộ phát lỗi; kiểm tra ghép / mạng");
  if(!strcmp(code,"network_error"))return Nxt_text("Network error; check Wi-Fi/time","Lỗi mạng; kiểm tra Wi-Fi / giờ máy");
@@ -222,7 +231,7 @@ static void event(const char *line){
  else if(!strcmp(e,"logged_in")){
  login_retry_at=0;busy=false;auth_upgrade=false;
  if(json_object_has_value(o,"playback_ready")&&json_object_get_boolean(o,"playback_ready")!=1){connected=false;copy(status,sizeof(status),friendly("authentication_failed"));json_value_free(v);return;}
- connected=true;auth_required=false;copy(account_name,sizeof(account_name),json_object_get_string(o,"display_name"));
+ connected=true;auth_required=false;native_catalog=json_object_get_boolean(o,"native_catalog")==1;copy(account_name,sizeof(account_name),json_object_get_string(o,"display_name"));
  const char *warning=json_object_get_string(o,"library_warning"),*import_warning=json_object_get_string(o,"import_warning");
  copy(status,sizeof(status),warning&&*warning?friendly(warning):import_warning&&*import_warning?friendly(import_warning):Nxt_text("Ready to play","Sẵn sàng nghe nhạc"));
  if(pairing&&pair_finishing){pair_done=true;pair_clear();}
@@ -247,7 +256,7 @@ static void event(const char *line){
  t->duration=(int)json_object_get_number(x,"duration_ms");if(!append_track(target?&queue:&results,target?&queue_count:&result_count,target?&queue_capacity:&result_capacity,t)){memory_ok=false;break;}}
  int following=json_object_has_value(o,"next_offset")?(int)json_object_get_number(o,"next_offset"):page+10;bool more=memory_ok&&json_object_get_boolean(o,"has_next")==1&&following>page;busy=false;queue_request=false;
  if(target){queue_offset=following;queue_more=more;queue_retry=0;if(queue_waiting){if(queue_count>before){queue_waiting=false;select_track(before);}else if(!more){queue_waiting=false;stop_track();}}}
- else{copy(result_kind,sizeof(result_kind),json_object_get_string(o,"kind"));offset=page;next_offset=following;has_next=more;revision++;copy(status,sizeof(status),result_count?Nxt_text("A Play / open","A Phát / mở"):Nxt_text("No playable items here · try another genre or page","Chưa có mục nghe được · thử thể loại hoặc trang khác"));}
+ else{copy(result_kind,sizeof(result_kind),json_object_get_string(o,"kind"));offset=page;next_offset=following;has_next=more;revision++;copy(status,sizeof(status),result_count?Nxt_text("A Play / open","A Phát / mở"):more?Nxt_text("No matching items on this page · R1 Next page","Trang này chưa có mục khớp · R1 Trang tiếp"):Nxt_text("No playable items here · try another genre or page","Chưa có mục nghe được · thử thể loại hoặc trang khác"));}
  }else if(!strcmp(e,"playing")){pthread_mutex_lock(&pcm_lock);pcm_enabled=true;pthread_mutex_unlock(&pcm_lock);playing=true;position_since=SDL_GetTicks();copy(status,sizeof(status),Nxt_text("Playing","Đang phát"));int restore=NxtStartup_takeSeek("Spotify",current.uri);if(restore>0)NxtSpotify_seek(restore);}
  else if(!strcmp(e,"paused")){pcm_enable(false);playing=false;position_since=SDL_GetTicks();copy(status,sizeof(status),Nxt_text("Paused","Tạm dừng"));}
  else if(!strcmp(e,"position")){position_since=SDL_GetTicks();}
@@ -356,7 +365,7 @@ static ModuleExitReason browse_impl(DisplayContext *d,const char *kind){
   if(!count){rows[0]=busy?Nxt_text("Please wait; B cancels","Đang tải; B quay lại"):status;count=1;}
   NxtPick p=Nxt_pickLive(d,title,rows,count,&selected,Nxt_text("A Play/Open • Scroll for more • B Back","A Phát/Mở • Cuộn tải thêm • B Về"));free(labels);free(rows);
   if(p.action==9)return MODULE_EXIT_QUIT;if(p.action==2)return MODULE_EXIT_TO_MENU;
-  if(!busy&&has_next&&(selected>=result_count-5||p.action==12))request(kind,next_offset);
+  if(!busy&&has_next&&((result_count>0&&selected>=result_count-5)||p.action==12))request(kind,next_offset);
   if(p.action==1&&result_count>0&&selected<result_count){
    if(!strcmp(kind,"playlists")||!strcmp(kind,"search_playlists")||!strcmp(kind,"search_albums")||!strcmp(kind,"search_artists")||!strcmp(kind,"artist_albums")||!strcmp(kind,"saved_albums")){char saved_id[64];copy(saved_id,sizeof(saved_id),playlist_id);copy(playlist_id,sizeof(playlist_id),results[selected].id);const char *next=(!strcmp(kind,"playlists")||!strcmp(kind,"search_playlists"))?"playlist_tracks":!strcmp(kind,"search_artists")?"artist_albums":"album_tracks";ModuleExitReason rr=browse(d,next);if(rr==MODULE_EXIT_QUIT)return rr;if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}copy(playlist_id,sizeof(playlist_id),saved_id);selected=0;wanted=revision;request(kind,0);}
    else{capture_queue(kind);select_track(selected);browser_depth--;ModuleExitReason rr=NxtSpotify_nowPlaying(d);browser_depth++;if(rr==MODULE_EXIT_QUIT)return rr;if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}}
@@ -384,7 +393,7 @@ static ModuleExitReason play_link(DisplayContext *d){
  select_track(0);return NxtSpotify_nowPlaying(d);
 }
 static ModuleExitReason search_menu(DisplayContext *d){
- int selected=0;const char *rows[]={Nxt_text("Tracks","Bài hát"),Nxt_text("Albums","Album"),Nxt_text("Artists","Nghệ sĩ"),Nxt_text("Playlists · access may be restricted","Playlist · có thể bị hạn chế quyền")};const char *kinds[]={"search","search_albums","search_artists","search_playlists"};
+ int selected=0;const char *rows[]={Nxt_text("Tracks","Bài hát"),native_catalog?Nxt_text("Albums · from matching tracks","Album · từ bài hát khớp"):Nxt_text("Albums","Album"),native_catalog?Nxt_text("Artists · from matching tracks","Nghệ sĩ · từ bài hát khớp"):Nxt_text("Artists","Nghệ sĩ"),native_catalog?Nxt_text("Playlists in your library","Playlist trong thư viện của bạn"):Nxt_text("Playlists · access may be restricted","Playlist · có thể bị hạn chế quyền")};const char *kinds[]={"search","search_albums","search_artists","search_playlists"};
  for(;;){NxtPick p=Nxt_pick(d,Nxt_text("Search Spotify","Tìm trên Spotify"),rows,4,&selected,Nxt_text("A Search • B Back","A Tìm • B Về"));if(p.action==9)return MODULE_EXIT_QUIT;if(p.action==2)return MODULE_EXIT_TO_MENU;if(p.action!=1)continue;
   char *q=Keyboard_open(Nxt_text("Search Spotify","Tìm trên Spotify"),200);if(!q)continue;copy(query,sizeof(query),q);free(q);if(!*query)continue;ModuleExitReason rr=browse(d,kinds[selected]);if(rr==MODULE_EXIT_QUIT)return rr;if(Nxt_takeReturnHome()){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
  }

@@ -4,9 +4,9 @@
   "icontop": "icon.png",
   "icon": "",
   "launch": "launch.sh",
-  "description": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster.",
-  "release_filename": "NXT_Retro_Music_v1.10.1_Stock.zip",
-  "version": "1.10.1",
+  "description": "v1.10.2: QR client-library browsing, liked songs/saved albums/favorites, batched metadata and bounded caches; scoped context search; v1.10.1 Back behavior and original OTA sources retained.",
+  "release_filename": "NXT_Retro_Music_v1.10.2_Stock.zip",
+  "version": "1.10.2",
   "rom": "stock",
   "device": "trimui-brick-pro"
 }
