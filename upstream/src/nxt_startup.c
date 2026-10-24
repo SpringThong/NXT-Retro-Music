@@ -95,7 +95,7 @@ ModuleExitReason NxtStartup_run(DisplayContext *d){
         ModuleCommon_frameBegin();Background_tick();SDL_Surface *s=DisplayHelper_getSurface(d);GlobalInputResult g=ModuleCommon_handleGlobalInput(s,&show,HELP_NONE);
         if(g.should_quit||ModuleCommon_stopSignalled())return MODULE_EXIT_QUIT;
         if(!g.input_consumed&&!Nxt_lockInput()){
-            if(NxtControl_pressed(NC_MENU)||NxtPad_justPressed(BTN_B)){return NxtSession_exitPrompt(d);}
+            if(NxtControl_pressed(NC_MENU)||NxtPad_justPressed(BTN_B)){return NxtSession_playerBack();}
             if(NxtControl_pressed(NC_EQ)){if(Nxt_dspScreen(d)==MODULE_EXIT_QUIT)return MODULE_EXIT_QUIT;dirty=true;}
             else if(NxtControl_pressed(NC_QUICK)){if(Nxt_quickOptions(d)==MODULE_EXIT_QUIT)return MODULE_EXIT_QUIT;dirty=true;}
             else if(NxtControl_pressed(NC_LYRICS)){if(Nxt_lyricsScreen(d)==MODULE_EXIT_QUIT)return MODULE_EXIT_QUIT;dirty=true;}

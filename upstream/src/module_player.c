@@ -541,7 +541,7 @@ static bool handle_playing_input(SDL_Surface *screen, PlayerInternalState *state
         *dirty = 1;
     }
     else if (NxtControl_pressed(NC_MENU)) {
-        if(NxtSession_exitPrompt(DisplayHelper_current())==MODULE_EXIT_TO_MENU){cleanup_album_art_background();cleanup_playback_ui();Background_setActive(BG_MUSIC);*state=PLAYER_INTERNAL_BROWSER;}
+        NxtSession_playerBack();cleanup_album_art_background();cleanup_playback_ui();Background_setActive(BG_MUSIC);*state=PLAYER_INTERNAL_BROWSER;
         *dirty=1;return true;
     }
     else if (NxtControl_pressed(NC_PREV)) {
@@ -954,7 +954,7 @@ ModuleExitReason PlayerModule_runWithPlaylist(DisplayContext* display,
             dirty = 1;
         }
         else if (NxtControl_pressed(NC_MENU)) {
-            ModuleExitReason exit_reason=NxtSession_exitPrompt(display);cleanup_playback_ui();return exit_reason;
+            cleanup_playback_ui();Background_setActive(BG_MUSIC);return NxtSession_playerBack();
         }
         else if (NxtControl_pressed(NC_PREV)) {
             PlayerModule_prevTrack();

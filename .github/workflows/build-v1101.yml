@@ -1,0 +1,114 @@
+name: Build NXT Retro Music v1.10.1
+on:
+  push:
+    branches: [build-v1.10.1]
+    paths: ['.github/workflows/build-v1101.yml']
+permissions:
+  contents: read
+jobs:
+  frontend:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rom: stock
+            define: NXT_ROM_STOCK
+            folder: stock
+            settings: libmsettings.so
+          - rom: nextui
+            define: NXT_ROM_NEXTUI
+            folder: upstream
+            settings: libmsettings.so
+          - rom: nxredux
+            define: NXT_ROM_NXREDUX
+            folder: nxredux
+            settings: libnxt-nxredux-settings.so
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test bounded streaming queue and click ramps
+        run: |
+          set -euo pipefail
+          mkdir -p logs
+          gcc -std=gnu99 -O2 -Wall -Wextra -Werror -Wno-misleading-indentation -pthread -I upstream/src qa/v110_pcm_queue.c -o /tmp/v1101-pcm
+          /tmp/v1101-pcm | tee logs/v1101-pcm-test.txt
+          python3 qa/test_v1101_exit.py | tee logs/v1101-exit-tests.txt
+          python3 qa/test_v1101_version.py | tee logs/v1101-version-tests.txt
+      - name: Build the selected ARM64 frontend
+        env:
+          NXT_BUILD_ROM: ${{ matrix.define }}
+          NXT_JOBS: "3"
+        run: |
+          python3 tools/build-stock.py > logs/v1101-build-${{ matrix.rom }}.txt 2>&1 || { tail -100 logs/v1101-build-${{ matrix.rom }}.txt; exit 1; }
+      - name: Check ARM64 loader, version, and exit status
+        env:
+          QA_ROMS: ${{ matrix.rom }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq qemu-user > /dev/null
+          python3 qa/test_v1101_loaders.py
+      - name: Collect compiled frontend and matching relink objects
+        env:
+          FRONTEND_FOLDER: ${{ matrix.folder }}
+          FRONTEND_ROM: ${{ matrix.rom }}
+        shell: python
+        run: |
+          import pathlib, tarfile
+          f=pathlib.Path(__import__("os").environ["FRONTEND_FOLDER"])
+          rom=__import__("os").environ["FRONTEND_ROM"]
+          paths=[f/"bin/tg5040/musicplayer.elf",f/"BUILD_INPUTS_v1.10.1.json"]
+          paths += list((f/"bin/tg5040").glob("*settings*.so"))
+          paths += [pathlib.Path("relink/obj") if rom=="nextui" else f/"relink/obj"]
+          paths += list(pathlib.Path("logs").glob("v1101-*"))
+          with tarfile.open("v1101-"+rom+"-compiled.tar.gz","w:gz") as z:
+              for p in paths:
+                  assert p.exists(),p
+                  z.add(p,arcname=str(p))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v1101-${{ matrix.rom }}-compiled
+          path: v1101-${{ matrix.rom }}-compiled.tar.gz
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: v1101-${{ matrix.rom }}-failure
+          path: logs/v1101-*
+          retention-days: 3
+  spotify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare native test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libasound2-dev pkg-config > /dev/null
+          rustc --version
+          rustup target add aarch64-unknown-linux-gnu
+          mkdir -p logs
+      - name: Run Spotify helper regression tests
+        run: cargo test --locked --jobs 3 --manifest-path spotify/backend/Cargo.toml > logs/v1101-spotify-tests.txt 2>&1 || { tail -100 logs/v1101-spotify-tests.txt; exit 1; }
+      - name: Build pinned-SDK ARM64 Spotify helper
+        run: |
+          python3 tools/sdk-assets.py > logs/v1101-spotify-sdk.txt 2>&1 || { tail -80 logs/v1101-spotify-sdk.txt; exit 1; }
+          bash tools/build-spotify.sh > logs/v1101-spotify-build.txt 2>&1 || { tail -100 logs/v1101-spotify-build.txt; exit 1; }
+      - name: Collect helper and regression evidence
+        shell: python
+        run: |
+          import pathlib,tarfile
+          with tarfile.open("v1101-spotify-compiled.tar.gz","w:gz") as z:
+              z.add("upstream/bin/tg5040/nxt-spotify-backend")
+              for p in pathlib.Path("logs").glob("v1101-*"):z.add(p,arcname=str(p))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v1101-spotify-compiled
+          path: v1101-spotify-compiled.tar.gz
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: v1101-spotify-failure
+          path: logs/v1101-*
+          retention-days: 3

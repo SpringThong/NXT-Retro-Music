@@ -120,8 +120,8 @@ static void favorite_request(bool change){
 }
 void NxtSpotify_favorite(void){favorite_request(true);}
 static bool start(void){
- if(child>0)return true;paths();LOG_info("Spotify frontend build: NXT-v1.10-QR-Streaming\n");
- if(*diag_path){struct stat st;if(!stat(diag_path,&st)&&st.st_size>262144){char previous[1300];snprintf(previous,sizeof(previous),"%s.previous",diag_path);rename(diag_path,previous);}int fd=open(diag_path,O_WRONLY|O_CREAT|O_APPEND,0600);if(fd>=0){fchmod(fd,0600);close(fd);}setenv("NXT_SPOTIFY_DIAG",diag_path,1);}diagnostic("Frontend build: NXT-v1.10-QR-Streaming");
+ if(child>0)return true;paths();LOG_info("Spotify frontend build: NXT-v1.10.1-Login5-Library\n");
+ if(*diag_path){struct stat st;if(!stat(diag_path,&st)&&st.st_size>262144){char previous[1300];snprintf(previous,sizeof(previous),"%s.previous",diag_path);rename(diag_path,previous);}int fd=open(diag_path,O_WRONLY|O_CREAT|O_APPEND,0600);if(fd>=0){fchmod(fd,0600);close(fd);}setenv("NXT_SPOTIFY_DIAG",diag_path,1);}diagnostic("Frontend build: NXT-v1.10.1-Login5-Library");
  int audio[2];if(socketpair(AF_UNIX,SOCK_SEQPACKET,0,audio)){copy(status,sizeof(status),"PCM IPC unavailable");return false;}
  int sv[2];if(socketpair(AF_UNIX,SOCK_STREAM,0,sv)){close(audio[0]);close(audio[1]);copy(status,sizeof(status),"IPC unavailable");return false;}
  fcntl(audio[0],F_SETFD,FD_CLOEXEC);fcntl(audio[1],F_SETFD,FD_CLOEXEC);
@@ -183,6 +183,8 @@ int NxtSpotify_queueIndex(void){return queue_index;}
 static const char *friendly(const char *code){
  if(!strcmp(code,"empty_search_query"))return Nxt_text("Enter an artist, album or track name","Nhập tên nghệ sĩ, album hoặc bài hát");
  if(!strcmp(code,"session_token_denied"))return Nxt_text("Spotify denied library access for this session","Spotify chưa cấp quyền thư viện cho phiên này");
+ if(!strcmp(code,"session_token_unavailable"))return Nxt_text("Cannot refresh Spotify session; reconnect the account","Không làm mới được phiên Spotify; kết nối lại tài khoản");
+ if(!strcmp(code,"api_scope_missing"))return Nxt_text("Spotify API denied the required permission; reconnect or use PC login","Spotify API từ chối quyền cần thiết; kết nối lại hoặc dùng đăng nhập PC");
  if(!strcmp(code,"session_token_timeout"))return Nxt_text("Spotify library timed out; reconnect","Kết nối thư viện Spotify quá lâu; kết nối lại");
  if(!strcmp(code,"pc_credentials_missing"))return Nxt_text("PC login missing; import the file again","Thiếu đăng nhập PC; nhập lại file");
  if(!strcmp(code,"pair_required"))return Nxt_text("Log in by QR to begin","Đăng nhập bằng QR để bắt đầu");
@@ -323,7 +325,7 @@ ModuleExitReason NxtSpotify_nowPlaying(DisplayContext *d){
   if(!g.input_consumed&&!Nxt_lockInput()){
    ModuleExitReason child_result=MODULE_EXIT_TO_MENU;
    if(NxtControl_aux()){}
-   else if(NxtControl_pressed(NC_MENU)){result=NxtSession_exitPrompt(d);break;}
+   else if(NxtControl_pressed(NC_MENU)){result=NxtSession_playerBack();break;}
    else if(NxtControl_pressed(NC_PLAY)){if(!track_loaded&&queue_count>0)select_track(queue_index);else NxtSpotify_togglePause();}
    else if(NxtControl_pressed(NC_PREV))select_track(adjacent(-1));
    else if(NxtControl_pressed(NC_NEXT))select_track(adjacent(1));

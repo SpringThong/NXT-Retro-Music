@@ -1,10 +1,10 @@
 {
   "name": "NXT Retro Music",
-  "version": "1.10",
+  "version": "1.10.1",
   "package": "vn.nguyenxuanthong.nxtretromusic",
   "rom": "nxredux",
   "device": "trimui-brick-pro",
   "launch": "launch.sh",
-  "release_filename": "NXT_Retro_Music_v1.10_NXRedux.zip",
-  "description": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained."
+  "release_filename": "NXT_Retro_Music_v1.10.1_NXRedux.zip",
+  "description": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster."
 }

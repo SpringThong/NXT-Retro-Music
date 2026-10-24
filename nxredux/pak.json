@@ -1,10 +1,10 @@
 {
   "name": "NXT Retro Music",
-  "version": "1.10",
+  "version": "1.10.1",
   "type": "TOOL",
-  "description": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained.",
+  "description": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster.",
   "author": "Nguyễn Xuân Thông; based on Music Player by Mohammad Syuhada and nborodikhin",
-  "release_filename": "NXT_Retro_Music_v1.10_NXRedux.zip",
+  "release_filename": "NXT_Retro_Music_v1.10.1_NXRedux.zip",
   "changelog": {
     "v1.9": "v1.9 NX Redux: original DSF/DFF DSD, Native DSD/opt-in DoP for compatible USB DAC. No PCM conversion. Retains Groq TXT, CPU, Home, LED, icon and official OTA.",
     "v1.2": "SoundCloud official public API: eligible full-length tracks, track/playlist search, themed discovery, public URL resolution, native HLS AAC/MP3 playback, local bookmarks, optional matched LRCLIB lyrics, source QR, and the shared NXT PCM/DSP/DAC/background player. Requires your registered API client; live playback has not been verified without credentials.",
@@ -24,7 +24,8 @@
     "v1.9.7.5": "Remove vocal reduction; clear retired key action safely; preserve all other listening and lyric features.",
     "v1.9.7.6": "Fix public MONETIZE SoundCloud permission handling and misleading stream errors; keep all v1.9.7.5 features.",
     "v1.9.7.7": "Refined antialiasing and artwork, larger symmetric Auralis controls, clear filled active states and bounded per-size icon caches. All listening features retained.",
-    "v1.10": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained."
+    "v1.10": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained.",
+    "v1.10.1": "v1.10.1: Now Playing B returns to the main menu; main-menu B asks background or exit while playing, and fully exits when paused/stopped. Retains v1.10 online fixes and official OTA feeds. QR library now uses the authenticated Login5 session instead of Mercury keymaster."
   },
   "screenshots": [],
   "platforms": [

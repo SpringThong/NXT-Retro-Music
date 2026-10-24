@@ -59,8 +59,8 @@ async fn main(){
  let mut pair_task:Option<tokio::task::JoinHandle<()>>=None;
  let mut cover_task:Option<tokio::task::JoinHandle<()>>=None;
  let generation=Arc::new(AtomicU32::new(0));
- diagnostic("Backend build: NXT-v1.10-QR-Streaming");
- emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.10","build":"NXT-v1.10-QR-Streaming"}));
+ diagnostic("Backend build: NXT-v1.10.1-Login5-Library");
+ emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.10.1","build":"NXT-v1.10.1-Login5-Library"}));
  while let Ok(Some(line))=input.next_line().await{
   if line.len()>16384{emit(json!({"event":"error","reason":"request_too_large"}));continue;}
   let Ok(v)=serde_json::from_str::<Value>(&line) else{emit(json!({"event":"error","reason":"invalid_json"}));continue;};

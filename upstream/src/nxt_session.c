@@ -81,6 +81,8 @@ void NxtSession_status(bool shown) {
     visible=shown;NxtStock_visible(shown);if(!enabled)return;char temp[160];snprintf(temp,sizeof(temp),"%s.tmp",status_path);FILE *f=fopen(temp,"w");if(f){fprintf(f,"%s %ld\n",shown?"VISIBLE":"HIDDEN",(long)getpid());fclose(f);rename(temp,status_path);}if(shown)poll_client();
 }
 bool NxtSession_wantsBackground(void){return background_choice||nxt.background;}
+/* Player B only navigates. The root menu owns all exit decisions. */
+ModuleExitReason NxtSession_playerBack(void){Nxt_returnHome();return MODULE_EXIT_TO_MENU;}
 ModuleExitReason NxtSession_exitPrompt(DisplayContext *display){
  bool audible=NxtSpotify_isPlaying()||NxtSoundCloud_isPlaying()||Player_getState()==PLAYER_STATE_PLAYING||Radio_getState()==RADIO_STATE_PLAYING;
  background_choice=false;

@@ -58,8 +58,12 @@ impl Api {
  }
  pub async fn token(&mut self)->Result<String,String>{
   if let Some(session)=&self.session {
-   return match tokio::time::timeout(std::time::Duration::from_secs(8),session.token_provider().get_token("user-read-private,playlist-read-private,playlist-read-collaborative,user-library-read,user-library-modify")).await {
-    Ok(Ok(token))=>Ok(token.access_token),Ok(Err(_))=>Err("session_token_denied".into()),Err(_)=>Err("session_token_timeout".into())
+   // auth::connect already verified Login5 for this same account/client. The
+   // old Mercury keymaster is not a catalog-grant probe: it can reject token
+   // issuance even after QR and playback authentication have succeeded.
+   // Reuse Login5's cached/refreshable token; Web API still enforces access.
+   return match tokio::time::timeout(std::time::Duration::from_secs(8),session.login5().auth_token()).await {
+    Ok(Ok(token))=>Ok(token.access_token),Ok(Err(e))=>{crate::diagnostic(&format!("Library token: Login5 unavailable ({:?})",e.kind));Err("session_token_unavailable".into())},Err(_)=>Err("session_token_timeout".into())
    };
   }
 
@@ -94,13 +98,13 @@ impl Api {
   let mut request=self.http.get(format!("https://api.spotify.com/v1{path}")).query(params).bearer_auth(token);
   if !retry {request=request.timeout(std::time::Duration::from_secs(8));}
   let res=self.send_limited(request,Endpoint::WebApi,retry).await?;
-  if !res.status().is_success(){return Err(format!("api_http_{}",res.status().as_u16()));}
+  if !res.status().is_success(){let status=res.status().as_u16();let body=res.json::<Value>().await.unwrap_or(Value::Null);return Err(api_error(status,&body));}
   res.json().await.map_err(|_|"api_invalid_json".into())
  }
  pub async fn favorite(&mut self,uri:&str,value:bool)->Result<(),String>{
   let token=self.token().await?;let method=if value{reqwest::Method::PUT}else{reqwest::Method::DELETE};
   let res=self.send_retry(self.http.request(method,"https://api.spotify.com/v1/me/library").query(&[("uris",uri)]).bearer_auth(token)).await?;
-  if res.status().is_success(){Ok(())}else{Err(format!("api_http_{}",res.status().as_u16()))}
+  if res.status().is_success(){Ok(())}else{let status=res.status().as_u16();let body=res.json::<Value>().await.unwrap_or(Value::Null);Err(api_error(status,&body))}
  }
  pub async fn cover(&self,url:&str,path:&str)->Result<(),String>{
   let u=reqwest::Url::parse(url).map_err(|_|"cover_invalid")?;
@@ -110,6 +114,11 @@ impl Api {
   let mut bytes=Vec::new();while let Some(chunk)=res.chunk().await.map_err(|_|"cover_read")?{if bytes.len()+chunk.len()>8*1024*1024{return Err("cover_too_large".into());}bytes.extend_from_slice(&chunk);}
   let tmp=format!("{path}.tmp");std::fs::write(&tmp,bytes).map_err(|_|"cover_write")?;std::fs::rename(tmp,path).map_err(|_|"cover_write".to_owned())
  }
+}
+fn api_error(status:u16,body:&Value)->String{
+ let message=body["error"]["message"].as_str().unwrap_or("").to_ascii_lowercase();
+ if status==403&&(message.contains("insufficient client scope")||message.contains("insufficient scope")){"api_scope_missing".into()}
+ else{format!("api_http_{status}")}
 }
 pub fn track(v:&Value)->Value{
  let names=v["artists"].as_array().map(|a|a.iter().filter_map(|v|v["name"].as_str()).collect::<Vec<_>>().join(", ")).unwrap_or_default();
@@ -201,5 +210,23 @@ mod tests {
   for reason in ["market","product","explicit"]{let mut t=good.clone();t["restrictions"]=json!({"reason":reason});assert!(!playable_track(&t));}
   let mut t=good.clone();t["is_playable"]=json!(false);assert!(!playable_track(&t));t=good.clone();t["is_local"]=json!(true);assert!(!playable_track(&t));
   for uri in ["spotify:episode:0123456789012345678901","spotify:track:../a","https://example.test"]{t=good.clone();t["uri"]=json!(uri);assert!(!playable_track(&t));}
+ }
+}
+
+#[cfg(test)] mod v1101_session_tests {
+ use super::*;
+ #[tokio::test] async fn empty_session_reports_login5_unavailable_without_keymaster_or_pc_fallback(){
+  let session=librespot_core::session::Session::new(Default::default(),None);
+  let client=session.client_id();let mut api=Api::from_session(session).unwrap();
+  assert_eq!(api.client_id(),client);assert!(api.path.as_os_str().is_empty());
+  let start=std::time::Instant::now();
+  assert_eq!(api.token().await.unwrap_err(),"session_token_unavailable");
+  assert!(start.elapsed()<std::time::Duration::from_secs(2));
+ }
+ #[test] fn server_scope_denial_is_distinct_from_token_transport_failure(){
+  assert_eq!(api_error(403,&json!({"error":{"message":"Insufficient client scope"}})),"api_scope_missing");
+  assert_eq!(api_error(403,&json!({"error":{"message":"Forbidden"}})),"api_http_403");
+  assert_eq!(api_error(401,&json!({"error":{"message":"Expired token"}})),"api_http_401");
+  assert_eq!(api_error(429,&Value::Null),"api_http_429");
  }
 }
