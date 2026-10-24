@@ -1,4 +1,5 @@
 #include "nxt_log.h"
+#include "nxt_online_ramp.h"
 #include "nxt_spotify.h"
 #include "nxt_soundcloud.h"
 /* SPDX-License-Identifier: GPL-3.0-only
@@ -36,7 +37,7 @@ typedef struct { float pcm[BLOCK*2]; int count,used,position; unsigned generatio
 typedef struct {
     pthread_mutex_t lock; pthread_cond_t wake; pthread_t worker;
     PCMBlock ring[BLOCKS]; int read,write,queued;
-    bool running,eof,loaded,load_done,load_ok,seeking,worker_started,preloaded,seekable;
+    bool running,eof,loaded,load_done,load_ok,seeking,worker_started,preloaded,seekable,network,buffering;
     unsigned request,worker_request,gen,visible_gen;
     char request_path[512],next_path[512],visible_path[512];
     int seek_ms,position,rate,bits,sink; PlayerState state;
@@ -46,6 +47,7 @@ typedef struct {
     int16_t vis[2048]; int vis_count; double listened_ms;
 } Engine;
 static Engine e={.lock=PTHREAD_MUTEX_INITIALIZER,.wake=PTHREAD_COND_INITIALIZER};
+static NxtOnlineRamp online_ramp;
 static TrackInfo ui_info; static char ui_path[512]; static unsigned ui_gen,sink_generation;
 static SDL_Surface *art; static char *embedded;
 static bool bluetooth_audio_active,usbdac_audio_active;
@@ -85,7 +87,7 @@ static void *decode_worker(void *unused) {
             local_request=request; generation++;stretch_position=seek;stretch_flushed=false;
             pthread_mutex_lock(&e.lock);
             if(request==e.request) {
-                e.read=e.write=e.queued=0; e.eof=false; e.loaded=current!=NULL; e.seekable=NxtDecoder_canSeek(current); e.load_done=true; e.load_ok=current!=NULL; e.seeking=false;
+                e.read=e.write=e.queued=0; e.network=NxtDrive_isStream(path);e.buffering=e.network; e.eof=false; e.loaded=current!=NULL; e.seekable=NxtDecoder_canSeek(current); e.load_done=true; e.load_ok=current!=NULL; e.seeking=false;
                 if(current) { info=*NxtDecoder_info(current); e.visible_info=info; snprintf(e.visible_path,sizeof(e.visible_path),"%s",path); e.visible_gen=generation; e.position=seek;if(e.state==PLAYER_STATE_STOPPED)e.state=PLAYER_STATE_PAUSED; }
                 pthread_cond_broadcast(&e.wake);
             }
@@ -96,7 +98,7 @@ static void *decode_worker(void *unused) {
         if(seek_now&&current) {
             stretch_position=seek;stretch_flushed=false;NxtDecoder_seekEpoch(current,seek,network_epoch); NxtDecoder_close(next); next=NULL; prepared[0]=0;
             if(stretch) sonicDestroyStream(stretch); stretch=sonicCreateStream(rate,2);
-            pthread_mutex_lock(&e.lock); if(request==e.request&&network_epoch==NxtStream_epoch()) { e.read=e.write=e.queued=0; e.eof=false; e.seeking=false; e.position=NxtDecoder_position(current); } pthread_mutex_unlock(&e.lock);
+            pthread_mutex_lock(&e.lock); if(request==e.request&&network_epoch==NxtStream_epoch()) { e.read=e.write=e.queued=0; e.buffering=e.network; e.eof=false; e.seeking=false; e.position=NxtDecoder_position(current); } pthread_mutex_unlock(&e.lock);
             continue;
         }
         if(!current||!room) { pthread_mutex_lock(&e.lock);if(e.running&&request==e.request&&!e.seeking&&(!current||e.queued>=BLOCKS))pthread_cond_wait(&e.wake,&e.lock);pthread_mutex_unlock(&e.lock);continue; }
@@ -164,7 +166,9 @@ static void output_audio(void *userdata,Uint8 *stream,int bytes) {
             /* Spotify uses the same DSP, visualization and output volume below. */
         } else {
             pthread_mutex_lock(&e.lock);
-            if(e.state==PLAYER_STATE_PLAYING&&!e.seeking&&e.queued) {
+            if(e.network&&e.buffering&&(e.queued>=16||e.eof))e.buffering=false;
+            if(e.network&&!e.queued&&!e.eof)e.buffering=true;
+            if(e.state==PLAYER_STATE_PLAYING&&!e.seeking&&e.queued&&!e.buffering) {
                 PCMBlock *b=&e.ring[e.read]; if(n>b->count-b->used)n=b->count-b->used;
                 memcpy(pcm,b->pcm+b->used*2,n*2*sizeof(float)); gain=b->mixed?0:replay(&b->info,&e.options); b->used+=n; got=n;
                 e.visible_gen=b->generation; e.visible_info=b->info; snprintf(e.visible_path,sizeof(e.visible_path),"%s",b->path);
@@ -185,6 +189,8 @@ static void output_audio(void *userdata,Uint8 *stream,int bytes) {
         volume*=GetSpeakerMute()?0.f:GetMusicVolume()/20.f;
 #endif
         for(int i=0;i<n*2;i++) pcm[i]*=volume;
+        if(e.network||NxtSpotify_active()||NxtSoundCloud_active())NxtOnlineRamp_process(&online_ramp,pcm,n,got,e.rate);
+        else memset(&online_ramp,0,sizeof(online_ramp));
         if(got) { if(e.rate>0)e.listened_ms+=got*1000.0/e.rate;int s=got*2; if(s>2048)s=2048; for(int i=0;i<s;i++)e.vis[i]=lrintf(fmaxf(-1,fminf(.999969f,pcm[i]))*32768); e.vis_count=s; }
         pthread_mutex_unlock(&e.lock);
         if(e.format==AUDIO_F32SYS) memcpy((float*)stream+done*2,pcm,n*2*sizeof(float));
@@ -279,7 +285,7 @@ int Player_play(void) { if(nxt.bit_perfect){if(!NxtBit_ready())return -1;NxtBit_
 void Player_pause(void) { if(nxt.bit_perfect){NxtBit_pause();return;}pthread_mutex_lock(&e.lock); if(e.state==PLAYER_STATE_PLAYING)e.state=PLAYER_STATE_PAUSED; pthread_mutex_unlock(&e.lock); }
 void Player_stop(void) { NxtBit_stop();pthread_mutex_lock(&e.lock); NxtDecoder_cancelStreams(); e.state=PLAYER_STATE_STOPPED; e.request++; e.request_path[0]=e.next_path[0]=0; e.loaded=e.preloaded=e.eof=e.seeking=false; e.read=e.write=e.queued=0; pthread_cond_broadcast(&e.wake); pthread_mutex_unlock(&e.lock); }
 void Player_togglePause(void) { if(Player_getState()==PLAYER_STATE_PLAYING)Player_pause();else Player_play(); }
-void Player_seek(int ms) { if(nxt.bit_perfect){NxtBit_seek(ms);return;}pthread_mutex_lock(&e.lock); if(e.loaded&&e.seekable) { e.seek_ms=ms<0?0:ms>e.visible_info.duration_ms?e.visible_info.duration_ms:ms; NxtDecoder_cancelStreams(); e.seeking=true; e.eof=false; e.queued=0; e.read=e.write=0;pthread_cond_broadcast(&e.wake); } pthread_mutex_unlock(&e.lock); }
+void Player_seek(int ms) { if(nxt.bit_perfect){NxtBit_seek(ms);return;}pthread_mutex_lock(&e.lock); if(e.loaded&&e.seekable) { e.seek_ms=ms<0?0:ms>e.visible_info.duration_ms?e.visible_info.duration_ms:ms; NxtDecoder_cancelStreams(); e.seeking=true; e.buffering=e.network; e.eof=false; e.queued=0; e.read=e.write=0;pthread_cond_broadcast(&e.wake); } pthread_mutex_unlock(&e.lock); }
 bool Player_resume(void) { if(nxt.bit_perfect)return NxtBit_seeking();pthread_mutex_lock(&e.lock); bool result=e.seeking; pthread_mutex_unlock(&e.lock); return result; }
 static bool mode_reload=true;static int mode_state=-1;
 void Player_refreshOptions(void){

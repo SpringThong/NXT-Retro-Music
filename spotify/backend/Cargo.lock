@@ -1360,7 +1360,7 @@ dependencies = [
 
 [[package]]
 name = "nxt-spotify-backend"
-version = "1.3.0"
+version = "1.10.0"
 dependencies = [
  "librespot-core",
  "librespot-metadata",

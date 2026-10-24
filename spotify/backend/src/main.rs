@@ -59,8 +59,8 @@ async fn main(){
  let mut pair_task:Option<tokio::task::JoinHandle<()>>=None;
  let mut cover_task:Option<tokio::task::JoinHandle<()>>=None;
  let generation=Arc::new(AtomicU32::new(0));
- diagnostic("Backend build: Stock-v1.3-Hardware-Login-Fix2");
- emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.3","build":"Stock-v1.3-Hardware-Login-Fix2"}));
+ diagnostic("Backend build: NXT-v1.10-QR-Streaming");
+ emit(json!({"event":"ready","experimental":false,"connect_service":false,"version":"1.10","build":"NXT-v1.10-QR-Streaming"}));
  while let Ok(Some(line))=input.next_line().await{
   if line.len()>16384{emit(json!({"event":"error","reason":"request_too_large"}));continue;}
   let Ok(v)=serde_json::from_str::<Value>(&line) else{emit(json!({"event":"error","reason":"invalid_json"}));continue;};
@@ -76,7 +76,7 @@ async fn main(){
     match auth::connect(v["source"].as_str()).await {
      Ok(verified)=>{
       emit(json!({"event":"login_progress","stage":"library"}));
-      let a=catalog::Catalog::open_verified(verified.credentials,&verified.username).await;
+      let a=catalog::Catalog::open_verified(verified.credentials,&verified.username,&verified.session).await;
       let name=a.display_name().to_owned();let warning=a.library_warning.clone();let import_warning=a.import_warning.clone();
       session=Some(verified.session);api=Some(Arc::new(tokio::sync::Mutex::new(a)));
       emit(json!({"event":"logged_in","display_name":name,"needs_upgrade":false,"playback_ready":true,"library_ready":warning.is_none(),"library_warning":warning,"import_warning":import_warning}));

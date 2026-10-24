@@ -541,17 +541,8 @@ static bool handle_playing_input(SDL_Surface *screen, PlayerInternalState *state
         *dirty = 1;
     }
     else if (NxtControl_pressed(NC_MENU)) {
-        Nxt_returnHome();cleanup_album_art_background();
-        if (Player_getState() != PLAYER_STATE_STOPPED) {
-            cleanup_playback_ui();
-            Background_setActive(BG_MUSIC);
-        } else {
-            Player_stop();
-            cleanup_playback(true);
-        }
-        *state = PLAYER_INTERNAL_BROWSER;
-        *dirty = 1;
-        return true;  // Skip track-ended check to prevent auto-advance
+        NxtSession_exitPrompt(DisplayHelper_current());
+        *dirty=1;return true;
     }
     else if (NxtControl_pressed(NC_PREV)) {
         PlayerModule_prevTrack();
@@ -693,7 +684,7 @@ ModuleExitReason PlayerModule_run(DisplayContext* display, bool now_playing_entr
             HelpId help_id = (state == PLAYER_INTERNAL_BROWSER) ? HELP_BROWSER : HELP_PLAYER;
             GlobalInputResult global = ModuleCommon_handleGlobalInput(screen, &show_setting, help_id);
             if (global.should_quit) {
-                if (nxt.background && !ModuleCommon_stopSignalled() && PlayerModule_isActive()) {
+                if (NxtSession_wantsBackground() && !ModuleCommon_stopSignalled() && PlayerModule_isActive()) {
                     Background_setActive(BG_MUSIC); cleanup_playback_ui();
                 } else { cleanup_playback(true); Browser_freeEntries(&browser); }
                 return MODULE_EXIT_QUIT;
@@ -878,7 +869,7 @@ ModuleExitReason PlayerModule_runWithPlaylist(DisplayContext* display,
             if (Nxt_shortcuts(DisplayHelper_current())) { dirty=1; ModuleCommon_PWR_update(&dirty,&show_setting); ModuleCommon_frameEnd(screen); continue; }
             GlobalInputResult global = ModuleCommon_handleGlobalInput(screen, &show_setting, HELP_PLAYER);
             if (global.should_quit) {
-                if (nxt.background && !ModuleCommon_stopSignalled()) {
+                if (NxtSession_wantsBackground() && !ModuleCommon_stopSignalled()) {
                     Background_setActive(BG_MUSIC);
                     cleanup_playback_ui();
                 } else {
@@ -962,15 +953,7 @@ ModuleExitReason PlayerModule_runWithPlaylist(DisplayContext* display,
             dirty = 1;
         }
         else if (NxtControl_pressed(NC_MENU)) {
-            Nxt_returnHome();cleanup_album_art_background();
-            if (Player_getState() != PLAYER_STATE_STOPPED) {
-                cleanup_playback_ui();
-                Background_setActive(BG_MUSIC);
-            } else {
-                Player_stop();
-                cleanup_playback(true);
-            }
-            return MODULE_EXIT_TO_MENU;
+            NxtSession_exitPrompt(display);cleanup_playback_ui();return MODULE_EXIT_QUIT;
         }
         else if (NxtControl_pressed(NC_PREV)) {
             PlayerModule_prevTrack();
@@ -1204,7 +1187,7 @@ static ModuleExitReason run_resume(DisplayContext* display, const ResumeState* r
                 if (Nxt_shortcuts(DisplayHelper_current())) { dirty=1; ModuleCommon_PWR_update(&dirty,&show_setting); ModuleCommon_frameEnd(screen); continue; }
             GlobalInputResult global = ModuleCommon_handleGlobalInput(screen, &show_setting, HELP_PLAYER);
                 if (global.should_quit) {
-                    if (nxt.background && !ModuleCommon_stopSignalled()) { Background_setActive(BG_MUSIC); cleanup_playback_ui(); }
+                    if (NxtSession_wantsBackground() && !ModuleCommon_stopSignalled()) { Background_setActive(BG_MUSIC); cleanup_playback_ui(); }
                     else { Player_stop(); cleanup_album_art_background(); cleanup_playback(true); }
                     return MODULE_EXIT_QUIT;
                 }

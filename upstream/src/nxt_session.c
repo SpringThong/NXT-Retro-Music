@@ -27,6 +27,7 @@
 static bool enabled,visible=true;static int server=-1,lockfd=-1;
 static char socket_path[100],status_path[128];
 static bool attach;
+static bool background_choice;
 static void poll_client(void) {
     if(server<0)return;int client=accept(server,NULL,NULL);if(client<0)return;
     struct timeval timeout={0,200000};setsockopt(client,SOL_SOCKET,SO_RCVTIMEO,&timeout,sizeof(timeout));
@@ -79,8 +80,20 @@ int NxtSession_start(int argc,char **argv) {
 void NxtSession_status(bool shown) {
     visible=shown;NxtStock_visible(shown);if(!enabled)return;char temp[160];snprintf(temp,sizeof(temp),"%s.tmp",status_path);FILE *f=fopen(temp,"w");if(f){fprintf(f,"%s %ld\n",shown?"VISIBLE":"HIDDEN",(long)getpid());fclose(f);rename(temp,status_path);}if(shown)poll_client();
 }
+bool NxtSession_wantsBackground(void){return background_choice||nxt.background;}
+void NxtSession_exitPrompt(DisplayContext *display){
+ bool audible=NxtSpotify_isPlaying()||NxtSoundCloud_isPlaying()||Player_getState()==PLAYER_STATE_PLAYING||Radio_getState()==RADIO_STATE_PLAYING;
+ background_choice=false;
+ if(!audible){ModuleCommon_signalStop();ModuleCommon_requestQuit();return;}
+ int selected=0;const char *rows[]={Nxt_text("Keep playing in background","Tiếp tục nghe nhạc dưới nền"),Nxt_text("Stop music and close app","Dừng nhạc và thoát hẳn ứng dụng")};
+ for(;;){NxtPick p=Nxt_pick(display,Nxt_text("Leave music player?","Thoát trình nghe nhạc?"),rows,2,&selected,Nxt_text("A Choose · B Close app","A Chọn · B Thoát hẳn"));
+  if(p.action==1&&selected==0){background_choice=true;ModuleCommon_requestQuit();return;}
+  if((p.action==1&&selected==1)||p.action==2||p.action==9){ModuleCommon_signalStop();ModuleCommon_requestQuit();return;}
+ }
+}
 bool NxtSession_background(DisplayContext *display) {
-    if(!enabled||!nxt.background||ModuleCommon_stopSignalled())return false;
+    if(!enabled||!NxtSession_wantsBackground()||ModuleCommon_stopSignalled())return false;
+    background_choice=false;
     if(Background_getActive()==BG_NONE){if(NxtSoundCloud_active())Background_setActive(BG_SOUNDCLOUD);else if(NxtSpotify_active())Background_setActive(BG_SPOTIFY);else if(PlayerModule_isActive())Background_setActive(BG_MUSIC);else if(Radio_isActive())Background_setActive(BG_RADIO);else if(Podcast_isActive())Background_setActive(BG_PODCAST);}
     if(!NxtSoundCloud_active()&&!NxtSpotify_active()&&!PlayerModule_isActive()&&!Radio_isActive()&&!Podcast_isActive())return false;
     if(!NxtSoundCloud_active()&&!NxtSpotify_active())Resume_updatePosition(Player_getPosition());MusicPlaying_leave();Spectrum_quit();DisplayHelper_prepareForExternal();PAD_quit();

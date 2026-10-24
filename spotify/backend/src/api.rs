@@ -5,7 +5,7 @@ pub const PLAYBACK_CLIENT_ID:&str="65b708073fc0480ea92a077233ca87bd";
 pub const CLIENT_ID:&str="320f1ca055564990bcdf4de6fe58b397";
 fn now()->u64{SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs()}
 #[derive(Clone)]
-pub struct Api { pub data:Value,path:PathBuf,http:reqwest::Client }
+pub struct Api { pub data:Value,path:PathBuf,http:reqwest::Client,session:Option<librespot_core::session::Session> }
 // Respect each authorized application's cooldown without blocking OAuth refresh
 // behind a Web API quota. Client IDs come only from the user's supplied login.
 #[derive(Default)]
@@ -48,9 +48,21 @@ impl Api {
   let id=d["client_id"].as_str().ok_or("credentials_wrong_app")?;
   if id.len()!=32||!id.bytes().all(|c|c.is_ascii_hexdigit())||expected.is_some_and(|e|e!=id){return Err("credentials_wrong_app".into());}
   if !d["access_token"].as_str().is_some_and(|v|!v.is_empty())||!d["refresh_token"].as_str().is_some_and(|v|!v.is_empty()){return Err("credentials_invalid".into());}
-  Ok(Self{data:d,path:p,http:reqwest::Client::builder().timeout(std::time::Duration::from_secs(20)).build().map_err(|_|"http_init")?})
+  Ok(Self{data:d,path:p,session:None,http:reqwest::Client::builder().timeout(std::time::Duration::from_secs(20)).build().map_err(|_|"http_init")?})
+ }
+ pub fn from_session(session:librespot_core::session::Session)->Result<Self,String>{
+  // Same approved account and client ID as playback. Never rotate clients to
+  // bypass a provider denial or quota; all HTTP limits remain shared.
+  Ok(Self{data:json!({"client_id":session.client_id()}),path:PathBuf::new(),
+   http:reqwest::Client::builder().timeout(std::time::Duration::from_secs(20)).build().map_err(|_|"http_init")?,session:Some(session)})
  }
  pub async fn token(&mut self)->Result<String,String>{
+  if let Some(session)=&self.session {
+   return match tokio::time::timeout(std::time::Duration::from_secs(8),session.token_provider().get_token("user-read-private,playlist-read-private,playlist-read-collaborative,user-library-read,user-library-modify")).await {
+    Ok(Ok(token))=>Ok(token.access_token),Ok(Err(_))=>Err("session_token_denied".into()),Err(_)=>Err("session_token_timeout".into())
+   };
+  }
+
   static TOKEN_LOCK:tokio::sync::Mutex<()>=tokio::sync::Mutex::const_new(());let _guard=TOKEN_LOCK.lock().await;
   // Cloned request workers use the latest rotated token from the same file.
   if let Ok(bytes)=std::fs::read(&self.path){if let Ok(data)=serde_json::from_slice::<Value>(&bytes){if data["client_id"]==self.data["client_id"]{self.data=data;}}}
@@ -150,7 +162,7 @@ mod tests {
 
 #[cfg(test)]mod retry_tests{
  #[test]fn respects_server_cooldown(){let mut h=reqwest::header::HeaderMap::new();h.insert(reqwest::header::RETRY_AFTER,"37".parse().unwrap());assert_eq!(super::retry_seconds(&h,0),37);h.clear();assert_eq!(super::retry_seconds(&h,0),2);assert_eq!(super::retry_seconds(&h,2),8);}
- #[tokio::test]async fn actual_429_wait_then_success(){use std::io::{Read,Write};use std::sync::atomic::Ordering;let listener=std::net::TcpListener::bind("127.0.0.1:0").unwrap();let address=listener.local_addr().unwrap();let server=std::thread::spawn(move||{for i in 0..2{let(mut s,_)=listener.accept().unwrap();let mut data=[0;4096];s.read(&mut data).unwrap();s.write_all(if i==0{b"HTTP/1.1 429 Too Many Requests\r\nRetry-After: 1\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"}else{b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}"}).unwrap();}});let api=super::Api{data:serde_json::json!({}),path:std::path::PathBuf::new(),http:reqwest::Client::new()};let start=std::time::Instant::now();api.rate_state(super::Endpoint::WebApi).retry.store(0,Ordering::Relaxed);let r=api.send_retry(api.http.get(format!("http://{address}/test"))).await.unwrap();assert_eq!(r.status(),200);assert!(start.elapsed().as_millis()>=900);server.join().unwrap();}
+ #[tokio::test]async fn actual_429_wait_then_success(){use std::io::{Read,Write};use std::sync::atomic::Ordering;let listener=std::net::TcpListener::bind("127.0.0.1:0").unwrap();let address=listener.local_addr().unwrap();let server=std::thread::spawn(move||{for i in 0..2{let(mut s,_)=listener.accept().unwrap();let mut data=[0;4096];s.read(&mut data).unwrap();s.write_all(if i==0{b"HTTP/1.1 429 Too Many Requests\r\nRetry-After: 1\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"}else{b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}"}).unwrap();}});let api=super::Api{data:serde_json::json!({}),path:std::path::PathBuf::new(),session:None,http:reqwest::Client::new()};let start=std::time::Instant::now();api.rate_state(super::Endpoint::WebApi).retry.store(0,Ordering::Relaxed);let r=api.send_retry(api.http.get(format!("http://{address}/test"))).await.unwrap();assert_eq!(r.status(),200);assert!(start.elapsed().as_millis()>=900);server.join().unwrap();}
 }
 
 #[cfg(test)] mod fix1_tests {
@@ -168,7 +180,7 @@ mod tests {
   let listener=std::net::TcpListener::bind("127.0.0.1:0").unwrap();let address=listener.local_addr().unwrap();
   let server=std::thread::spawn(move||{for i in 0..2 {let (mut socket,_)=listener.accept().unwrap();let mut bytes=[0;4096];socket.read(&mut bytes).unwrap();
    socket.write_all(if i==0 {b"HTTP/1.1 429 Too Many Requests\r\nRetry-After: 37\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"}else{b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}"}).unwrap();}});
-  let a=Api{data:json!({"client_id":"feed0123456789abcdef0123456789ab"}),path:PathBuf::new(),http:reqwest::Client::new()};
+  let a=Api{data:json!({"client_id":"feed0123456789abcdef0123456789ab"}),path:PathBuf::new(),session:None,http:reqwest::Client::new()};
   let state=a.rate_state(Endpoint::WebApi);state.retry.store(0,Ordering::Relaxed);let start=std::time::Instant::now();
   let first=a.send_limited(a.http.get(format!("http://{address}/library")),Endpoint::WebApi,false).await;
   assert!(matches!(first,Err(e) if e.starts_with("rate_limited:")));assert!(start.elapsed().as_secs()<3);

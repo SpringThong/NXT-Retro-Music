@@ -101,7 +101,7 @@ static bool start(void){
  if(*diag_path){int fd=open(diag_path,O_WRONLY|O_CREAT|O_TRUNC,0600);if(fd>=0){fchmod(fd,0600);close(fd);}}diagnostic("Frontend build: " NXT_BUILD_REVISION);
  int audio[2];if(socketpair(AF_UNIX,SOCK_SEQPACKET,0,audio)){copy(status,sizeof(status),"PCM IPC unavailable");return false;}
  int sv[2];if(socketpair(AF_UNIX,SOCK_STREAM,0,sv)){close(audio[0]);close(audio[1]);copy(status,sizeof(status),"IPC unavailable");return false;}
- fcntl(audio[0],F_SETFD,FD_CLOEXEC);fcntl(audio[1],F_SETFD,FD_CLOEXEC);int size=32768;setsockopt(audio[1],SOL_SOCKET,SO_SNDBUF,&size,sizeof(size));
+ fcntl(audio[0],F_SETFD,FD_CLOEXEC);fcntl(audio[1],F_SETFD,FD_CLOEXEC);int size=262144;setsockopt(audio[1],SOL_SOCKET,SO_SNDBUF,&size,sizeof(size));
  if(!pcm_open(audio[0])){close(audio[1]);close(sv[0]);close(sv[1]);pcm_close();return false;}
  setenv("NXT_SOUNDCLOUD_PCM_FD","3",1);fcntl(sv[0],F_SETFD,FD_CLOEXEC);fcntl(sv[1],F_SETFD,FD_CLOEXEC);
  setenv("NXT_SOUNDCLOUD_CREDENTIALS",creds,1);setenv("NXT_SOUNDCLOUD_COVER",cover_path,1);setenv("NXT_SOUNDCLOUD_LYRICS",lyrics_path,1);pid_t parent=getpid(),pid=fork();
@@ -235,7 +235,7 @@ ModuleExitReason NxtSoundCloud_nowPlaying(DisplayContext *d){
   if(!g.input_consumed&&!Nxt_lockInput()){
    ModuleExitReason child_result=MODULE_EXIT_TO_MENU;
    if(NxtControl_aux()){}
-   else if(NxtControl_pressed(NC_MENU)){Nxt_returnHome();break;}
+   else if(NxtControl_pressed(NC_MENU)){NxtSession_exitPrompt(d);result=MODULE_EXIT_QUIT;break;}
    else if(NxtControl_pressed(NC_PLAY)){if(!track_loaded&&queue_count>0)select_track(queue_index);else NxtSoundCloud_togglePause();}
    else if(NxtControl_pressed(NC_PREV))select_track(adjacent(-1));
    else if(NxtControl_pressed(NC_NEXT))select_track(adjacent(1));

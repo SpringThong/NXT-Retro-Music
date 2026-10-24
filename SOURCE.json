@@ -1,6 +1,6 @@
 {
   "project": "NXT Retro Music",
-  "stage": "v1.9.7.7-refined-icons-artwork-alignment",
+  "stage": "v1.10-qr-online-audio-exit-policy",
   "upstream_repository": "https://github.com/nborodikhin/nextui-music-player.git",
   "upstream_commit": "f0e5e2ea2fea4f535d659b72aa1d2a8e969e5484",
   "nextui_ref": "v6.14.0",
@@ -13,11 +13,11 @@
   "libzip_ref": "v1.10.1",
   "libsamplerate_ref": "0.2.2",
   "container_runtime_required": false,
-  "version": "1.9.7.7",
+  "version": "1.10",
   "ffmpeg_ref": "n6.1.6",
   "ffmpeg_commit": "f1e3a2bf7a2f2cde936d1ed97f09a26853d20125",
-  "stock_status": "Three fresh ARM64 builds, ASan/UBSan native UI at two sizes, active-state/alignment pixels, preservation, QEMU loaders, full packages and production OTA installer fixtures passed. No physical device or live OTA publication.",
-  "hardware_test_status": "Not tested on physical TrimUI; no measured 60 FPS, temperature or battery guarantee",
+  "stock_status": "v1.10 changes prepared; fresh builds and checks pending.",
+  "hardware_test_status": "Not tested on physical TrimUI; live Spotify QR/account test remains required.",
   "freetype_ref": "2.13.2",
   "harfbuzz_ref": "8.3.0",
   "sdl2_ttf_ref": "2.24.0",
@@ -26,7 +26,7 @@
   "noto_cjk_ref": "Sans2.004",
   "unifont_ref": "16.0.04",
   "lucide_ref": "0.468.0",
-  "baseline_version": "Unified v1.9.7.6",
+  "baseline_version": "1.9.7.7",
   "baseline_hardware_status": "User reports aliasing, small glass icons with ambiguous active state and some misaligned themes.",
   "build_variant": "Shared source, separate Stock/NextUI/NX Redux binaries",
   "spotify": {
@@ -38,7 +38,7 @@
     "account_tested": false,
     "hardware_tested": false,
     "test1_login_and_playlists_user_confirmed": true,
-    "audio_pipeline": "librespot decoded F32 44100 Hz stereo → bounded SOCK_SEQPACKET fd3 → libsamplerate → existing SDL/DSP/volume/DAC engine; no helper-owned ALSA device",
+    "audio_pipeline": "librespot F32 stereo -> bounded worker-owned PCM queue -> shared SDL/DSP/output; startup/refill buffering and audible progress clock",
     "test2_playback_on_device_confirmed": false,
     "test3_playback_on_device_confirmed": false,
     "test3_feedback": "User reports playback authentication rejected before library connection",
@@ -65,7 +65,9 @@
     "user_confirmed_integrated_build": true,
     "user_confirmation": "2026-10-07 Asia/Saigon: app runs well; user requests final v1.1 name and removal of experimental labels",
     "premium_required_for_playback": true,
-    "test5_app_running_on_device_user_confirmed": true
+    "test5_app_running_on_device_user_confirmed": true,
+    "v110_live_account_tested": false,
+    "v110_qr_catalog": "same authorized session/client scopes; no client rotation or quota bypass"
   },
   "soundcloud": {
     "mode": "public unofficial yt-dlp",
@@ -331,7 +333,7 @@
     ],
     "nxredux_build_deferred": false
   },
-  "release_ready": true,
+  "release_ready": false,
   "release_roms": [
     "stock",
     "nextui",

@@ -7,17 +7,17 @@
 #include <SDL2/SDL_ttf.h>
 #include "display_helper.h"
 #include "module_common.h"
-#define NXT_VERSION "1.9.7.7"
+#define NXT_VERSION "1.10"
 #define NXT_APP_NAME "NXT Retro Music"
 #ifdef NXT_ROM_NXREDUX
-#define NXT_BUILD_REVISION "NX Redux · v1.9.7.7 · Refined-Rendering"
-#define NXT_SESSION_BUILD_KEY "1.9.7.7-NXRedux-Refined-Rendering"
+#define NXT_BUILD_REVISION "NX Redux · v1.10 · QR-Online-Exit"
+#define NXT_SESSION_BUILD_KEY "1.10-NXRedux-QR-Online-Exit"
 #elif defined(NXT_ROM_STOCK)
-#define NXT_BUILD_REVISION "Stock · v1.9.7.7 · Refined-Rendering"
-#define NXT_SESSION_BUILD_KEY "1.9.7.7-Stock-Refined-Rendering"
+#define NXT_BUILD_REVISION "Stock · v1.10 · QR-Online-Exit"
+#define NXT_SESSION_BUILD_KEY "1.10-Stock-QR-Online-Exit"
 #else
-#define NXT_BUILD_REVISION "NextUI · v1.9.7.7 · Refined-Rendering"
-#define NXT_SESSION_BUILD_KEY "1.9.7.7-NextUI-Refined-Rendering"
+#define NXT_BUILD_REVISION "NextUI · v1.10 · QR-Online-Exit"
+#define NXT_SESSION_BUILD_KEY "1.10-NextUI-QR-Online-Exit"
 #endif
 
 #define NXT_EQ_BANDS 31
@@ -121,6 +121,8 @@ const char *NxtHardware_bottomStatus(void);
 int NxtHardware_bottomUSB(bool host);
 int NxtSession_start(int argc, char **argv);
 bool NxtSession_background(DisplayContext *);
+void NxtSession_exitPrompt(DisplayContext *);
+bool NxtSession_wantsBackground(void);
 void NxtSession_status(bool visible);
 void NxtSession_quit(void);
 void NxtSession_tick(void);

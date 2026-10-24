@@ -5,8 +5,8 @@
   "icon": "",
   "launch": "launch.sh",
   "description": "v1.9.7.7: refined antialiasing, cached high-quality cover scaling, larger aligned Auralis controls and clearly filled active buttons. All existing audio/online/lyrics and official ROM OTA retained.",
-  "release_filename": "NXT_Retro_Music_v1.9.7.7_Stock.zip",
-  "version": "1.9.7.7",
+  "release_filename": "NXT_Retro_Music_v1.10_Stock.zip",
+  "version": "1.10",
   "rom": "stock",
   "device": "trimui-brick-pro"
 }
