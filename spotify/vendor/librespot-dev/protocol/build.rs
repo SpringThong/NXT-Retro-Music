@@ -22,6 +22,7 @@ fn compile() {
         proto_dir.join("devices.proto"),
         proto_dir.join("entity_extension_data.proto"),
         proto_dir.join("extended_metadata.proto"),
+        proto_dir.join("collection2v2.proto"),
         proto_dir.join("extension_kind.proto"),
         proto_dir.join("metadata.proto"),
         proto_dir.join("player.proto"),

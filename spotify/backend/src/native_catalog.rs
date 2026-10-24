@@ -273,8 +273,8 @@ fn error(reason: &str, req: &Value) -> Value { json!({"event":"error","reason":r
 fn id_from_gid(gid: &[u8]) -> Option<String> { SpotifyId::from_raw(gid).ok().map(|id| id.to_base62()) }
 fn artist_row(artist: &meta::Artist) -> Value { json!({"id":id_from_gid(artist.gid()),"title":artist.name(),"artist":"Artist"}) }
 fn image_url(images: &[meta::Image]) -> Value {
-    images.iter().find(|i| i.gid().len() == 20 && i.width() >= 300 && i.width() <= 640).or_else(|| images.iter().find(|i| i.gid().len() == 20))
-        .map(|i| json!(format!("https://i.scdn.co/image/{}",i.gid().iter().map(|b|format!("{b:02x}")).collect::<String>()))).unwrap_or(Value::Null)
+    images.iter().find(|i| i.file_id().len() == 20 && i.width() >= 300 && i.width() <= 640).or_else(|| images.iter().find(|i| i.file_id().len() == 20))
+        .map(|i| json!(format!("https://i.scdn.co/image/{}",i.file_id().iter().map(|b|format!("{b:02x}")).collect::<String>()))).unwrap_or(Value::Null)
 }
 fn album_row(album: &meta::Album) -> Value {
     let names = album.artist.iter().map(|a| a.name()).collect::<Vec<_>>().join(", ");

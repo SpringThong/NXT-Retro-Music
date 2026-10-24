@@ -1,0 +1,44 @@
+name: Build NXT v1.10.2 Spotify helper
+on:
+  push:
+    branches: [build-v1.10.2]
+    paths: ['.github/workflows/build-v1102-spotify.yml']
+permissions:
+  contents: read
+jobs:
+  spotify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare native test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libasound2-dev pkg-config > /dev/null
+          rustc --version
+          rustup target add aarch64-unknown-linux-gnu
+          mkdir -p logs
+      - name: Run Spotify helper regression tests
+        run: cargo test --locked --jobs 3 --manifest-path spotify/backend/Cargo.toml > logs/v1102-spotify-tests.txt 2>&1 || { tail -100 logs/v1102-spotify-tests.txt; exit 1; }
+      - name: Build pinned-SDK ARM64 Spotify helper
+        run: |
+          python3 tools/sdk-assets.py > logs/v1102-spotify-sdk.txt 2>&1 || { tail -80 logs/v1102-spotify-sdk.txt; exit 1; }
+          bash tools/build-spotify.sh > logs/v1102-spotify-build.txt 2>&1 || { tail -100 logs/v1102-spotify-build.txt; exit 1; }
+      - name: Collect helper and regression evidence
+        shell: python
+        run: |
+          import pathlib,tarfile
+          with tarfile.open("v1102-spotify-compiled.tar.gz","w:gz") as z:
+              z.add("upstream/bin/tg5040/nxt-spotify-backend")
+              for p in pathlib.Path("logs").glob("v1102-*"):z.add(p,arcname=str(p))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v1102-spotify-compiled
+          path: v1102-spotify-compiled.tar.gz
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: v1102-spotify-failure
+          path: logs/v1102-*
+          retention-days: 3
