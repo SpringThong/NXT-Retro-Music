@@ -1,0 +1,25 @@
+{
+  "version": "1.10",
+  "exit": 0,
+  "baseline": "1.9.7.7",
+  "source_files_compared": 894,
+  "resource_files_preserved": 746,
+  "intended_source_changes": [
+    "upstream/src/module_menu.c",
+    "upstream/src/module_player.c",
+    "upstream/src/nxt.h",
+    "upstream/src/nxt_player_core.c",
+    "upstream/src/nxt_screens.c",
+    "upstream/src/nxt_session.c",
+    "upstream/src/nxt_soundcloud.c",
+    "upstream/src/nxt_soundcloud_pcm.inc",
+    "upstream/src/nxt_spotify.c",
+    "upstream/src/nxt_spotify_pcm.inc",
+    "upstream/src/nxt_startup.c"
+  ],
+  "themes_fonts_artwork_unchanged": true,
+  "soundcloud_ytdlp_runtime_unchanged": true,
+  "original_three_OTA_feed_urls_unchanged": true,
+  "DSD_bitperfect_translation_library_CPU_LED_OTA_code_unchanged": true,
+  "physical_hardware_tested": false
+}

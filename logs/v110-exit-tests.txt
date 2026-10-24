@@ -1,0 +1,1 @@
+PASS production B exit decisions: paused closes, playing background, close choice, B closes, X returns to menu; saved preference unchanged

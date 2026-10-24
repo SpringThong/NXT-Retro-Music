@@ -1,0 +1,14 @@
+{
+  "version": "1.10",
+  "rom": "stock",
+  "exit": 0,
+  "kit": "NXT_OTA_Google_Drive_v1.10_Stock.zip",
+  "kit_sha256": "3f43e535b6fd6613818be042ed2a0b8a38d1486d4dbffc6e107041acfd06ff95",
+  "size": 146829232,
+  "installer": "NXT_Retro_Music_v1.10_Stock.zip",
+  "installer_sha256": "2978213c85d80f50195cad0428f5931565b49ff177afde82737ecfa2db8872a2",
+  "exact_installer_included": true,
+  "offline_generator_included": true,
+  "placeholder_only_in_templates": true,
+  "public_source_published": false
+}

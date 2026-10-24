@@ -1,0 +1,23 @@
+{
+  "version": "1.10",
+  "rom": "nextui",
+  "exit": 0,
+  "binary_sha256": "902e0ba61b99f1bb0d53dea40532b8c104858dc00a109f28b0a60da70c197feb",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10\nNextUI \u00b7 v1.10 \u00b7 QR-Online-Exit\n",
+      "stderr": ""
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10 for NextUI\n\nUsage: /home/runner/work/NXT-Retro-Music/NXT-Retro-Music/upstream/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n",
+      "stderr": ""
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

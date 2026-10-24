@@ -1,0 +1,23 @@
+{
+  "version": "1.10",
+  "rom": "nxredux",
+  "exit": 0,
+  "binary_sha256": "b5e0bff70a942038b2c4b9cd32dcad31b61d8412d4ceaed26b22d8d1a3f378af",
+  "real_ARM64_release": true,
+  "QEMU_with_pinned_SDK": true,
+  "checks": [
+    {
+      "argument": "--build-info",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10\nNX Redux \u00b7 v1.10 \u00b7 QR-Online-Exit\n",
+      "stderr": ""
+    },
+    {
+      "argument": "--help",
+      "exit": 0,
+      "stdout": "NXT Retro Music v1.10 for NX Redux\n\nUsage: /home/runner/work/NXT-Retro-Music/NXT-Retro-Music/nxredux/bin/tg5040/musicplayer.elf [options]\n\nOptions:\n  --build-info                 Show frontend revision and stop.\n  -h, --help                   Give this text and stop.\n",
+      "stderr": ""
+    }
+  ],
+  "physical_ROM_boot_tested": false
+}

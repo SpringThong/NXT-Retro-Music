@@ -1,67 +1,24 @@
 {
-  "variant": "NextUI Spotify Test5",
-  "base": "NextUI BottomDAC Fix1",
+  "version": "1.10",
+  "helper_package_version": "1.10.0",
   "rust_backend_built": true,
-  "c_frontend_built": true,
-  "checks": [
-    "Rust 12 release tests: credentials/metadata/PCM/QR/privacy/account matching/lyrics",
-    "Production C frontend lifecycle and QR-first IPC with fake local backend",
-    "Production PCM receiver: framed/stale/paused/finite/resample audio",
-    "Production C lyrics: exact ms, multilingual/long lines, plain text, stale worker results",
-    "Production detached session loop and STATUS/ATTACH over real socketpair; host blocks bind/listen; display/audio fixtures",
-    "Production logo/lock/DAC PCM and USB role regression",
-    "Actual NXT/Spotify software renderer + Unicode fallback + spectrum at 1024x768 and 640x480 with fixture metadata/audio/DAC",
-    "Live HTTP device-code request 200 with six scopes; no real account approval"
-  ],
-  "account_login_tested": false,
-  "real_stream_playback_tested": false,
-  "full_gui_runtime_tested": false,
-  "device_tested": false,
-  "limitations": [
-    "Test5 has no real-account/device playback verification in build environment; Test4 user confirmed audio",
-    "Native Rust live pair probe in host failed; separate urllib HTTP request with same scopes succeeded; device network path retained from working Test4",
-    "Full native application GUI/input loop not executed; renderer, controller IPC and background tested separately with fixtures",
-    "Some accounts may require existing same-account Developer Web API credentials for compatibility",
-    "Lyrics depend on service coverage; unsynced text does not auto-follow",
-    "Queue limited to selected results page; discovery uses themed searches"
-  ],
-  "app_sha256": "3361d46eccd9882bfc7cc3dac8fe71ddfbcb22a5a3289269938708936f2a2427",
-  "backend_sha256": "8b75719bcd6345624a5460184209e911e4eba664704bb8b320003d2b1bf7048b",
-  "previous_build_user_feedback": "Test4 direct playback confirmed by user; requested simpler QR login, common native player, lyrics and background",
-  "account_login_tested_by_user_on_test1": true,
-  "audio_pipeline": "librespot decoded F32 44100 Hz stereo → bounded SOCK_SEQPACKET fd3 → libsamplerate → existing SDL/DSP/volume/DAC engine; no helper-owned ALSA device",
-  "test2_user_feedback": "Login5 FaultyRequest(INVALID_CREDENTIALS), no audio decoded",
-  "test3_user_feedback": "Authentication rejected; library connection blocked",
-  "test4_auth_change": "Separate Developer Web API login and desktop device authorization for direct playback; QR/code at spotify.com/pair",
-  "live_device_authorization_request": {
-    "status": 200,
-    "device_code_received": true,
-    "user_code_received": true,
-    "error": null,
-    "approval_tested": false,
-    "scopes_requested": [
-      "streaming",
-      "user-read-private",
-      "playlist-read-private",
-      "playlist-read-collaborative",
-      "user-library-read",
-      "user-library-modify"
-    ]
+  "backend_sha256": "a3253a38b147d265399b240278ec9c2ec8b5ba2cdc2a17865fe738b8212ae18f",
+  "host_regression_tests": 21,
+  "host_regression_tests_passed": true,
+  "build_workflow_run_id": 40086156392,
+  "build_commit": "18feac290e9be17397fdf5d41d96b2978cadbe4f",
+  "source_sha256": {
+    "spotify/backend/src/main.rs": "9329bf52ec1f741451fba4ef3e227c51b2c4c7bde6a8b896cff79d29a1e6a735",
+    "spotify/backend/src/api.rs": "3d1176e2325c30228aff4acf377eea99437958072dd4584d42c868c5de73f39f",
+    "spotify/backend/src/catalog.rs": "1e4c947bbff7a8cac222c5d5d59be72fa3456fedf2f2b5b6987d54f8da635fc8",
+    "spotify/backend/src/pcm.rs": "d6fe97444133001317530073c658217d49f7f7d8e00977ddb7e6ca5fa8e398b2",
+    "spotify/backend/src/pair.rs": "1c6b8a50314c013be5ae448396bebc21d7e0772d8f35c2a81d8917c7f66b382c",
+    "spotify/backend/src/auth.rs": "109881828fe3621fae682248e6b81d4d566e134054358c2074cd03c7ae9b7d75",
+    "spotify/backend/src/lyrics.rs": "f67da13796754c26bd280a2c75efa7d04ef85e0736a63b01998b0e8ce808a025",
+    "spotify/backend/Cargo.toml": "746b8e4703d13b352f60512f5f7dbab3d3b37d81085be01c9a094787b8c76622",
+    "spotify/backend/Cargo.lock": "5baa6ca2050548778e6448a7b76f1edfd579943269198eddcf9ff488df264a15"
   },
-  "diagnostic_file": "NXT_Spotify_Log.txt",
-  "rust_test_count": 12,
-  "build": "NextUI-Spotify-Test5",
-  "test4_user_feedback": "Direct playback confirmed by user on TrimUI Brick Pro",
-  "test5_hardware_tested": false,
-  "test5_account_approved": false,
-  "tests": [
-    "Rust 12 release tests: credentials/metadata/PCM/QR/privacy/account matching/lyrics",
-    "Production C frontend lifecycle and QR-first IPC with fake local backend",
-    "Production PCM receiver: framed/stale/paused/finite/resample audio",
-    "Production C lyrics: exact ms, multilingual/long lines, plain text, stale worker results",
-    "Production detached session loop and STATUS/ATTACH over real socketpair; host blocks bind/listen; display/audio fixtures",
-    "Production logo/lock/DAC PCM and USB role regression",
-    "Actual NXT/Spotify software renderer + Unicode fallback + spectrum at 1024x768 and 640x480 with fixture metadata/audio/DAC",
-    "Live HTTP device-code request 200 with six scopes; no real account approval"
-  ]
+  "live_account_tested": false,
+  "physical_device_tested": false,
+  "client_id_rotation_or_quota_bypass": false
 }

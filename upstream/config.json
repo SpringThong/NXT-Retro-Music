@@ -6,5 +6,5 @@
   "device": "trimui-brick-pro",
   "launch": "launch.sh",
   "release_filename": "NXT_Retro_Music_v1.10_NextUI.zip",
-  "description": "v1.9.7.7: refined antialiasing, cached high-quality cover scaling, larger aligned Auralis controls and clearly filled active buttons. All existing audio/online/lyrics and official ROM OTA retained."
+  "description": "v1.10: QR Spotify session catalog, valid search pagination, bounded online audio buffering, B background-or-exit dialog and paused exit; original official OTA feeds retained."
 }

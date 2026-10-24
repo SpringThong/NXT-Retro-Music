@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "version": "1.10",
+  "rom": "nextui",
+  "binary_sha256": "902e0ba61b99f1bb0d53dea40532b8c104858dc00a109f28b0a60da70c197feb",
+  "installer_size": 144450133,
+  "installer_sha256": "02f430dca60f800d20b75fb18c100fbefba2fd71dab6c7d9a1557c42873c4d74",
+  "kit_size": 144471126,
+  "kit_sha256": "bcf9c4bc6e76e5a0b71418762e4539784420ea2f4801b4eff99510f6463d4595",
+  "official_OTA_URL": "https://drive.google.com/file/d/16OuNQmcxwLE3VTTN2bUyZ0yL2EiGFeuD/view?usp=sharing",
+  "cached_version_and_config_current": true,
+  "correct_ROM_paths_and_libraries": true,
+  "original_resource_assets_verified": 746,
+  "online_backends_match_built_payloads": true,
+  "no_userdata_credentials_or_other_ROM_feed": true,
+  "executable_modes_CRC_checked": true,
+  "current_build_fingerprints_match": true,
+  "exact_installer_in_OTA_kit": true,
+  "offline_OTA_generator_metadata_and_guide_current": true,
+  "live_feed_uploaded": false,
+  "hardware_tested": false
+}
